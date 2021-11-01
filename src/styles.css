@@ -1,0 +1,25 @@
+body {
+    padding-top: 5rem;
+}
+
+.wrapper {
+  display: flex;
+  width: 100%;
+}
+
+#sidebar {
+  padding-top: 3.5rem;
+  width: 175px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 999;
+  background: #7386D5;
+  color: #fff;
+  transition: all 0.3s;
+}
+
+.navbar{
+  height: 40px;
+}
