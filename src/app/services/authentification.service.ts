@@ -20,13 +20,12 @@ export class AuthentificationService {
   authenticate(utilisateur : UtilisateurModel) {
     return this.httpClient
       .post('http://localhost:8080/utilisateur/login', utilisateur);
-
   }
 
   isUserLoggedIn() {
     let user = sessionStorage.getItem('pseudo');
     if(!(user === null)){
-      this.emitIsLoginSubject();
+      //this.emitIsLoginSubject();
       return true
     }
     return false;

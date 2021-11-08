@@ -8,8 +8,11 @@ import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
 import { HttpClientModule } from '@angular/common/http';
 import { LogoutComponent } from './logout/logout.component';
-import {AuthentificationService} from "./services/authentification.service";
-import { MenuComponent } from './menu/menu.component';
+import { ListProduitsComponent } from './list-produits/list-produits.component';
+import { ListMonturesComponent } from './list-montures/list-montures.component';
+import { ListLentillesComponent } from './list-lentilles/list-lentilles.component';
+import { EditLentilleComponent } from './edit-lentille/edit-lentille.component';
+import { EditMontureComponent } from './edit-monture/edit-monture.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +20,11 @@ import { MenuComponent } from './menu/menu.component';
     LoginComponent,
     HomeComponent,
     LogoutComponent,
-    MenuComponent
+    ListProduitsComponent,
+    ListMonturesComponent,
+    ListLentillesComponent,
+    EditLentilleComponent,
+    EditMontureComponent
   ],
     imports: [
         BrowserModule,
@@ -25,9 +32,7 @@ import { MenuComponent } from './menu/menu.component';
         HttpClientModule,
         FormsModule,
     ],
-  providers: [
-    AuthentificationService
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
