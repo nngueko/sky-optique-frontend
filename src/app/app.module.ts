@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import {FormGroup, FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -13,6 +13,14 @@ import { ListMonturesComponent } from './list-montures/list-montures.component';
 import { ListLentillesComponent } from './list-lentilles/list-lentilles.component';
 import { EditLentilleComponent } from './edit-lentille/edit-lentille.component';
 import { EditMontureComponent } from './edit-monture/edit-monture.component';
+import { ListLivraisonsComponent } from './list-livraisons/list-livraisons.component';
+import { EditLivraisonComponent } from './edit-livraison/edit-livraison.component';
+import { EditBonCommandeComponent } from './edit-bon-commande/edit-bon-commande.component';
+import { ListBonCommandesComponent } from './list-bon-commandes/list-bon-commandes.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
 
 @NgModule({
   declarations: [
@@ -24,14 +32,23 @@ import { EditMontureComponent } from './edit-monture/edit-monture.component';
     ListMonturesComponent,
     ListLentillesComponent,
     EditLentilleComponent,
-    EditMontureComponent
+    EditMontureComponent,
+    ListLivraisonsComponent,
+    EditLivraisonComponent,
+    EditBonCommandeComponent,
+    ListBonCommandesComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        HttpClientModule,
-        FormsModule,
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

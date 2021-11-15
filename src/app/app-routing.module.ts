@@ -7,6 +7,8 @@ import {ListMonturesComponent} from "./list-montures/list-montures.component";
 import {EditMontureComponent} from "./edit-monture/edit-monture.component";
 import {EditLentilleComponent} from "./edit-lentille/edit-lentille.component";
 import {ListLentillesComponent} from "./list-lentilles/list-lentilles.component";
+import {ListLivraisonsComponent} from "./list-livraisons/list-livraisons.component";
+import {EditLivraisonComponent} from "./edit-livraison/edit-livraison.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate:[AuthGaurdService] },
@@ -17,6 +19,9 @@ const routes: Routes = [
   { path: 'lentilles', component: ListLentillesComponent, canActivate:[AuthGaurdService] },
   { path: 'add-lentille', component: EditLentilleComponent, canActivate:[AuthGaurdService] },
   { path: 'update-lentille/:id', component: EditLentilleComponent, canActivate:[AuthGaurdService] },
+  { path: 'livraisons', component: ListLivraisonsComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-livraison', component: EditLivraisonComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-livraison/:id', component: EditLivraisonComponent, canActivate:[AuthGaurdService] },
   { path: 'login', component: LoginComponent },
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

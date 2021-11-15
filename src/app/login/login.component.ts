@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
     this.utilisateur.pseudo = (<string> form.value['utilisateur_Pseudo']).trim();
     this.utilisateur.password = (<string> form.value['utilisateur_Password']).trim();
     this.loading = true;
-    
+
     this.authentificationService.authenticate(this.utilisateur).subscribe(data=>{
       console.log(data);
 
@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
         // @ts-ignore
         this.utilisateur = data;
         console.log(this.utilisateur);
-        this.authentificationService.login(this.utilisateur)
+        this.onLogin(this.utilisateur)
         this.router.navigate(['/home']);
       } else {
         this.loading = false;
@@ -43,6 +43,14 @@ export class LoginComponent implements OnInit {
       console.log('Error ! : ' + error);
       this.loading = false;
     });
+  }
+
+  onLogin(utilisateur : UtilisateurModel) {
+    // @ts-ignore
+    sessionStorage.setItem('id', utilisateur.id.toString());
+    sessionStorage.setItem('pseudo', utilisateur.pseudo);
+    sessionStorage.setItem('nom', utilisateur.nom);
+    this.authentificationService.emitIsLoginSubject();
   }
 
 }

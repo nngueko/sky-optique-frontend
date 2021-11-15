@@ -17,8 +17,14 @@ export class LogoutComponent implements OnInit {
   }
 
   onLogout() {
-    this.authentificationService.logOut();
+    this.onLogOut();
     this.router.navigate(['/login']);
+  }
+
+  onLogOut() {
+    sessionStorage.removeItem('pseudo');
+    sessionStorage.removeItem('nom');
+    this.authentificationService.emitIsLogoutSubject();
   }
 
 

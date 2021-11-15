@@ -12,6 +12,11 @@ export class AuthentificationService {
   isLogin = false ;
   isLoginSubject = new Subject<boolean>();
   emitIsLoginSubject(){
+    this.isLogin = true ;
+    this.isLoginSubject.next(this.isLogin);
+  }
+  emitIsLogoutSubject(){
+    this.isLogin = false ;
     this.isLoginSubject.next(this.isLogin);
   }
 
@@ -31,18 +36,8 @@ export class AuthentificationService {
     return false;
   }
 
-  login(utilisateur : UtilisateurModel) {
-    sessionStorage.setItem('pseudo', utilisateur.pseudo);
-    sessionStorage.setItem('nom', utilisateur.nom);
-    this.isLogin = true;
-    this.emitIsLoginSubject();
-  }
 
-  logOut() {
-    sessionStorage.removeItem('pseudo');
-    sessionStorage.removeItem('nom');
-    this.isLogin = false;
-    this.emitIsLoginSubject();
-  }
+
+
 
 }

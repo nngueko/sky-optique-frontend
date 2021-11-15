@@ -1,9 +1,10 @@
 export class UtilisateurModel {
-  
-  constructor( 
+
+  constructor(
     public pseudo:string,
     public password:string,
-    public nom:string, 
+    public nom:string,
+    public id?:number,
   ){}
 
 }
