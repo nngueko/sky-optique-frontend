@@ -1,0 +1,59 @@
+<div class="card">
+  <div *ngIf="isAddMode" class="card-header text-white bg-primary mb-3">
+    Ajouter monture
+  </div>
+  <div *ngIf="!isAddMode" class="card-header text-white bg-primary mb-3">
+    Modifier monture
+  </div>
+  <div class="card-body">
+    <form #montureForm="ngForm" (ngSubmit)="onSubmit(montureForm)" >
+
+      <div class="form-group">
+        <label for="monture_ref">
+          Reference
+        </label>
+        <input type="text" id="monture_ref" class="form-control" name="monture_ref" [(ngModel)] = "monture.reference" required>
+      </div>
+      <br/>
+      <div class="form-group">
+        <label for="monture_nomComplet">
+          Nom complet
+        </label>
+        <input type="text" id="monture_nomComplet" class="form-control" name="monture_nomComplet" [(ngModel)] = "monture.nomComplet" required>
+      </div>
+      <div class="form-group">
+        <label for="monture_model">
+          Model
+        </label>
+        <input type="text" id="monture_model" class="form-control" name="monture_model" [(ngModel)] = "monture.model" >
+      </div>
+      <div class="form-group">
+        <label for="monture_matiere">
+          Matiere
+        </label>
+        <input type="text" id="monture_matiere" class="form-control" name="monture_matiere" [(ngModel)] = "monture.matiere" >
+      </div>
+      <div class="form-group">
+        <label for="monture_genre">
+          Genre
+        </label>
+        <input type="text" id="monture_genre" class="form-control" name="monture_genre" [(ngModel)] = "monture.genre" >
+      </div>
+      <div class="form-group">
+        <label for="monture_taille">
+          Taille
+        </label>
+        <input type="text" id="monture_taille" class="form-control" name="monture_taille" [(ngModel)] = "monture.taille" >
+      </div>
+
+      <div class="form-group">
+        <button [disabled]="montureForm.invalid" class="btn btn-primary" type="submit">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Enregistrer
+        </button>
+        <a *ngIf="!isAddMode" routerLink="../../montures" class="btn btn-link">Annuler</a>
+      </div>
+
+    </form>
+  </div>
+</div>

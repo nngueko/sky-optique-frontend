@@ -1,0 +1,60 @@
+
+    <div class="card col-lg-4 offset-lg-4">
+      <div *ngIf="isAddMode" class="card-header text-white bg-primary mb-3">
+        Ajouter lentille
+      </div>
+      <div *ngIf="!isAddMode" class="card-header text-white bg-primary mb-3">
+        Modifier lentille
+      </div>
+      <div class="card-body">
+        <form #lentilleForm="ngForm" (ngSubmit)="onSubmit(lentilleForm)" >
+
+          <div class="form-group">
+            <label for="libelle">
+              Libelle
+            </label>
+            <input type="text" id="libelle" class="form-control" name="libelle" [(ngModel)] = "lentille.libelle" >
+          </div>
+          <div class="form-group">
+            <label for="type">
+              Type
+            </label>
+            <input type="text" id="type" class="form-control" name="type" [(ngModel)] = "lentille.type" >
+          </div>
+          <div class="form-group">
+            <label for="sphere">
+              Sphere
+            </label>
+            <input type="number" id="sphere" class="form-control" name="sphere" [(ngModel)] = "lentille.sphere" >
+          </div>
+          <div class="form-group">
+            <label for="T1">
+              Cylindre
+            </label>
+            <input type="number" id="T1" class="form-control" name="cylindre" [(ngModel)]="lentille.cylindre">
+          </div>
+          <div class="form-group">
+            <label for="axe">
+              Axe
+            </label>
+            <input type="number" id="axe" class="form-control" name="axe" [(ngModel)]="lentille.axe" >
+          </div>
+          <div class="form-group">
+            <label for="addition">
+              Addition
+            </label>
+            <input type="number" id="addition" class="form-control" name="addition" [(ngModel)]="lentille.addition" >
+          </div>
+
+          <div class="form-group">
+            <button [disabled]="lentilleForm.invalid" class="btn btn-primary" type="submit">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+              Enregistrer
+            </button>
+            <a *ngIf="!isAddMode" routerLink="../../lentilles" class="btn btn-link">Annuler</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
