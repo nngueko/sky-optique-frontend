@@ -24,11 +24,11 @@ export class ListLentillesComponent implements OnInit {
     this.loading = true;
     this.listLentilleSubscription = this.lentilleService.listLentilleSubject.subscribe(
       (lentilles: LentilleModel[]) => {
-        this.lentilles = lentilles
+        this.lentilles = lentilles;
+        this.loading = false;
       }
     );
     this.lentilleService.getAllLentilles();
-    this.loading = false;
   }
 
   ngOnDestroy(): void {

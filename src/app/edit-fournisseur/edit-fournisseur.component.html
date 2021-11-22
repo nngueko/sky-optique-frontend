@@ -1,0 +1,54 @@
+
+<div class="card col-lg-4 offset-lg-4">
+  <div *ngIf="isAddMode" class="card-header text-white bg-primary mb-3">
+    Ajouter un fournisseur
+  </div>
+  <div *ngIf="!isAddMode" class="card-header text-white bg-primary mb-3">
+    Modifier fournisseur
+  </div>
+  <div class="card-body">
+    <form #fournisseurForm="ngForm" (ngSubmit)="onSubmit(fournisseurForm)" >
+
+      <div class="form-group">
+        <label for="nom">
+          Nom du fournisseur
+        </label>
+        <input type="text" id="nom" class="form-control" name="nom" [(ngModel)] = "fournisseur.nom" required >
+      </div>
+      <div class="form-group">
+        <label for="adresse">
+          Adresse
+        </label>
+        <input type="text" id="adresse" class="form-control" name="adresse" [(ngModel)] = "fournisseur.adresse" >
+      </div>
+      <div class="form-group">
+        <label for="email">
+          Email
+        </label>
+        <input type="email" id="email" class="form-control" name="email" [(ngModel)] = "fournisseur.email" required>
+      </div>
+      <div class="form-group">
+        <label for="tel1">
+          Téléphone 1
+        </label>
+        <input type="text" id="tel1" class="form-control" name="tel1" [(ngModel)]="fournisseur.tel1" required>
+      </div>
+      <div class="form-group">
+        <label for="tel2">
+          Téléphone 2
+        </label>
+        <input type="text" id="tel2" class="form-control" name="tel2" [(ngModel)]="fournisseur.tel2" >
+      </div>
+      <br/>
+      <div class="form-group">
+        <button [disabled]="fournisseurForm.invalid" class="btn btn-primary" type="submit">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Enregistrer
+        </button>
+        <a *ngIf="!isAddMode" routerLink="../fournisseurs" class="btn btn-link">Annuler</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+

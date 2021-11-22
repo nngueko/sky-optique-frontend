@@ -4,7 +4,7 @@ export class MontureModel extends ProduitModel{
 
   constructor(
     public reference:string,
-    public nomComplet:string,
+    //public nomComplet:string,
     public model:string,
     public matiere:string,
     public genre:string,

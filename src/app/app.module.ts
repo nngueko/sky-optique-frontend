@@ -21,6 +21,20 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {HttpClientModule} from "@angular/common/http";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatSelectModule} from "@angular/material/select";
+import {MatRadioModule} from "@angular/material/radio";
+import {MatNativeDateModule, MatOptionModule} from "@angular/material/core";
+import {MatCardModule} from "@angular/material/card";
+import {MatIconModule} from "@angular/material/icon";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatMenuModule} from "@angular/material/menu";
+import {MatButtonModule} from "@angular/material/button";
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { ListBonLivraisonsComponent } from './list-bon-livraisons/list-bon-livraisons.component';
+import { EditBonLivraisonComponent } from './edit-bon-livraison/edit-bon-livraison.component';
+import { EditFournisseurComponent } from './edit-fournisseur/edit-fournisseur.component';
+import { ListFournisseursComponent } from './list-fournisseurs/list-fournisseurs.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +50,11 @@ import {HttpClientModule} from "@angular/common/http";
     ListLivraisonsComponent,
     EditLivraisonComponent,
     EditBonCommandeComponent,
-    ListBonCommandesComponent
+    ListBonCommandesComponent,
+    ListBonLivraisonsComponent,
+    EditBonLivraisonComponent,
+    EditFournisseurComponent,
+    ListFournisseursComponent
   ],
   imports: [
     BrowserModule,
@@ -45,9 +63,21 @@ import {HttpClientModule} from "@angular/common/http";
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
+
     MatAutocompleteModule,
     MatFormFieldModule,
     MatInputModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatCardModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]

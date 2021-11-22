@@ -45,13 +45,13 @@
             </label>
             <input type="number" id="addition" class="form-control" name="addition" [(ngModel)]="lentille.addition" >
           </div>
-
+          <br/>
           <div class="form-group">
             <button [disabled]="lentilleForm.invalid" class="btn btn-primary" type="submit">
               <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
               Enregistrer
             </button>
-            <a *ngIf="!isAddMode" routerLink="../../lentilles" class="btn btn-link">Annuler</a>
+            <a *ngIf="!isAddMode" routerLink="../lentilles" class="btn btn-link">Annuler</a>
           </div>
 
         </form>

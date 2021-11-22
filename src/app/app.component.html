@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-primary navbar-dark">
+<nav class="navbar navbar-expand-lg bg-primary navbar-dark" *ngIf="authentificationService.isUserLoggedIn()">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">Sky-Optique</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -7,7 +7,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Montures</a>
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMonture" role="button" data-bs-toggle="dropdown" aria-expanded="false">Montures</a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" routerLink="montures">Liste des montures</a></li>
             <li><a class="dropdown-item" routerLink="add-monture">Ajouter une monture</a></li>
@@ -15,7 +15,7 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Lentilles</a>
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLentille" role="button" data-bs-toggle="dropdown" aria-expanded="false">Lentilles</a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" routerLink="lentilles">Liste des lentilles</a></li>
             <li><a class="dropdown-item" routerLink="add-lentille">Ajouter une lentille</a></li>
@@ -23,10 +23,18 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Lentilles</a>
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBonLivraison" role="button" data-bs-toggle="dropdown" aria-expanded="false">Bons de livraisons</a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a href="add-livraison">Enregistrer une livraison</a></li>
-            <li><a href="livraisons">Liste des livraisons</a></li>
+            <li><a class="dropdown-item" routerLink="add-bonLivraison">Enregistrer un bon de livraison</a></li>
+            <li><a class="dropdown-item" routerLink="bonLivraisons">Liste des bons de livraisons</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownFournisseur" role="button" data-bs-toggle="dropdown" aria-expanded="false">Fournisseurs</a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" routerLink="fournisseurs">Liste des fournisseurs</a></li>
+            <li><a class="dropdown-item" routerLink="add-fournisseur">Ajouter un fournisseur</a></li>
+            <li><a class="dropdown-item" routerLink="">Stock</a></li>
           </ul>
         </li>
       </ul>

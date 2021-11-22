@@ -41,7 +41,7 @@ export class EditMontureComponent implements OnInit {
 
   onSubmit(form: NgForm) {
     this.monture.reference = typeof (<string> form.value['monture_ref']) === "string" ? (<string> form.value['monture_ref']).trim() : form.value['monture_ref'];
-    this.monture.nomComplet = typeof (<string> form.value['monture_nomComplet']) === "string" ? (<string> form.value['monture_nomComplet']).trim() : form.value['monture_nomComplet'];
+    this.monture.libelle = typeof (<string> form.value['libelle']) === "string" ? (<string> form.value['libelle']).trim() : form.value['libelle'];
     this.monture.model = typeof (<string> form.value['monture_model']) === "string" ? (<string> form.value['monture_model']).trim() : form.value['monture_model'];
     this.monture.matiere = typeof (<string> form.value['monture_matiere']) === "string" ? (<string> form.value['monture_matiere']).trim() : form.value['monture_matiere'];
     this.monture.genre = typeof (<string> form.value['monture_genre']) === "string" ? (<string> form.value['monture_genre']).trim() : form.value['monture_genre'];
