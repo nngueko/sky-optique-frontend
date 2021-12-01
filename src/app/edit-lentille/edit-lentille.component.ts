@@ -4,7 +4,7 @@ import {LentilleModel} from "../models/lentille.model";
 import {MontureService} from "../services/monture.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LentilleService} from "../services/lentille.service";
-import {NgForm} from "@angular/forms";
+import {FormBuilder, FormGroup, NgForm, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-edit-lentille',
@@ -13,52 +13,80 @@ import {NgForm} from "@angular/forms";
 })
 export class EditLentilleComponent implements OnInit {
 
-  // @ts-ignore
   isAddMode: boolean;
+  lentilleForm: FormGroup;
+  submitted = false;
   loading = false;
-  // @ts-ignore
   lentille = new LentilleModel(null, null, null, null, null, null);
 
-  constructor(private lentilleService : LentilleService, private router: Router, private route: ActivatedRoute) {
+  constructor(private formBuilder: FormBuilder, private lentilleService : LentilleService, private router: Router, private route: ActivatedRoute) {
     this.lentille.id = this.route.snapshot.params['id'];
   }
 
   ngOnInit(): void {
     this.isAddMode = !this.lentille.id;
-
+    this.initForm(this.lentille);
     if (!this.isAddMode) {
       this.loading = true;
-
-      // @ts-ignore
       this.lentilleService.getLentilleById(this.lentille.id).subscribe((response) => {
-          this.lentille = response;
+        this.lentille = response;
+        this.initForm(this.lentille);
         },(error) => {
           console.log('Erreur ! : ' + error);
         }
       );
       this.loading = false;
     }
+
   }
 
-  onSubmit(form: NgForm) {
-    this.lentille.libelle = typeof (<string> form.value['libelle']) === "string" ? (<string> form.value['libelle']).trim() : form.value['libelle'];
-    this.lentille.type = typeof (<string> form.value['type']) === "string" ? (<string> form.value['type']).trim() : form.value['type'];
-    this.lentille.sphere = typeof (<string> form.value['sphere']) === "number" ? (<number> form.value['sphere']) : form.value['sphere'];
-    this.lentille.cylindre = typeof (<string> form.value['cylindre']) === "number" ? (<number> form.value['cylindre']) : form.value['cylindre'];
-    this.lentille.axe = <number> form.value['axe'];
-    this.lentille.addition = <number> form.value['addition'];
-    this.loading = true;
-    console.log(this.lentille);
+  initForm(lentille : LentilleModel){
+    this.lentilleForm = this.formBuilder.group({
+      libelle: [lentille.libelle, Validators.compose([Validators.required])],
+      type: lentille.type,
+      sphere: lentille.sphere,
+      cylindre: lentille.cylindre,
+      axe: lentille.axe,
+      addition: lentille.addition
+    });
+  }
+
+  get f() { return this.lentilleForm.controls; }
+
+  onSubmitForm() {
+    this.submitted = true;
+    if (this.lentilleForm.invalid) {
+      return;
+    }
+    const formValue = this.lentilleForm.value;
+    let editedLentille : LentilleModel = new LentilleModel(
+      (<string> formValue['type']).trim(),
+      (<number> formValue['sphere']),
+      (<number> formValue['cylindre.']),
+      (<number> formValue['addition']),
+      (<number> formValue['taille']),
+      (<number> formValue['forme'])
+    );
+    editedLentille.libelle = (<string> formValue['libelle']).trim();
+    console.log(editedLentille);
+
     if (this.isAddMode) {
-      this.addLentille();
+      this.addLentille(editedLentille);
     } else {
-      this.updateLentille();
+      this.updateLentille(editedLentille);
     }
   }
 
-  private addLentille() {
-    this.lentilleService.addLentille(this.lentille).subscribe(data=>{
+  onReset() {
+    this.submitted = false;
+    this.lentilleForm.reset();
+  }
+
+
+  private addLentille(lentille : LentilleModel) {
+    this.lentilleService.addLentille(lentille).subscribe(data=>{
       console.log(data);
+      this.loading = false;
       this.lentilleService.getAllLentilles();
       this.router.navigate(['/lentilles']);
     }, error => {
@@ -67,8 +95,9 @@ export class EditLentilleComponent implements OnInit {
     });
   }
 
-  private updateLentille() {
-    this.lentilleService.updateLentille(this.lentille).subscribe(data=>{
+  private updateLentille(lentille : LentilleModel) {
+    lentille.id = this.lentille.id;
+    this.lentilleService.updateLentille(lentille).subscribe(data=>{
       console.log(data);
       this.lentilleService.getAllLentilles();
       this.router.navigate(['/lentilles']);

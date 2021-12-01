@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card col-lg-6 offset-lg-3">
   <div *ngIf="isAddMode" class="card-header text-white bg-primary mb-3">
     Ajouter monture
   </div>
@@ -6,52 +6,61 @@
     Modifier monture
   </div>
   <div class="card-body">
-    <form #montureForm="ngForm" (ngSubmit)="onSubmit(montureForm)" >
+      <form [formGroup]="montureForm" (ngSubmit)="onSubmitForm()">
 
       <div class="form-group">
         <label for="monture_ref">
-          Reference
+          Reference*
         </label>
-        <input type="text" id="monture_ref" class="form-control" name="monture_ref" [(ngModel)] = "monture.reference" required>
+        <input type="text" id="monture_ref" class="form-control" formControlName="reference" [ngClass]="{ 'is-invalid': submitted && f.reference.errors }" />
+        <div *ngIf="submitted && f.reference.errors" class="invalid-feedback">
+          <div *ngIf="f.reference.errors.required">Veuillez renseigner le nom de la reference</div>
+        </div>
       </div>
       <br/>
       <div class="form-group">
         <label for="libelle">
-          Nom complet
+          Nom complet*
         </label>
-        <input type="text" id="libelle" class="form-control" name="libelle" [(ngModel)] = "monture.libelle" required>
+        <input type="text" id="libelle" class="form-control" formControlName="libelle" [ngClass]="{ 'is-invalid': submitted && f.libelle.errors }" />
+        <div *ngIf="submitted && f.libelle.errors" class="invalid-feedback">
+          <div *ngIf="f.libelle.errors.required">Veuillez renseigner le nom de la monture</div>
+        </div>
       </div>
       <div class="form-group">
-        <label for="monture_model">
-          Model
+        <label for="modele">
+          Modele
         </label>
-        <input type="text" id="monture_model" class="form-control" name="monture_model" [(ngModel)] = "monture.model" >
+        <input type="text" id="modele" class="form-control" formControlName="modele"/>
       </div>
       <div class="form-group">
-        <label for="monture_matiere">
+        <label for="matiere">
           Matiere
         </label>
-        <input type="text" id="monture_matiere" class="form-control" name="monture_matiere" [(ngModel)] = "monture.matiere" >
+        <input type="text" id="matiere" class="form-control" formControlName="matiere" />
       </div>
       <div class="form-group">
-        <label for="monture_genre">
+        <label for="genre">
           Genre
         </label>
-        <input type="text" id="monture_genre" class="form-control" name="monture_genre" [(ngModel)] = "monture.genre" >
+        <input type="text" id="genre" class="form-control" formControlName="genre" />
       </div>
       <div class="form-group">
-        <label for="monture_taille">
+        <label for="taille">
           Taille
         </label>
-        <input type="text" id="monture_taille" class="form-control" name="monture_taille" [(ngModel)] = "monture.taille" >
+        <input type="text" id="taille" class="form-control" formControlName="taille" />
+      </div>
+      <div class="form-group">
+        <label for="forme">
+          Forme*
+        </label>
+        <input type="text" id="forme" class="form-control" formControlName="forme" />
       </div>
       <br/>
-      <div class="form-group">
-        <button [disabled]="montureForm.invalid" class="btn btn-primary" type="submit">
-          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-          Enregistrer
-        </button>
-        <a *ngIf="!isAddMode" routerLink="../../montures" class="btn btn-link">Annuler</a>
+      <div >
+        <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
+        <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
       </div>
 
     </form>

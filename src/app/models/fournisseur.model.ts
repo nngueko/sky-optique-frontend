@@ -8,6 +8,7 @@ export class FournisseurModel {
     public adresse:string,
     public tel1:string,
     public tel2:string,
+    public bp:string,
     public id?:number,
   ){}
 

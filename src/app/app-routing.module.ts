@@ -13,6 +13,8 @@ import {ListBonLivraisonsComponent} from "./list-bon-livraisons/list-bon-livrais
 import {EditBonLivraisonComponent} from "./edit-bon-livraison/edit-bon-livraison.component";
 import {ListFournisseursComponent} from "./list-fournisseurs/list-fournisseurs.component";
 import {EditFournisseurComponent} from "./edit-fournisseur/edit-fournisseur.component";
+import {ListMarquesComponent} from "./list-marques/list-marques.component";
+import {EditMarqueComponent} from "./edit-marque/edit-marque.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate:[AuthGaurdService] },
@@ -26,6 +28,10 @@ const routes: Routes = [
   { path: 'lentilles', component: ListLentillesComponent, canActivate:[AuthGaurdService] },
   { path: 'add-lentille', component: EditLentilleComponent, canActivate:[AuthGaurdService] },
   { path: 'update-lentille/:id', component: EditLentilleComponent, canActivate:[AuthGaurdService] },
+
+  { path: 'marques', component: ListMarquesComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-marque', component: EditMarqueComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-marque/:id', component: EditMarqueComponent, canActivate:[AuthGaurdService] },
 
   { path: 'livraisons', component: ListLivraisonsComponent, canActivate:[AuthGaurdService] },
   { path: 'add-livraison', component: EditLivraisonComponent, canActivate:[AuthGaurdService] },

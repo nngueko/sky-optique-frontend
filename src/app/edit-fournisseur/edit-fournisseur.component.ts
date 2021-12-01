@@ -4,7 +4,7 @@ import {FournisseurModel} from "../models/fournisseur.model";
 import {LentilleService} from "../services/lentille.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {FournisseurService} from "../services/fournisseur.service";
-import {NgForm} from "@angular/forms";
+import {FormBuilder, FormGroup, NgForm, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-edit-fournisseur',
@@ -15,21 +15,23 @@ export class EditFournisseurComponent implements OnInit {
 
   isAddMode: boolean;
   loading = false;
-  fournisseur = new FournisseurModel(null, null, null, null, null);
+  submitted = false;
+  fournisseur = new FournisseurModel(null, null, null, null, null, null);
+  fournisseurForm: FormGroup;
 
-  constructor(private fournisseurService : FournisseurService, private router: Router, private route: ActivatedRoute) {
+  constructor(private formBuilder: FormBuilder, private fournisseurService : FournisseurService, private router: Router, private route: ActivatedRoute) {
     this.fournisseur.id = this.route.snapshot.params['id'];
   }
 
   ngOnInit(): void {
     this.isAddMode = !this.fournisseur.id;
+    this.initForm(this.fournisseur);
 
     if (!this.isAddMode) {
       this.loading = true;
-
-      // @ts-ignore
       this.fournisseurService.getFournisseurById(this.fournisseur.id).subscribe((response) => {
-          this.fournisseur = response;
+        this.fournisseur = response;
+        this.initForm(this.fournisseur);
         this.loading = false;
         },(error) => {
           this.loading = false;
@@ -39,22 +41,48 @@ export class EditFournisseurComponent implements OnInit {
     }
   }
 
-  onSubmit(form: NgForm) {
-    this.fournisseur.nom = typeof (<string> form.value['nom']) === "string" ? (<string> form.value['nom']).trim() : form.value['nom'];
-    this.fournisseur.adresse = typeof (<string> form.value['adresse']) === "string" ? (<string> form.value['adresse']).trim() : form.value['adresse'];
-    this.fournisseur.email = typeof (<string> form.value['email']) === "number" ? (<number> form.value['email']) : form.value['email'];
-    this.fournisseur.tel1 = typeof (<string> form.value['tel1']) === "number" ? (<number> form.value['tel1']) : form.value['tel1'];
-    this.fournisseur.tel2 = typeof (<string> form.value['tel2']) === "number" ? (<number> form.value['tel2']) : form.value['tel2'];
-    this.loading = true;
+  initForm(fournisseur : FournisseurModel){
+    this.fournisseurForm = this.formBuilder.group({
+      nom: [fournisseur.nom, Validators.compose([Validators.required])],
+      adresse: fournisseur.adresse,
+      email: [fournisseur.email, Validators.compose([Validators.required, Validators.email])],
+      tel1: [fournisseur.tel1, Validators.compose([Validators.required])],
+      tel2: fournisseur.tel2,
+      bp: fournisseur.bp
+    });
+  }
+
+  get f() { return this.fournisseurForm.controls; }
+
+  onSubmitForm() {
+    this.submitted = true;
+    if (this.fournisseurForm.invalid) {
+      return;
+    }
+    const formValue = this.fournisseurForm.value;
+    let editedFournisseur : FournisseurModel = new FournisseurModel(
+      (<string> formValue['nom']).trim(),
+      (<string> formValue['email']).trim(),
+      (<string> formValue['adresse.']).trim(),
+      (<string> formValue['tel1']).trim(),
+      (<string> formValue['tel2']).trim(),
+      (<string> formValue['bp']).trim()
+    );
+
     if (this.isAddMode) {
-      this.addFournisseur();
+      this.addFournisseur(editedFournisseur);
     } else {
-      this.updateFournisseur();
+      this.updateFournisseur(editedFournisseur);
     }
   }
 
-  private addFournisseur() {
-    this.fournisseurService.addFournisseur(this.fournisseur).subscribe(data=>{
+  onReset() {
+    this.submitted = false;
+    this.fournisseurForm.reset();
+  }
+
+  private addFournisseur(fournisseur : FournisseurModel) {
+    this.fournisseurService.addFournisseur(fournisseur).subscribe(data=>{
       console.log(data);
       this.fournisseurService.getAllFournisseurs();
       this.router.navigate(['/fournisseurs']);
@@ -64,8 +92,9 @@ export class EditFournisseurComponent implements OnInit {
     });
   }
 
-  private updateFournisseur() {
-    this.fournisseurService.updateFournisseur(this.fournisseur).subscribe(data=>{
+  private updateFournisseur(fournisseur : FournisseurModel) {
+    fournisseur.id = this.fournisseur.id;
+    this.fournisseurService.updateFournisseur(fournisseur).subscribe(data=>{
       console.log(data);
       this.fournisseurService.getAllFournisseurs();
       this.router.navigate(['/fournisseurs']);

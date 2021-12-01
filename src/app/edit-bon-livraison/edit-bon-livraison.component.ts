@@ -98,7 +98,6 @@ export class EditBonLivraisonComponent implements OnInit {
     this.subscription = this.trigger.panelClosingActions
       .subscribe(e => {
           if (!e) {
-            console.log('oui')
             this.produit = null;
           }
         },
@@ -107,7 +106,6 @@ export class EditBonLivraisonComponent implements OnInit {
     this.listFournisseurSubscription = this.trigger2.panelClosingActions
       .subscribe(e => {
           if (!e) {
-            console.log('oui')
             this.fournisseur = null;
             this.fournisseurControl.setValue(new FournisseurModel(null,null,null,null, null, null));
           }
@@ -139,11 +137,11 @@ export class EditBonLivraisonComponent implements OnInit {
   }
 
   initForm() {
-    let livraison : LivraisonModel = new LivraisonModel(null, null, new LotModel(null, null, null, new ProduitModel(null, null)));
+    //let livraison : LivraisonModel = new LivraisonModel(null, null, []);
     this.livraisonForm = this.formBuilder.group({
-      prixAchat: [livraison.prixAchat, Validators.compose([Validators.required, Validators.min(0)])],
-      qte: [livraison.qte, Validators.compose([Validators.required, Validators.min(1)])],
-      prixVente: [livraison.lot.prixVente, Validators.compose([Validators.required, Validators.min(0)])],
+      prixAchat: ['', Validators.compose([Validators.required, Validators.min(0)])],
+      qte: ['', Validators.compose([Validators.required, Validators.min(1)])],
+      prixVente: ['', Validators.compose([Validators.required, Validators.min(0)])],
     });
   }
 
@@ -152,12 +150,12 @@ export class EditBonLivraisonComponent implements OnInit {
     let addedLivraison : LivraisonModel = new LivraisonModel(
       formValue['prixAchat'],
       formValue['qte'],
-      new LotModel(null, formValue['prixVente'], formValue['qte'], this.produit,)
+      [new LotModel(null, formValue['prixVente'], formValue['qte'], this.produit,)]
     );
     this.listLivraison.push(addedLivraison);
     this.produitControl.setValue("");
     this.produit = null;
-    this.initForm();
+    this.livraisonForm.reset();
   }
 
 
@@ -203,8 +201,12 @@ export class EditBonLivraisonComponent implements OnInit {
     this.bonLivraison.dateLivraison = <string> form.value['dateLivraison'];
     this.bonLivraison.reference = <string> form.value['reference'];
     this.bonLivraison.fournisseur = this.fournisseur;
-    this.bonLivraison.listLivraisons = this.listLivraison;
-    this.bonLivraison.listLivraisons.forEach(livr => livr.lot.nom = this.bonLivraison.reference+'-'+this.bonLivraison.dateLivraison);
+    this.bonLivraison.livraisons = this.listLivraison;
+    this.bonLivraison.livraisons.forEach(livr => {
+      livr.lots.forEach(lot =>{
+        lot.ref_lot = this.bonLivraison.reference+'-'+this.bonLivraison.dateLivraison;
+      })
+    });
     console.log(this.bonLivraison);
     //this.loading = true;
     if (this.isAddMode) {
@@ -215,12 +217,12 @@ export class EditBonLivraisonComponent implements OnInit {
   }
 
   private addBonLivraison() {
-    console.log('ADDMODE');
+    console.log(this.bonLivraison);
     this.bonLivraisonService.addBonLivraison(this.bonLivraison).subscribe(
       data =>{
         console.log(data);
-        this.bonLivraisonService.getAllBonLivraison();
-        this.router.navigate(['/bonLivraisons']);
+        //this.bonLivraisonService.getAllBonLivraison();
+        //this.router.navigate(['/bonLivraisons']);
       }, error => {
         console.log('Error ! : ' + error);
         //this.loading = false;

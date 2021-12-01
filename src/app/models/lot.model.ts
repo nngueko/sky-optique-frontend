@@ -3,7 +3,7 @@ import {ProduitModel} from "./produit.model";
 export class LotModel {
 
   constructor(
-    public nom:string,
+    public ref_lot:string,
     public prixVente:number,
     public qte:number,
     public produit : ProduitModel,

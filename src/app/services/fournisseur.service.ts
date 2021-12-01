@@ -15,15 +15,16 @@ export class FournisseurService {
   listFournisseurs : FournisseurModel[];
   listFournisseurSubject = new Subject<FournisseurModel[]>();
   emitListFournisseurSubject(){
-    this.listFournisseurSubject.next(this.listFournisseurs.slice());
+    this.listFournisseurSubject.next(this.listFournisseurs);
   }
 
   constructor(private httpClient: HttpClient) { }
 
   getAllFournisseurs() {
     this.httpClient.get<any[]>(this.url).subscribe(
-      (fournisseurs: FournisseurModel[]) => {
-        this.listFournisseurs = fournisseurs;
+      (data: any[]) => {
+        // @ts-ignore
+        this.listFournisseurs = data._embedded.fournisseur;
         this.emitListFournisseurSubject();
       }
     );
@@ -31,6 +32,10 @@ export class FournisseurService {
 
   getFournisseurById(idFournisseur : number) {
     return this.httpClient.get<any>(this.url+idFournisseur);
+  }
+
+  getFournisseurByIdBonLivraison(idBonLivraison : number) {
+    return this.httpClient.get<any>("http://localhost:8080/bonLivraison/"+idBonLivraison+"/fournisseur");
   }
 
   addFournisseur(fournisseur : FournisseurModel) {

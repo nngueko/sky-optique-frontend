@@ -1,57 +1,56 @@
 
-    <div class="card col-lg-4 offset-lg-4">
+    <div class="card col-lg-6 offset-lg-3">
       <div *ngIf="isAddMode" class="card-header text-white bg-primary mb-3">
-        Ajouter lentille
+        Ajouter une lentille
       </div>
       <div *ngIf="!isAddMode" class="card-header text-white bg-primary mb-3">
         Modifier lentille
       </div>
       <div class="card-body">
-        <form #lentilleForm="ngForm" (ngSubmit)="onSubmit(lentilleForm)" >
+        <form [formGroup]="lentilleForm" (ngSubmit)="onSubmitForm()">
 
           <div class="form-group">
-            <label for="libelle">
-              Libelle
-            </label>
-            <input type="text" id="libelle" class="form-control" name="libelle" [(ngModel)] = "lentille.libelle" >
+            <label for="libelle">Nom*</label>
+            <input type="text" id="libelle" class="form-control" formControlName="libelle"  [ngClass]="{ 'is-invalid': submitted && f.libelle.errors }" />
+            <div *ngIf="submitted && f.libelle.errors" class="invalid-feedback">
+              <div *ngIf="f.libelle.errors.required">Veuillez renseigner le libelle</div>
+            </div>
           </div>
+
           <div class="form-group">
             <label for="type">
               Type
             </label>
-            <input type="text" id="type" class="form-control" name="type" [(ngModel)] = "lentille.type" >
+            <input type="text" id="type" class="form-control" formControlName="type"/>
           </div>
           <div class="form-group">
             <label for="sphere">
               Sphere
             </label>
-            <input type="number" id="sphere" class="form-control" name="sphere" [(ngModel)] = "lentille.sphere" >
+            <input type="number" id="sphere" class="form-control" formControlName="sphere" />
           </div>
           <div class="form-group">
             <label for="T1">
               Cylindre
             </label>
-            <input type="number" id="T1" class="form-control" name="cylindre" [(ngModel)]="lentille.cylindre">
+            <input type="number" id="T1" class="form-control" formControlName="cylindre" />
           </div>
           <div class="form-group">
             <label for="axe">
               Axe
             </label>
-            <input type="number" id="axe" class="form-control" name="axe" [(ngModel)]="lentille.axe" >
+            <input type="number" id="axe" class="form-control" formControlName="axe" />
           </div>
           <div class="form-group">
             <label for="addition">
               Addition
             </label>
-            <input type="number" id="addition" class="form-control" name="addition" [(ngModel)]="lentille.addition" >
+            <input type="number" id="addition" class="form-control" formControlName="addition" />
           </div>
           <br/>
-          <div class="form-group">
-            <button [disabled]="lentilleForm.invalid" class="btn btn-primary" type="submit">
-              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-              Enregistrer
-            </button>
-            <a *ngIf="!isAddMode" routerLink="../lentilles" class="btn btn-link">Annuler</a>
+          <div >
+            <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
+            <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
           </div>
 
         </form>

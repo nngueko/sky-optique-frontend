@@ -8,7 +8,7 @@ export class BonLivraisonModel {
     public reference : string,
     public dateLivraison : string,
     public fournisseur? : FournisseurModel,
-    public listLivraisons? : LivraisonModel[],
+    public livraisons? : LivraisonModel[],
     public id? : number,
   ){}
 

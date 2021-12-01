@@ -14,15 +14,17 @@ export class LentilleService {
   listLentilles : LentilleModel[];
   listLentilleSubject = new Subject<LentilleModel[]>();
   emitlistLentilleSubject(){
-    this.listLentilleSubject.next(this.listLentilles.slice());
+    this.listLentilleSubject.next(this.listLentilles);
   }
 
   constructor(private httpClient: HttpClient) { }
 
   getAllLentilles() {
     this.httpClient.get<any[]>(this.url).subscribe(
-      (lentilles: LentilleModel[]) => {
-        this.listLentilles = lentilles;
+      (data: any[]) => {
+        console.log(data);
+        // @ts-ignore
+        this.listLentilles = data._embedded.lentille;
         this.emitlistLentilleSubject();
       }
     );

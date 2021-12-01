@@ -11,6 +11,7 @@ import {BonLivraisonModel} from "../models/bonLivraison.model";
 export class BonLivraisonService {
 
   url = 'http://localhost:8080/bonLivraison/';
+  url2 = 'http://localhost:8080/bonLivraisonCtr/';
 
   listBonLivraisons : BonLivraisonModel[];
   listBonLivraisonSubject = new Subject<BonLivraisonModel[]>();
@@ -21,8 +22,9 @@ export class BonLivraisonService {
 
   getAllBonLivraison() {
     return this.httpClient.get<any[]>(this.url).subscribe(
-      (bonLivraisons: BonLivraisonModel[]) => {
-        this.listBonLivraisons = bonLivraisons;
+      (data) => {
+        // @ts-ignore
+        this.listBonLivraisons = data;
         this.emitListBonLivraisonSubject();
       }
     );
@@ -32,8 +34,12 @@ export class BonLivraisonService {
     return this.httpClient.get<any>(this.url+idBonLivraison);
   }
 
+  getFournisseurByIdBonLivraison(idBonLivraison : number) {
+    return this.httpClient.get<any>(this.url+idBonLivraison+"/fournisseur");
+  }
+
   addBonLivraison(bonLivraison : BonLivraisonModel) {
-    return this.httpClient.post(this.url, bonLivraison);
+    return this.httpClient.post(this.url2, bonLivraison);
   }
 
   updateBonLivraison(bonLivraison : BonLivraisonModel, idBonLivraison : number) {

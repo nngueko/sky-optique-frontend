@@ -16,7 +16,7 @@ export class ListBonLivraisonsComponent implements OnInit {
   bonLivraisons: BonLivraisonModel[];
   listBonLivraisonSubscription : Subscription;
 
-  constructor(private bonLivraisonService : BonLivraisonService) { }
+  constructor(public bonLivraisonService : BonLivraisonService) { }
 
   ngOnInit(): void {
     this.loading = true;

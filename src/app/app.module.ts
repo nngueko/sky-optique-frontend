@@ -35,6 +35,8 @@ import { ListBonLivraisonsComponent } from './list-bon-livraisons/list-bon-livra
 import { EditBonLivraisonComponent } from './edit-bon-livraison/edit-bon-livraison.component';
 import { EditFournisseurComponent } from './edit-fournisseur/edit-fournisseur.component';
 import { ListFournisseursComponent } from './list-fournisseurs/list-fournisseurs.component';
+import { EditMarqueComponent } from './edit-marque/edit-marque.component';
+import { ListMarquesComponent } from './list-marques/list-marques.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,9 @@ import { ListFournisseursComponent } from './list-fournisseurs/list-fournisseurs
     ListBonLivraisonsComponent,
     EditBonLivraisonComponent,
     EditFournisseurComponent,
-    ListFournisseursComponent
+    ListFournisseursComponent,
+    EditMarqueComponent,
+    ListMarquesComponent
   ],
   imports: [
     BrowserModule,

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {MontureModel} from "../models/monture.model";
 import {MontureService} from "../services/monture.service";
-import {NgForm} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-edit-monture',
@@ -11,53 +11,81 @@ import {NgForm} from "@angular/forms";
 })
 export class EditMontureComponent implements OnInit {
 
-  // @ts-ignore
   isAddMode: boolean;
+  montureForm: FormGroup;
+  submitted = false;
   loading = false;
-  // @ts-ignore
   monture = new MontureModel(null, null, null, null, null, null, null);
 
-  constructor(private montureService : MontureService, private router: Router, private route: ActivatedRoute) {
+  constructor(private formBuilder: FormBuilder, private montureService : MontureService, private router: Router, private route: ActivatedRoute) {
     this.monture.id = this.route.snapshot.params['id'];
   }
 
   ngOnInit(): void {
     this.isAddMode = !this.monture.id;
-
+    this.initForm(this.monture);
     if (!this.isAddMode) {
       this.loading = true;
-
-      // @ts-ignore
       this.montureService.getMontureById(this.monture.id).subscribe((response) => {
         this.monture = response;
+        this.initForm(this.monture);
       },(error) => {
         console.log('Erreur ! : ' + error);
         }
       );
       this.loading = false;
     }
+
   }
 
+  initForm(monture : MontureModel){
+    this.montureForm = this.formBuilder.group({
+      reference: [monture.reference, Validators.compose([Validators.required])],
+      libelle: [monture.libelle, Validators.compose([Validators.required])],
+      model: monture.modele,
+      matiere: monture.matiere,
+      genre: monture.genre,
+      taille: monture.taille,
+      forme: monture.forme,
+    });
+  }
 
-  onSubmit(form: NgForm) {
-    this.monture.reference = typeof (<string> form.value['monture_ref']) === "string" ? (<string> form.value['monture_ref']).trim() : form.value['monture_ref'];
-    this.monture.libelle = typeof (<string> form.value['libelle']) === "string" ? (<string> form.value['libelle']).trim() : form.value['libelle'];
-    this.monture.model = typeof (<string> form.value['monture_model']) === "string" ? (<string> form.value['monture_model']).trim() : form.value['monture_model'];
-    this.monture.matiere = typeof (<string> form.value['monture_matiere']) === "string" ? (<string> form.value['monture_matiere']).trim() : form.value['monture_matiere'];
-    this.monture.genre = typeof (<string> form.value['monture_genre']) === "string" ? (<string> form.value['monture_genre']).trim() : form.value['monture_genre'];
-    this.monture.taille = typeof (<string> form.value['monture_taille']) === "string" ? (<string> form.value['monture_taille']).trim() : form.value['monture_taille'];
-    console.log(this.monture);
-    this.loading = true;
-    if (this.isAddMode) {
-      this.addMonture();
-    } else {
-      this.updateMonture();
+  get f() { return this.montureForm.controls; }
+
+  onSubmitForm() {
+    this.submitted = true;
+    if (this.montureForm.invalid) {
+      return;
     }
+    const formValue = this.montureForm.value;
+    let editedMonture : MontureModel = new MontureModel(
+      (<string> formValue['reference']).trim(),
+      (<string> formValue['modele']).trim(),
+      (<string> formValue['matiere.']).trim(),
+      (<string> formValue['genre']).trim(),
+      (<string> formValue['taille']).trim(),
+      (<string> formValue['forme']).trim()
+    );
+    editedMonture.libelle = (<string> formValue['libelle']).trim();
+    console.log(editedMonture);
+
+    if (this.isAddMode) {
+     // this.addMonture(editedMonture);
+    } else {
+      //this.updateMonture(editedMonture);
+    }
+
   }
 
-  private addMonture() {
-    this.montureService.addMonture(this.monture).subscribe(data=>{
+  onReset() {
+    this.submitted = false;
+    this.montureForm.reset();
+  }
+
+  private addMonture(monture : MontureModel) {
+    this.montureService.addMonture(monture).subscribe(data=>{
       console.log(data);
+      this.loading = false;
       this.montureService.getAllMontures();
       this.router.navigate(['/montures']);
     }, error => {
@@ -66,9 +94,11 @@ export class EditMontureComponent implements OnInit {
     });
   }
 
-  private updateMonture() {
+  private updateMonture(monture : MontureModel) {
+    monture.id = this.monture.id;
     this.montureService.updateMonture(this.monture).subscribe(data=>{
       console.log(data);
+      this.loading = false;
       this.montureService.getAllMontures();
       this.router.navigate(['/montures']);
     }, error => {
