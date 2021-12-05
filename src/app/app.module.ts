@@ -37,6 +37,7 @@ import { EditFournisseurComponent } from './edit-fournisseur/edit-fournisseur.co
 import { ListFournisseursComponent } from './list-fournisseurs/list-fournisseurs.component';
 import { EditMarqueComponent } from './edit-marque/edit-marque.component';
 import { ListMarquesComponent } from './list-marques/list-marques.component';
+import { ListStockComponent } from './list-stock/list-stock.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import { ListMarquesComponent } from './list-marques/list-marques.component';
     EditFournisseurComponent,
     ListFournisseursComponent,
     EditMarqueComponent,
-    ListMarquesComponent
+    ListMarquesComponent,
+    ListStockComponent
   ],
   imports: [
     BrowserModule,

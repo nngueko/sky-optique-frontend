@@ -7,7 +7,8 @@ export class LivraisonModel {
   constructor(
     public prixAchat : number,
     public qte : number,
-    public lots : LotModel[],
+    public prixVente:number,
+    public lot? : LotModel,
     public bonLivraison? : BonLivraisonModel,
     public id? : number,
     ){}

@@ -1,4 +1,5 @@
 <div class="row">
+
   <div class="col-lg-4">
 
     <form [formGroup]="livraisonForm" (ngSubmit)="onSubmitForm(livraisonForm.value)">
@@ -135,12 +136,12 @@
           </thead>
           <tbody>
           <tr *ngFor="let livr of listLivraison; let i = index">
-            <td *ngIf="livr.lots[0].produit.discriminator== 'L'">Lentille</td>
-            <td *ngIf="livr.lots[0].produit.discriminator== 'M'">Monture</td>
-            <td>{{ livr.lots[0].produit.libelle }}</td>
+            <td *ngIf="livr.lot.produit.discriminator== 'L'">Lentille</td>
+            <td *ngIf="livr.lot.produit.discriminator== 'M'">Monture</td>
+            <td>{{ livr.lot.produit.libelle }}</td>
             <td>{{ livr.qte }}</td>
             <td>{{ livr.prixAchat }}</td>
-            <td>{{ livr.lots[0].prixVente }}</td>
+            <td>{{ livr.lot.prixVente }}</td>
             <td style="white-space: nowrap">
               <button (click)="removeProduit(i)" class="btn btn-sm btn-danger btn-delete-user" [disabled]="false">
                 <span>Retirer</span>

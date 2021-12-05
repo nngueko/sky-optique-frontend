@@ -61,12 +61,12 @@ export class EditFournisseurComponent implements OnInit {
     }
     const formValue = this.fournisseurForm.value;
     let editedFournisseur : FournisseurModel = new FournisseurModel(
-      (<string> formValue['nom']).trim(),
-      (<string> formValue['email']).trim(),
-      (<string> formValue['adresse.']).trim(),
-      (<string> formValue['tel1']).trim(),
-      (<string> formValue['tel2']).trim(),
-      (<string> formValue['bp']).trim()
+      formValue['nom'] ? (<string> formValue['nom']).trim() : formValue['nom'],
+      formValue['email'] ? (<string> formValue['email']).trim() : formValue['email'],
+      formValue['adresse'] ? (<string> formValue['adresse.']).trim() : formValue['adresse'],
+      formValue['tel1'] ? (<string> formValue['tel1']).trim() : formValue['tel1'],
+      formValue['tel2'] ? (<string> formValue['tel2']).trim() : formValue['tel2'],
+      formValue['bp'] ? (<string> formValue['bp']).trim() : formValue['bp']
     );
 
     if (this.isAddMode) {

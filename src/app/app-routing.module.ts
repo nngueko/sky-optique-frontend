@@ -15,6 +15,8 @@ import {ListFournisseursComponent} from "./list-fournisseurs/list-fournisseurs.c
 import {EditFournisseurComponent} from "./edit-fournisseur/edit-fournisseur.component";
 import {ListMarquesComponent} from "./list-marques/list-marques.component";
 import {EditMarqueComponent} from "./edit-marque/edit-marque.component";
+import {ListBonCommandesComponent} from "./list-bon-commandes/list-bon-commandes.component";
+import {EditBonCommandeComponent} from "./edit-bon-commande/edit-bon-commande.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate:[AuthGaurdService] },
@@ -40,6 +42,10 @@ const routes: Routes = [
   { path: 'bonLivraisons', component: ListBonLivraisonsComponent, canActivate:[AuthGaurdService] },
   { path: 'add-bonLivraison', component: EditBonLivraisonComponent, canActivate:[AuthGaurdService] },
   { path: 'update-bonLivraison/:id', component: EditBonLivraisonComponent, canActivate:[AuthGaurdService] },
+
+  { path: 'bonCommandes', component: ListBonCommandesComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-bonCommande', component: EditBonCommandeComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-bonCommande/:id', component: EditBonCommandeComponent, canActivate:[AuthGaurdService] },
 
   { path: 'fournisseurs', component: ListFournisseursComponent, canActivate:[AuthGaurdService] },
   { path: 'add-fournisseur', component: EditFournisseurComponent, canActivate:[AuthGaurdService] },

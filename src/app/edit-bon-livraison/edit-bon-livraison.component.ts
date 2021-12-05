@@ -150,7 +150,8 @@ export class EditBonLivraisonComponent implements OnInit {
     let addedLivraison : LivraisonModel = new LivraisonModel(
       formValue['prixAchat'],
       formValue['qte'],
-      [new LotModel(null, formValue['prixVente'], formValue['qte'], this.produit,)]
+      formValue['prixVente'],
+      new LotModel(formValue['prixVente'], formValue['qte'], this.produit)
     );
     this.listLivraison.push(addedLivraison);
     this.produitControl.setValue("");
@@ -202,11 +203,9 @@ export class EditBonLivraisonComponent implements OnInit {
     this.bonLivraison.reference = <string> form.value['reference'];
     this.bonLivraison.fournisseur = this.fournisseur;
     this.bonLivraison.livraisons = this.listLivraison;
-    this.bonLivraison.livraisons.forEach(livr => {
-      livr.lots.forEach(lot =>{
-        lot.ref_lot = this.bonLivraison.reference+'-'+this.bonLivraison.dateLivraison;
-      })
-    });
+    /*this.bonLivraison.livraisons.forEach(livr => {
+      livr.lot.ref_lot = this.bonLivraison.reference+'-'+this.bonLivraison.dateLivraison;
+    });*/
     console.log(this.bonLivraison);
     //this.loading = true;
     if (this.isAddMode) {

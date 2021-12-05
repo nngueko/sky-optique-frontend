@@ -144,7 +144,8 @@ export class EditLivraisonComponent implements OnInit {
     let addedLivraison : LivraisonModel = new LivraisonModel(
       formValue['prixAchat'],
       formValue['qte'],
-      [new LotModel(null, formValue['prixVente'], formValue['qte'], this.produit)]
+      formValue['prixVente'],
+      new LotModel( formValue['prixVente'], formValue['qte'], this.produit)
     );
 
     if (this.isAddMode) {
@@ -159,12 +160,11 @@ export class EditLivraisonComponent implements OnInit {
   onReset() {
     this.submitted = false;
     this.livraisonForm.reset();
+    this.produit = null;
   }
 
   private addLivraison(livraison : LivraisonModel) {
-    alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.livraisonForm.value, null, 4));
-    this.onReset();
-    /*this.livraisonService.addLivraison(livraison).subscribe(data=>{
+    this.livraisonService.addLivraison(livraison).subscribe(data=>{
       console.log(data);
       alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.livraisonForm.value, null, 4));
       this.livraisonService.getAllLivraisonByBonLivraison(this.bonLivraison.id);
@@ -172,7 +172,7 @@ export class EditLivraisonComponent implements OnInit {
     }, error => {
       console.log('Error ! : ' + error);
       this.loading = false;
-    });*/
+    });
   }
 
   private updateLivraison(livraison : LivraisonModel) {

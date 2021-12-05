@@ -42,7 +42,7 @@ export class EditMontureComponent implements OnInit {
     this.montureForm = this.formBuilder.group({
       reference: [monture.reference, Validators.compose([Validators.required])],
       libelle: [monture.libelle, Validators.compose([Validators.required])],
-      model: monture.modele,
+      modele: monture.modele,
       matiere: monture.matiere,
       genre: monture.genre,
       taille: monture.taille,
@@ -59,20 +59,20 @@ export class EditMontureComponent implements OnInit {
     }
     const formValue = this.montureForm.value;
     let editedMonture : MontureModel = new MontureModel(
-      (<string> formValue['reference']).trim(),
-      (<string> formValue['modele']).trim(),
-      (<string> formValue['matiere.']).trim(),
-      (<string> formValue['genre']).trim(),
-      (<string> formValue['taille']).trim(),
-      (<string> formValue['forme']).trim()
+      formValue['reference'] ? ( <string>formValue['reference']).trim() : formValue['reference'],
+      formValue['modele'] ? (<string> formValue['modele']).trim() : formValue['modele'],
+      formValue['matiere'] ? (<string> formValue['matiere']).trim() : formValue['matiere'],
+      formValue['genre'] ? (<string> formValue['genre']).trim() : formValue['genre'],
+      formValue['taille'] ? (<string> formValue['taille']).trim() : formValue['taille'],
+      formValue['forme'] ? (<string> formValue['forme']).trim() : formValue['forme']
     );
     editedMonture.libelle = (<string> formValue['libelle']).trim();
     console.log(editedMonture);
 
     if (this.isAddMode) {
-     // this.addMonture(editedMonture);
+      this.addMonture(editedMonture);
     } else {
-      //this.updateMonture(editedMonture);
+      this.updateMonture(editedMonture);
     }
 
   }
