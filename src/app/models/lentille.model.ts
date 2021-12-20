@@ -1,4 +1,5 @@
 import {ProduitModel} from "./produit.model";
+import {PrescriptionModel} from "./prescription.model";
 
 export class LentilleModel extends ProduitModel{
 

@@ -63,9 +63,8 @@ export class EditLentilleComponent implements OnInit {
       (<string> formValue['type']).trim(),
       (<number> formValue['sphere']),
       (<number> formValue['cylindre.']),
+      (<number> formValue['axe']),
       (<number> formValue['addition']),
-      (<number> formValue['taille']),
-      (<number> formValue['forme'])
     );
     editedLentille.libelle = (<string> formValue['libelle']).trim();
     console.log(editedLentille);

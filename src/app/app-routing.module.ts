@@ -17,6 +17,9 @@ import {ListMarquesComponent} from "./list-marques/list-marques.component";
 import {EditMarqueComponent} from "./edit-marque/edit-marque.component";
 import {ListBonCommandesComponent} from "./list-bon-commandes/list-bon-commandes.component";
 import {EditBonCommandeComponent} from "./edit-bon-commande/edit-bon-commande.component";
+import {AddFactureComponent} from "./add-facture/add-facture.component";
+import {UpdateFactureComponent} from "./update-facture/update-facture.component";
+import {ListFacturesComponent} from "./list-factures/list-factures.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate:[AuthGaurdService] },
@@ -50,6 +53,10 @@ const routes: Routes = [
   { path: 'fournisseurs', component: ListFournisseursComponent, canActivate:[AuthGaurdService] },
   { path: 'add-fournisseur', component: EditFournisseurComponent, canActivate:[AuthGaurdService] },
   { path: 'update-fournisseur/:id', component: EditFournisseurComponent, canActivate:[AuthGaurdService] },
+
+  { path: 'factures', component: ListFacturesComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-facture', component: AddFactureComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-facture/:id', component: UpdateFactureComponent, canActivate:[AuthGaurdService] },
 
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

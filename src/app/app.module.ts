@@ -38,6 +38,10 @@ import { ListFournisseursComponent } from './list-fournisseurs/list-fournisseurs
 import { EditMarqueComponent } from './edit-marque/edit-marque.component';
 import { ListMarquesComponent } from './list-marques/list-marques.component';
 import { ListStockComponent } from './list-stock/list-stock.component';
+import { EditVenteComponent } from './edit-vente/edit-vente.component';
+import { AddFactureComponent } from './add-facture/add-facture.component';
+import { UpdateFactureComponent } from './update-facture/update-facture.component';
+import { ListFacturesComponent } from './list-factures/list-factures.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +64,11 @@ import { ListStockComponent } from './list-stock/list-stock.component';
     ListFournisseursComponent,
     EditMarqueComponent,
     ListMarquesComponent,
-    ListStockComponent
+    ListStockComponent,
+    EditVenteComponent,
+    AddFactureComponent,
+    UpdateFactureComponent,
+    ListFacturesComponent
   ],
   imports: [
     BrowserModule,

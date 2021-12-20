@@ -59,8 +59,8 @@ export class EditBonLivraisonComponent implements OnInit {
   ngOnInit() {
     this.typeControl.setValue("ALL");
     this.listFournisseurSubscription = this.fournisseurService.listFournisseurSubject.subscribe(
-      fournisseurs => {
-        this.listFournisseurs = fournisseurs;
+      data => {
+        this.listFournisseurs = data;
         this.fournisseurControl.setValue(new FournisseurModel(null,null,null,null, null, null));
       }, error => {
         console.log('Error ! : ' + error);
@@ -158,7 +158,6 @@ export class EditBonLivraisonComponent implements OnInit {
     this.produit = null;
     this.livraisonForm.reset();
   }
-
 
   getPosts(event) {
     this.produit = event.option.value;

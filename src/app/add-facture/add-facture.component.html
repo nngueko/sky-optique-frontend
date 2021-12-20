@@ -1,0 +1,208 @@
+<form [formGroup]="factureForm" (ngSubmit)="onSubmitForm()">
+  <div class="row">
+    <div class="col-md-6">
+
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Patient</div>
+        <div class="card-body">
+
+          <!--<div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="patientRadio" id="patientRadio1" value="new" formControlName="isNewPatient"/>
+            <label class="form-check-label" for="patientRadio1">Nouveau patient</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="patientRadio" id="patientRadio2" value="select" formControlName="isNewPatient" />
+            <label class="form-check-label" for="patientRadio2">Selectionner un patient</label>
+          </div>
+
+          <div class="form-group" >
+            <mat-form-field class="example-full-width" appearance="fill"  >
+              <mat-label>Selectionner un patient</mat-label>
+              <input type="text" matInput [formControl]="patientControl" [matAutocomplete]="auto1" #autoCompletePatient>
+              <mat-autocomplete #auto1="matAutocomplete" (optionSelected)='getPatient($event)' [displayWith]="displayPatient">
+                <mat-option *ngFor="let option of filteredPatients | async" [value]="option">
+                  {{option.nom+' '+option.prenom}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>-->
+
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group" >
+                <mat-form-field class="example-full-width" appearance="fill"  >
+                  <mat-label>Nom du patient</mat-label>
+                  <input type="text" matInput [formControl]="patientControl" [matAutocomplete]="auto1" #autoCompletePatient>
+                  <mat-autocomplete #auto1="matAutocomplete" (optionSelected)='getPatient($event)' [displayWith]="displayPatient">
+                    <mat-option *ngFor="let option of filteredPatients | async" [value]="option">
+                      {{option.nom+' '+option.prenom}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <mat-form-field appearance="fill">
+                <mat-label>Date de naissance</mat-label>
+                <input type="text" matInput placeholder="Date de naissance" formControlName="dateNaiss" [readOnly]="patient!=null">
+              </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Mobile</mat-label>
+                <input type="text" matInput placeholder="Date de naissance" formControlName="tel1" [readOnly]="patient!=null">
+              </mat-form-field>
+            </div>
+            <div class="col-lg-6">
+              <mat-form-field appearance="fill">
+                <mat-label>Prénom</mat-label>
+                <input type="text" matInput placeholder="Date de naissance" formControlName="prenom" [readOnly]="patient!=null">
+              </mat-form-field>
+              <mat-form-field appearance="fill">
+                <mat-label>Civilité</mat-label>
+                <mat-select value="Mr" formControlName="civilite" [disabled]="patient!=null">
+                  <mat-option value="Mr">Mr.</mat-option>
+                  <mat-option value="Mme">Mme.</mat-option>
+                  <mat-option value="Mxlle">Mxlle.</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="form-group">
+                <mat-form-field class="example-full-width" appearance="fill" >
+                  <mat-label>Entreprise</mat-label>
+                  <input type="text" matInput [formControl]="entrepriseControl" [matAutocomplete]="auto" #autoCompleteEntreprise [readOnly]="patient!=null">
+                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEntreprise($event)' [displayWith]="displayEntreprise">
+                    <mat-option *ngFor="let option of filteredEntreprises | async" [value]="option">
+                      {{option.nom}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Tiers payant</div>
+        <div class="card-body">
+          <button type="button" class="btn btn-primary" (click)="onAddCouverture()">Ajouter un tier payant</button>
+          <div formArrayName="couvertures">
+            <br/>
+            <div class="card" *ngFor="let couverture of couvertures.controls; let i = index" >
+              <div class="card-header text-white bg-primary mb-3">Tiers payant {{i + 1}}</div>
+              <div class="card-body" [formGroupName]="i">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <mat-form-field appearance="fill">
+                        <mat-label>Date du document</mat-label>
+                        <input type="date" matInput placeholder="Date du document" formControlName="dateDocument" >
+                      </mat-form-field>
+                    </div>
+                    <div class="form-group">
+                      <label for="assurance">Assurance*</label>
+                      <mat-form-field class="example-full-width" appearance="fill" >
+                        <mat-label>Assurance</mat-label>
+                        <input type="text" matInput [matAutocomplete]="auto" #autoCompleteAssuranceCouverture formControlName="assurance">
+                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEntreprise($event)' [displayWith]="displayEntreprise">
+                          <mat-option *ngFor="let option of filteredEntreprises | async" [value]="option">
+                            {{option.nom}}
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </div>
+                    <div class="form-group">
+                      <label for="assuranrePrincipal">Assuré principal*</label>
+                    </div>
+                    <div class="form-group">
+                      <label for="couvertureVerre">Couverture verre</label>
+                      <input type="number" id="couvertureVerre" class="form-control" formControlName="couvertureVerre" />
+                    </div>
+                    <div class="form-group">
+                      <label for="priseCharge">Prise en charge</label>
+                      <input disabled="false" type="number" id="priseCharge" class="form-control" formControlName="priseEnCharge" />
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label for="numeroDocument">Numéro du document</label>
+                      <input type="text" id="numeroDocument" class="form-control" formControlName="numeroDocument" />
+                    </div>
+                    <div class="form-group">
+                      <label for="entreprise">Entreprise*</label>
+                    </div>
+                    <div class="form-group">
+                      <label for="relation">Relation</label>
+                    </div>
+                    <div class="form-group">
+                      <label for="couvertureMonture">Couverture Monture</label>
+                      <input type="number" id="couvertureMonture" class="form-control" formControlName="couvertureMonture" />
+                    </div>
+                    <div class="form-group">
+                      <label for="franchise">Franchise</label>
+                      <input disabled="false" type="number" id="franchise" class="form-control" formControlName="franchise" />
+                    </div>
+                  </div>
+                </div>
+                  <br/>
+                  <button type="button" class="btn btn-danger" (click)="onDeleteCouverture(i)">Delete</button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Prescription</div>
+        <div class="card-body">
+          <div class="form-group">
+            <label for="prescripteur">Prescripteur*</label>
+            <input type="text" id="prescripteur" class="form-control" formControlName="nom"  [ngClass]="{ 'is-invalid': submitted && f.nom.errors }" />
+            <div *ngIf="submitted && f.nom.errors" class="invalid-feedback">
+              <div *ngIf="f.nom.errors.required">Veuillez renseigner le nom du patient</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Monture</div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="monture">Nom de la monture</label>
+                <input type="date"  id="monture" class="form-control" formControlName="dateNaiss" />
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Lentille Droite</div>
+        <div class="card-body">
+
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Lentille Gauche</div>
+        <div class="card-body">
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="card">
+      <div class="card-header text-white bg-danger mb-3">Production</div>
+      <div class="card-body">
+
+      </div>
+    </div>
+  </div>
+
+</form>
+
+
