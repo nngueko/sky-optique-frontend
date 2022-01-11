@@ -19,9 +19,10 @@ export class MontureService {
   constructor(private httpClient: HttpClient) { }
 
   getAllMontures() {
-    this.httpClient.get<any[]>(this.url).subscribe(
-      (montures: MontureModel[]) => {
-        this.listMontures = montures;
+    this.httpClient.get<MontureModel[]>(this.url).subscribe(
+      (data: any[]) => {
+        // @ts-ignore
+        this.listMontures = data;
         this.emitlistMontureSubject();
       }
     );

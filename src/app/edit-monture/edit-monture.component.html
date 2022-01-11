@@ -6,12 +6,10 @@
     Modifier monture
   </div>
   <div class="card-body">
-      <form [formGroup]="montureForm" (ngSubmit)="onSubmitForm()">
+    <form [formGroup]="montureForm" (ngSubmit)="onSubmitForm()">
 
       <div class="form-group">
-        <label for="monture_ref">
-          Reference*
-        </label>
+        <label for="monture_ref">Reference*</label>
         <input type="text" id="monture_ref" class="form-control" formControlName="reference" [ngClass]="{ 'is-invalid': submitted && f.reference.errors }" />
         <div *ngIf="submitted && f.reference.errors" class="invalid-feedback">
           <div *ngIf="f.reference.errors.required">Veuillez renseigner le nom de la reference</div>
@@ -19,43 +17,65 @@
       </div>
       <br/>
       <div class="form-group">
-        <label for="libelle">
-          Nom complet*
-        </label>
+        <label for="libelle">Nom complet*</label>
         <input type="text" id="libelle" class="form-control" formControlName="libelle" [ngClass]="{ 'is-invalid': submitted && f.libelle.errors }" />
         <div *ngIf="submitted && f.libelle.errors" class="invalid-feedback">
           <div *ngIf="f.libelle.errors.required">Veuillez renseigner le nom de la monture</div>
         </div>
       </div>
+      <br/>
+      <div class="form-group">
+        <label for="idMarque">Marque</label>
+        <select id="idMarque" class="form-select" formControlName="idMarque">
+          <option value="" ></option>
+          <option *ngFor="let marque of listMarques" [value]="marque.id" >{{ marque.nom }}</option>
+        </select>
+      </div>
+      <br/>
       <div class="form-group">
         <label for="modele">
           Modele
         </label>
         <input type="text" id="modele" class="form-control" formControlName="modele"/>
       </div>
+      <br/>
       <div class="form-group">
-        <label for="matiere">
-          Matiere
-        </label>
-        <input type="text" id="matiere" class="form-control" formControlName="matiere" />
+        <label for="matiere">Matiere</label>
+        <select id="matiere" class="form-select" formControlName="matiere">
+          <option value="" ></option>
+          <option value="Plastique" >Plastique</option>
+          <option value="Métallique" >Métallique</option>
+        </select>
       </div>
+      <br/>
       <div class="form-group">
-        <label for="genre">
-          Genre
-        </label>
-        <input type="text" id="genre" class="form-control" formControlName="genre" />
+        <label for="genre">Genre</label>
+        <select id="genre" class="form-select" formControlName="genre">
+          <option value="" ></option>
+          <option value="Mixte" >Mixte</option>
+          <option value="Homme" >Homme</option>
+          <option value="Femme" >Femme</option>
+        </select>
       </div>
+      <br/>
       <div class="form-group">
         <label for="taille">
           Taille
         </label>
         <input type="text" id="taille" class="form-control" formControlName="taille" />
       </div>
+      <br/>
       <div class="form-group">
-        <label for="forme">
-          Forme*
-        </label>
-        <input type="text" id="forme" class="form-control" formControlName="forme" />
+        <label for="forme">Forme</label>
+        <select id="forme" class="form-select" formControlName="forme">
+          <option value="" ></option>
+          <option value="Ovale" >Ovale</option>
+          <option value="Rectangulaire" >Rectangulaire</option>
+          <option value="Ronde" >Ronde</option>
+          <option value="Papillon" >Papillon</option>
+          <option value="Wayfarer" >Wayfarer</option>
+          <option value="Pilote" >Pilote</option>
+        </select>
       </div>
       <br/>
       <div >

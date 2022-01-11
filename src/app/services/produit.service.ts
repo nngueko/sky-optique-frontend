@@ -9,7 +9,7 @@ import {LentilleModel} from "../models/lentille.model";
 })
 export class ProduitService {
 
-  url = 'http://localhost:8080/produitCtr/';
+  url = 'http://localhost:8080/produit/';
 
   listProduits : ProduitModel[];
   listProduitSubject = new Subject<ProduitModel[]>();

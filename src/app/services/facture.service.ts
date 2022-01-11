@@ -11,23 +11,21 @@ import {FactureModel} from "../models/facture.model";
 export class FactureService {
 
   url = 'http://localhost:8080/facture/';
-  url2 = 'http://localhost:8080/factureCtr/';
   // @ts-ignore
   listFactures : FactureModel[];
   listFactureSubject = new Subject<FactureModel[]>();
-  emitlistFacrureSubject(){
+  emitlistFactureSubject(){
     this.listFactureSubject.next(this.listFactures);
   }
 
   constructor(private httpClient: HttpClient) { }
 
   getAllFactures() {
-    this.httpClient.get<any[]>(this.url).subscribe(
-      (data: any[]) => {
+    this.httpClient.get<FactureModel[]>(this.url).subscribe(
+      (data: FactureModel[]) => {
         console.log(data);
-        // @ts-ignore
-        this.listFactures = data._embedded.lentille;
-        this.emitlistFacrureSubject();
+        this.listFactures = data;
+        this.emitlistFactureSubject();
       }
     );
   }
@@ -37,7 +35,7 @@ export class FactureService {
   }
 
   addFacture(facture : FactureModel) {
-    return this.httpClient.post(this.url2, facture);
+    return this.httpClient.post(this.url, facture);
   }
 
   updateFacture(facture : FactureModel) {

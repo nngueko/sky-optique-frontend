@@ -8,6 +8,8 @@ export class PersonneModel extends EntiteModel{
     public prenom?: string,
     public dateNaiss?:string,
     public civilite?:string,
+    public titre?:string,
+    public isPrescripteur?: boolean,
     public entreprise?: CompagniModel,
     public factures?: FactureModel[],
     public id?:number,

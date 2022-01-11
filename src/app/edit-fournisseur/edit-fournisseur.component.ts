@@ -60,14 +60,13 @@ export class EditFournisseurComponent implements OnInit {
       return;
     }
     const formValue = this.fournisseurForm.value;
-    let editedFournisseur : FournisseurModel = new FournisseurModel(
-      formValue['nom'] ? (<string> formValue['nom']).trim() : formValue['nom'],
-      formValue['email'] ? (<string> formValue['email']).trim() : formValue['email'],
-      formValue['adresse'] ? (<string> formValue['adresse.']).trim() : formValue['adresse'],
-      formValue['tel1'] ? (<string> formValue['tel1']).trim() : formValue['tel1'],
-      formValue['tel2'] ? (<string> formValue['tel2']).trim() : formValue['tel2'],
-      formValue['bp'] ? (<string> formValue['bp']).trim() : formValue['bp']
-    );
+    let editedFournisseur = this.fournisseur;
+    editedFournisseur.nom = formValue['nom'] ? (<string> formValue['nom']).trim() : formValue['nom'];
+    editedFournisseur.email = formValue['email'] ? (<string> formValue['email']).trim() : formValue['email'];
+    editedFournisseur.adresse = formValue['adresse'] ? (<string> formValue['adresse']).trim() : formValue['adresse'];
+    editedFournisseur.tel1 = formValue['tel1'] ? (<string> formValue['tel1']).trim() : formValue['tel1'];
+    editedFournisseur.tel2 = formValue['tel2'] ? (<string> formValue['tel2']).trim() : formValue['tel2'];
+    editedFournisseur.bp = formValue['bp'] ? (<string> formValue['bp']).trim() : formValue['bp'];
 
     if (this.isAddMode) {
       this.addFournisseur(editedFournisseur);

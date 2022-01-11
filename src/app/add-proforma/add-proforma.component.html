@@ -1,0 +1,319 @@
+<form [formGroup]="factureForm" (ngSubmit)="onSubmitForm()">
+  <div class="row">
+    <div class="col-md-6">
+
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Patient</div>
+        <div class="card-body">
+          <div class="form-group" >
+            <mat-form-field class="example-full-width" appearance="outline"  >
+              <mat-label>Nom du patient</mat-label>
+              <input type="text" matInput formControlName="nomPatient" [matAutocomplete]="auto1" #autoCompletePatient>
+              <mat-error *ngIf="factureForm.get('nomPatient').invalid" >Selectionnez ou éditez un patient</mat-error>
+              <mat-autocomplete #auto1="matAutocomplete" (optionSelected)='getPatient($event)' [displayWith]="displayPatient">
+                <mat-option *ngFor="let option of filteredPatients | async" [value]="option">
+                  {{option.nom+' '+option.prenom}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" class="form-control" formControlName="prenomPatient" [readOnly]="patient!=null"/>
+              </div>
+              <div class="form-group">
+                <label for="dateNaiss">Date de naissance</label>
+                <input type="date" id="dateNaiss" class="form-control" formControlName="dateNaissPatient" [readOnly]="patient!=null"/>
+              </div>
+              <div class="form-group">
+                <label for="adresse">Adresse</label>
+                <input type="text" id="adresse" class="form-control" formControlName="adressePatient" [readOnly]="patient!=null"/>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" formControlName="emailPatient" [ngClass]="{ 'is-invalid': submitted && f.emailPatient.errors }" [readOnly]="patient!=null"/>
+                <div *ngIf="submitted && f.emailPatient.errors" class="invalid-feedback">
+                  <div *ngIf="f.emailPatient!=null && f.emailPatient.errors.email">Veuillez entrer une adresse email valide</div>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-lg-6">
+
+              <div class="form-group">
+                <label for="dateNaiss">Civilité</label>
+                <select class="form-select" value="Mr" formControlName="civilitePatient" [ngClass]="{ 'is-invalid': submitted && f.civilitePatient.errors }">
+                  <option value="Mr">Mr.</option>
+                  <option value="Mme">Mme.</option>
+                  <option value="Mxlle">Mxlle.</option>
+                </select>
+                <div *ngIf="submitted && f.civilitePatient.errors" class="invalid-feedback">
+                  <div *ngIf="f.civilitePatient!=null && f.civilitePatient.errors.required">Veuillez selectionner la civilité</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="tel1">Tel 1</label>
+                <input type="text" id="tel1" class="form-control" formControlName="tel1Patient" [readOnly]="patient!=null"/>
+              </div>
+              <div class="form-group">
+                <label for="tel2">Tel 2</label>
+                <input type="text" id="tel2" class="form-control" formControlName="tel2Patient" [readOnly]="patient!=null"/>
+              </div>
+              <div class="form-group">
+                <label for="idEntreprise">Entreprise</label>
+                <select id="idEntreprise" class="form-select" formControlName="idEntreprisePatient">
+                  <option value="" ></option>
+                  <option *ngFor="let entreprise of listEntreprises" [value]="entreprise.id" >{{ entreprise.nom }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Prescription</div>
+        <div class="card-body">
+          <div class="form-group" >
+            <mat-form-field class="example-full-width" appearance="outline"  >
+              <mat-label>Prescripteur</mat-label>
+              <input type="text" matInput formControlName="nomPrescripteur" [matAutocomplete]="auto5" #autoCompletePrescripteur>
+              <mat-error *ngIf="factureForm.get('nomPrescripteur').invalid" >Selectionnez ou éditez le prescripteur</mat-error>
+              <mat-autocomplete #auto5="matAutocomplete" (optionSelected)='getPrescripteur($event)' [displayWith]="displayPrescripteur">
+                <mat-option *ngFor="let option of filteredPrescripteurs | async" [value]="option">
+                  <span *ngIf="option.titre">{{option.titre+' '}}</span>{{option.nom+' '+option.prenom}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+
+          <div class="row" >
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="prenomPrescripteur">Prénom</label>
+                <input type="text" id="prenomPrescripteur" class="form-control" formControlName="prenomPrescripteur" [readOnly]="prescripteur!=null"/>
+              </div>
+              <div class="form-group">
+                <label for="datePrescription">Date prescription</label>
+                <input type="date" id="datePrescription" class="form-control" formControlName="datePrescription" />
+              </div>
+              <div class="form-group">
+                <label for="dateLimite">Date limite</label>
+                <input type="date" id="dateLimite" class="form-control" formControlName="dateLimite" />
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="titre">Titre</label>
+                <select id="titre" class="form-select" value="Mr" formControlName="titre" >
+                  <option value=""></option>
+                  <option value="Medicin">Médicin</option>
+                  <option value="Dr">Dr</option>
+                  <option value="Opticien">Opticien</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="eyeVision">Eye vision</label>
+                <input type="text" id="eyeVision" class="form-control" formControlName="eyeVision" />
+              </div>
+              <div class="form-group">
+                <label for="port">Port</label>
+                <input type="text" id="port" class="form-control" formControlName="port" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Monture</div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="form-group" >
+                <mat-form-field class="example-full-width" appearance="outline"  >
+                  <mat-label>Nom complet</mat-label>
+                  <input type="text" matInput [formControl]="montureControl" [matAutocomplete]="auto2" #autoCompleteMonture>
+                  <mat-autocomplete #auto2="matAutocomplete" (optionSelected)='getMonture($event)' [displayWith]="displayProduit">
+                    <mat-option *ngFor="let option of filteredMontures | async" [value]="option">
+                      {{option.produit.libelle}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="stockMonture">Stock</label>
+                <input type="number" id="stockMonture" min="0" class="form-control" [value]="monture ? monture.qte : null" readonly="true" />
+              </div>
+            </div>
+          </div>
+          <div class="row" [hidden]="!monture">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="puMonture">Prix unitaire</label>
+                <input type="number" id="puMonture" min="0" class="form-control" [value]="monture ? monture.prixVente : null" readonly="true" />
+              </div>
+              <div class="form-group">
+                <label for="remiseMonture">Remise</label>
+                <input type="number" id="remiseMonture" class="form-control" formControlName="remiseMonture" [ngClass]="{ 'is-invalid': submitted && f.remiseMonture.errors }" [readonly]="!monture"/>
+                <div *ngIf="submitted && f.remiseMonture.errors" class="invalid-feedback">
+                  <div *ngIf="f.remiseMonture.errors.min">La remise doit être supérieur ou égale à 0%</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="qteMonture">Quantité</label>
+                <input type="number" id="qteMonture" class="form-control" formControlName="qteMonture" [ngClass]="{ 'is-invalid': submitted && f.qteMonture.errors }" [readonly]="!monture"/>
+                <div *ngIf="f.qteMonture.errors" class="invalid-feedback">
+                  <div *ngIf="f.qteMonture.errors.min">La quantité doit être supérieur ou égale à 1</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="montantMonture">Montant</label>
+                <input type="number" id="montantMonture" min="0" class="form-control" formControlName="montantMonture" [value]="monture ? monture.prixVente*(1-f.remiseMonture.value/100) : 0" readonly="true"/>
+              </div>
+              <div class="form-group">
+                <label for="totalMonture">Total</label>
+                <input type="number" id="totalMonture" min="0" class="form-control" formControlName="totalMonture" [value]="monture ? (monture.prixVente*(1-f.remiseMonture.value/100))*f.qteMonture.value : 0" readonly="true"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Lentille Gauche</div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="form-group" >
+                <mat-form-field class="example-full-width" appearance="outline"  >
+                  <mat-label>Libelle</mat-label>
+                  <input type="text" matInput [formControl]="lentilleGControl" [matAutocomplete]="auto4" #autoCompleteLentilleG>
+                  <mat-autocomplete #auto4="matAutocomplete" (optionSelected)='getLentilleG($event)' [displayWith]="displayProduit">
+                    <mat-option *ngFor="let option of filteredLentilleG | async" [value]="option">
+                      {{option.produit.libelle}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="stockLentilleG">Stock</label>
+                <input type="number" id="stockLentilleG" min="0" class="form-control" [value]="lentilleG ? lentilleG.qte : null" readonly="true" />
+              </div>
+            </div>
+          </div>
+          <div class="row" [hidden]="!lentilleG">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="puLentilleG">Prix unitaire</label>
+                <input type="number" id="puLentilleG" min="0" class="form-control" [value]="lentilleG ? lentilleG.prixVente : null" readonly="true" />
+              </div>
+              <div class="form-group">
+                <label for="remiseLentilleG">Remise</label>
+                <input type="number" id="remiseLentilleG" class="form-control" formControlName="remiseLentilleG" [ngClass]="{ 'is-invalid': submitted && f.remiseLentilleG.errors }" [readonly]="!lentilleG"/>
+                <div *ngIf="submitted && f.remiseLentilleG.errors" class="invalid-feedback">
+                  <div *ngIf="f.remiseLentilleG.errors.min">La remise doit être supérieur ou égale à 0%</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="qteLentilleG">Quantité</label>
+                <input type="number" id="qteLentilleG" min="0" class="form-control" formControlName="qteLentilleG" [ngClass]="{ 'is-invalid': submitted && f.qteLentilleG.errors }" [readonly]="!lentilleG"/>
+                <div *ngIf="submitted && f.qteLentilleG.errors" class="invalid-feedback">
+                  <div *ngIf="f.qteLentilleG.errors.min">La quantité doit être supérieur ou égale à 1</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="montantLentilleG">Montant</label>
+                <input type="number" id="montantLentilleG" min="0" class="form-control" formControlName="montantLentilleG" [value]="lentilleG ? lentilleG.prixVente*(1-f.remiseLentilleG.value/100) : 0" readonly="true"/>
+              </div>
+              <div class="form-group">
+                <label for="totalLentilleG">Total</label>
+                <input type="number" id="totalLentilleG" min="0" class="form-control" formControlName="totalLentilleG" [value]="lentilleG ? (lentilleG.prixVente*(1-f.remiseLentilleG.value/100))*f.qteLentilleG.value : 0" readonly="true"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Lentille Droite</div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="form-group" >
+                <mat-form-field class="example-full-width" appearance="outline"  >
+                  <mat-label>Libelle</mat-label>
+                  <input type="text" matInput [formControl]="lentilleDControl" [matAutocomplete]="auto3" #autoCompleteLentilleD>
+                  <mat-autocomplete #auto3="matAutocomplete" (optionSelected)='getLentilleD($event)' [displayWith]="displayProduit">
+                    <mat-option *ngFor="let option of filteredLentilleD | async" [value]="option">
+                      {{option.produit.libelle}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="stockLentilleD">Stock</label>
+                <input type="number" id="stockLentilleD" min="0" class="form-control" [value]="lentilleD ? lentilleD.qte : null" readonly="true" />
+              </div>
+            </div>
+          </div>
+          <div class="row" [hidden]="!lentilleD">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="puLentilleD">Prix unitaire</label>
+                <input type="number" id="puLentilleD" min="0" class="form-control" [value]="lentilleD ? lentilleD.prixVente : null" readonly="true" />
+              </div>
+              <div class="form-group">
+                <label for="remiseLentilleD">Remise</label>
+                <input type="number" id="remiseLentilleD" class="form-control" formControlName="remiseLentilleD" [ngClass]="{ 'is-invalid': submitted && f.remiseLentilleG.errors }" [readonly]="!lentilleD"/>
+                <div *ngIf="submitted && f.remiseLentilleD.errors" class="invalid-feedback">
+                  <div *ngIf="f.remiseLentilleD.errors.min">La remise doit être supérieur ou égale à 0%</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="qteLentilleD">Quantité</label>
+                <input type="number" id="qteLentilleD" min="0" class="form-control" formControlName="qteLentilleD" [ngClass]="{ 'is-invalid': submitted && f.qteLentilleD.errors }" [readonly]="!lentilleD"/>
+                <div *ngIf="f.qteLentilleD.errors" class="invalid-feedback">
+                  <div *ngIf="f.qteLentilleD.errors">La quantité doit être supérieur ou égale à 1</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="montantLentilleD">Montant</label>
+                <input type="number" id="montantLentilleD" min="0" class="form-control" formControlName="montantLentilleD" [value]="lentilleD ? lentilleD.prixVente*(1-f.remiseLentilleD.value/100) : 0" readonly="true"/>
+              </div>
+              <div class="form-group">
+                <label for="totalLentilleD">Total</label>
+                <input type="number" id="totalLentilleD" min="0" class="form-control" formControlName="totalLentilleD" [value]="lentilleD ? (lentilleD.prixVente*(1-f.remiseLentilleD.value/100))*f.qteLentilleD.value : 0" readonly="true"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <br/>
+  <div >
+    <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
+    <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
+  </div>
+  <br/>
+  <br/>
+</form>
+
+

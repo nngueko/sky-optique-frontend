@@ -6,6 +6,7 @@
       <tr>
         <th>Reference</th>
         <th>Nom complet</th>
+        <th>Marque</th>
         <th>Model</th>
         <th>Matiere</th>
         <th>Genre</th>
@@ -17,7 +18,8 @@
       <tr *ngFor="let monture of montures">
         <td>{{ monture.reference }}</td>
         <td>{{ monture.libelle }}</td>
-        <td>{{ monture.model }}</td>
+        <td><span *ngIf="monture.marque">{{ monture.marque.nom }}</span></td>
+        <td>{{ monture.modele }}</td>
         <td>{{ monture.matiere }}</td>
         <td>{{ monture.genre }}</td>
         <td>{{ monture.taille }}</td>

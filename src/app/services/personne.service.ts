@@ -9,6 +9,7 @@ import {PersonneModel} from "../models/personne.model";
 export class PersonneService {
 
   url = 'http://localhost:8080/personne/';
+
   // @ts-ignore
   listPersonnes : PersonneModel[];
   listPersonneSubject = new Subject<PersonneModel[]>();
@@ -29,18 +30,18 @@ export class PersonneService {
       (data: any[]) => {
         console.log(data);
         // @ts-ignore
-        this.listPersonnes = data._embedded.personne;
+        this.listPersonnes = data;
         this.emitlistPersonneSubject();
       }
     );
   }
 
   getAllPatients() {
-    this.httpClient.get<any[]>(this.url).subscribe(
+    this.httpClient.get<any[]>(this.url+"/client/").subscribe(
       (data: any[]) => {
         console.log(data);
         // @ts-ignore
-        this.listPatients = data._embedded.personne;
+        this.listPatients = data;
         this.emitlistPatientSubject();
       }
     );
@@ -58,7 +59,7 @@ export class PersonneService {
     return this.httpClient.put(this.url+personne.id, personne);
   }
 
-  deleteLentille(idPersonne : number) {
+  deletePersonne(idPersonne : number) {
     return this.httpClient.delete(this.url+idPersonne);
   }
 

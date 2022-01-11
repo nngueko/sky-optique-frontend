@@ -1,4 +1,5 @@
 import {ProduitModel} from "./produit.model";
+import {MarqueModel} from "./marque.model";
 
 export class MontureModel extends ProduitModel{
 
@@ -8,10 +9,11 @@ export class MontureModel extends ProduitModel{
     public matiere:string,
     public genre:string,
     public taille:string,
-    public forme:string,
+    public forme?:string,
     public coloris?:string,
     public lngBrn?:string,
     public catAge?:string,
+    public marque?:MarqueModel,
     public id?:number
   ) {
     super(null, null);

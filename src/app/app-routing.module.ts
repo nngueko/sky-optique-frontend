@@ -20,6 +20,11 @@ import {EditBonCommandeComponent} from "./edit-bon-commande/edit-bon-commande.co
 import {AddFactureComponent} from "./add-facture/add-facture.component";
 import {UpdateFactureComponent} from "./update-facture/update-facture.component";
 import {ListFacturesComponent} from "./list-factures/list-factures.component";
+import {EditEntrepriseComponent} from "./edit-entreprise/edit-entreprise.component";
+import {ListEntreprisesComponent} from "./list-entreprises/list-entreprises.component";
+import {EditPersonneComponent} from "./edit-personne/edit-personne.component";
+import {ListPersonnesComponent} from "./list-personnes/list-personnes.component";
+import {AddProformaComponent} from "./add-proforma/add-proforma.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate:[AuthGaurdService] },
@@ -55,8 +60,17 @@ const routes: Routes = [
   { path: 'update-fournisseur/:id', component: EditFournisseurComponent, canActivate:[AuthGaurdService] },
 
   { path: 'factures', component: ListFacturesComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-proforma', component: AddProformaComponent, canActivate:[AuthGaurdService] },
   { path: 'add-facture', component: AddFactureComponent, canActivate:[AuthGaurdService] },
   { path: 'update-facture/:id', component: UpdateFactureComponent, canActivate:[AuthGaurdService] },
+
+  { path: 'entreprises', component: ListEntreprisesComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-entreprise', component: EditEntrepriseComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-entreprise/:id', component: EditEntrepriseComponent, canActivate:[AuthGaurdService] },
+
+  { path: 'personnes', component: ListPersonnesComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-personne', component: EditPersonneComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-personne/:id', component: EditPersonneComponent, canActivate:[AuthGaurdService] },
 
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

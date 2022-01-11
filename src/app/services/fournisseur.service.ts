@@ -21,10 +21,9 @@ export class FournisseurService {
   constructor(private httpClient: HttpClient) { }
 
   getAllFournisseurs() {
-    this.httpClient.get<any[]>(this.url).subscribe(
-      (data: any[]) => {
-        // @ts-ignore
-        this.listFournisseurs = data._embedded.fournisseur;
+    this.httpClient.get<FournisseurModel[]>(this.url).subscribe(
+      (data: FournisseurModel[]) => {
+        this.listFournisseurs = data;
         this.emitListFournisseurSubject();
       }
     );

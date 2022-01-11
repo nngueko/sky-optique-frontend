@@ -19,10 +19,10 @@ export class CompagniService {
   constructor(private httpClient: HttpClient) { }
 
   getAllCompagnis() {
-    this.httpClient.get<any[]>(this.url).subscribe(
-      (data: any[]) => {
+    this.httpClient.get<CompagniModel[]>(this.url).subscribe(
+      (data: CompagniModel[]) => {
         // @ts-ignore
-        this.listCompagnis = data._embedded.compagni;
+        this.listCompagnis = data;
         this.emitListCompagniSubject();
       }
     );
@@ -30,6 +30,10 @@ export class CompagniService {
 
   getCompagniById(idCompagni : number) {
     return this.httpClient.get<any>(this.url+idCompagni);
+  }
+
+  getCompagniByPersonne(idPersonne : number) {
+    return this.httpClient.get<any>("http://localhost:8080/personne/"+idPersonne+"/entreprise");
   }
 
 

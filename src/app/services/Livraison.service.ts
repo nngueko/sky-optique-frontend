@@ -21,7 +21,7 @@ export class LivraisonService {
   constructor(private httpClient: HttpClient) { }
 
   getAllLivraison() {
-    return this.httpClient.get<any[]>('http://localhost:8080/livraisonCtr/').subscribe(
+    return this.httpClient.get<LivraisonModel[]>(this.url).subscribe(
       (data) => {
         // @ts-ignore
         this.listBonLivraisons = data;
@@ -31,7 +31,7 @@ export class LivraisonService {
   }
 
   getAllLivraisonByBonLivraison(idBonLivraison : number) {
-    return this.httpClient.get<any[]>('http://localhost:8080/livraisonCtr/').subscribe(
+    return this.httpClient.get<LivraisonModel[]>(this.url).subscribe(
       (data) => {
         // @ts-ignore
         this.listBonLivraisons = data;

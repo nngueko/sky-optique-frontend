@@ -5,7 +5,7 @@
     <form [formGroup]="livraisonForm" (ngSubmit)="onSubmitForm(livraisonForm.value)">
 
       <div class="form-group">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Type de produit</mat-label>
           <mat-select value="ALL" [formControl]="typeControl" (selectionChange)="onTypeChange($event)">
             <mat-option value="ALL">Tous les produits</mat-option>
@@ -16,9 +16,10 @@
         </mat-form-field>
       </div>
       <div class="form-group">
-        <mat-form-field class="example-full-width" appearance="fill"  >
+        <mat-form-field appearance="outline"  >
           <mat-label>Nom du produit</mat-label>
           <input type="text" matInput [formControl]="produitControl" [matAutocomplete]="auto" >
+          <mat-error>Im an error</mat-error>
           <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getPosts($event)' [displayWith]="displayFn">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
               {{option.libelle}}
@@ -90,24 +91,17 @@
       </div>
 
       <div class="form-group">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Prix d'achat</mat-label>
           <input type="number" class="form-control" matInput placeholder="Entrer le prix d'achat" formControlName="prixAchat">
           <mat-error *ngIf="livraisonForm.get('prixAchat').invalid" >{{getErrorMessage('prixAchat')}}</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Quantité</mat-label>
           <input type="number" class="form-control" matInput placeholder="Entrer le prix d'achat" formControlName="qte">
           <mat-error *ngIf="livraisonForm.get('qte').invalid" >{{getErrorMessage('qte')}}</mat-error>
-        </mat-form-field>
-      </div>
-      <div class="form-group">
-        <mat-form-field appearance="fill">
-          <mat-label>Prix de vente</mat-label>
-          <input type="number" class="form-control" matInput placeholder="Entrer le prix de vente" formControlName="prixVente">
-          <mat-error *ngIf="livraisonForm.get('prixVente').invalid" >{{getErrorMessage('prixVente')}}</mat-error>
         </mat-form-field>
       </div>
 
@@ -155,7 +149,7 @@
     <form #BonLivraisonForm="ngForm" (ngSubmit)="onSubmit(BonLivraisonForm)" >
 
       <div class="form-group">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>reference</mat-label>
           <input type="text" class="form-control" matInput placeholder="Entrer la reference du bon de livraison" name="reference" [(ngModel)] = "bonLivraison.reference">
           <mat-error *ngIf="BonLivraisonForm.invalid" >{{getErrorMessage('reference')}}</mat-error>
@@ -163,7 +157,7 @@
       </div>
 
       <div class="form-group">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Date de livraison</mat-label>
           <!--<input type="text" class="form-control" name="libelle" [(ngModel)] = "bonLivraison.dateLivraison" >-->
           <input type="date" class="form-control" matInput placeholder="Entrer la date de livraison" name="dateLivraison" [(ngModel)] = "bonLivraison.dateLivraison">
@@ -172,7 +166,7 @@
       </div>
 
       <div class="form-group">
-        <mat-form-field class="example-full-width" appearance="fill"  >
+        <mat-form-field class="example-full-width" appearance="outline"  >
           <mat-label>Fournisseur</mat-label>
           <input type="text" matInput [formControl]="fournisseurControl" [matAutocomplete]="auto1" #autoCompleteInput>
           <mat-autocomplete #auto1="matAutocomplete" (optionSelected)='getFournisseur($event)' [displayWith]="displayFournisseur">

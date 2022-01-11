@@ -17,7 +17,7 @@ export class EditLentilleComponent implements OnInit {
   lentilleForm: FormGroup;
   submitted = false;
   loading = false;
-  lentille = new LentilleModel(null, null, null, null, null, null);
+  lentille = new LentilleModel(null, null, null, null, null);
 
   constructor(private formBuilder: FormBuilder, private lentilleService : LentilleService, private router: Router, private route: ActivatedRoute) {
     this.lentille.id = this.route.snapshot.params['id'];
@@ -43,9 +43,9 @@ export class EditLentilleComponent implements OnInit {
   initForm(lentille : LentilleModel){
     this.lentilleForm = this.formBuilder.group({
       libelle: [lentille.libelle, Validators.compose([Validators.required])],
-      type: lentille.type,
-      sphere: lentille.sphere,
-      cylindre: lentille.cylindre,
+      //type: lentille.type,
+      sphere: [lentille.sphere, Validators.compose([Validators.required])],
+      cylindre: [lentille.cylindre, Validators.compose([Validators.required])],
       axe: lentille.axe,
       addition: lentille.addition
     });
@@ -59,13 +59,11 @@ export class EditLentilleComponent implements OnInit {
       return;
     }
     const formValue = this.lentilleForm.value;
-    let editedLentille : LentilleModel = new LentilleModel(
-      (<string> formValue['type']).trim(),
-      (<number> formValue['sphere']),
-      (<number> formValue['cylindre.']),
-      (<number> formValue['axe']),
-      (<number> formValue['addition']),
-    );
+    let editedLentille = this.lentille;
+    editedLentille.sphere = <number> formValue['sphere'];
+    editedLentille.cylindre = <number> formValue['cylindre'];
+    editedLentille.axe = <number> formValue['axe'];
+    editedLentille.addition = <number> formValue['addition'];
     editedLentille.libelle = (<string> formValue['libelle']).trim();
     console.log(editedLentille);
 

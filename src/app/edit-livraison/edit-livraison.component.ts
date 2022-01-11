@@ -8,7 +8,7 @@ import {map, startWith} from "rxjs/operators";
 import {ProduitService} from "../services/produit.service";
 import {MatAutocompleteTrigger} from "@angular/material/autocomplete";
 import {LivraisonService} from "../services/Livraison.service";
-import {LotModel} from "../models/lot.model";
+import {StockModel} from "../models/stockModel";
 import {BonLivraisonModel} from "../models/bonLivraison.model";
 
 
@@ -144,8 +144,8 @@ export class EditLivraisonComponent implements OnInit {
     let addedLivraison : LivraisonModel = new LivraisonModel(
       formValue['prixAchat'],
       formValue['qte'],
-      formValue['prixVente'],
-      new LotModel( formValue['prixVente'], formValue['qte'], this.produit)
+      this.produit
+      //new StockModel( formValue['prixVente'], formValue['qte'], this.produit)
     );
 
     if (this.isAddMode) {

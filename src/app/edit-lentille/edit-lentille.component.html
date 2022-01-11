@@ -17,23 +17,29 @@
             </div>
           </div>
 
-          <div class="form-group">
+          <!--<div class="form-group">
             <label for="type">
               Type
             </label>
             <input type="text" id="type" class="form-control" formControlName="type"/>
-          </div>
+          </div>-->
           <div class="form-group">
             <label for="sphere">
               Sphere
             </label>
-            <input type="number" id="sphere" class="form-control" formControlName="sphere" />
+            <input type="number" id="sphere" class="form-control" formControlName="sphere"  [ngClass]="{ 'is-invalid': submitted && f.sphere.errors }"/>
+            <div *ngIf="submitted && f.sphere.errors" class="invalid-feedback">
+              <div *ngIf="f.sphere.errors.required">Veuillez renseigner la valeur</div>
+            </div>
           </div>
           <div class="form-group">
-            <label for="T1">
+            <label for="cylindre">
               Cylindre
             </label>
-            <input type="number" id="T1" class="form-control" formControlName="cylindre" />
+            <input type="number" id="cylindre" class="form-control" formControlName="cylindre"  [ngClass]="{ 'is-invalid': submitted && f.cylindre.errors }"/>
+            <div *ngIf="submitted && f.cylindre.errors" class="invalid-feedback">
+              <div *ngIf="f.cylindre.errors.required">Veuillez renseigner la valeur</div>
+            </div>
           </div>
           <div class="form-group">
             <label for="axe">

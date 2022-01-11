@@ -13,7 +13,7 @@ import {LentilleService} from "../services/lentille.service";
 import {MontureService} from "../services/monture.service";
 import {BonCommandeService} from "../services/BonCommande.service";
 import {map, startWith} from "rxjs/operators";
-import {LotModel} from "../models/lot.model";
+import {StockModel} from "../models/stockModel";
 import {CommandeModel} from "../models/commande.model";
 
 @Component({
@@ -150,7 +150,7 @@ export class EditBonCommandeComponent implements OnInit {
     );
     console.log(addedcommande);
     this.listCommande.push(addedcommande);
-    this.produitControl.reset();
+    this.produitControl.setValue('');
     this.produit = null;
     this.commandeForm.reset();
   }

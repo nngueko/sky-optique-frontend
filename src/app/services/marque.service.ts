@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {MontureModel} from "../models/monture.model";
 import {Subject} from "rxjs";
-import {LentilleModel} from "../models/lentille.model";
 import {MarqueModel} from "../models/marque.model";
 
 @Injectable({
@@ -21,11 +19,11 @@ export class MarqueService {
   constructor(private httpClient: HttpClient) { }
 
   getAllMarques() {
-    this.httpClient.get<any[]>(this.url).subscribe(
+    this.httpClient.get<MarqueModel[]>(this.url).subscribe(
       (data: any[]) => {
         console.log(data);
         // @ts-ignore
-        this.listMarques = data._embedded.marque;
+        this.listMarques = data;
         this.emitListMarqueSubject();
       }
     );

@@ -8,8 +8,8 @@ import {BonCommandeModel} from "../models/bonCommande.model";
 })
 export class BonCommandeService {
 
+  //url2 = 'http://localhost:8080/bonCommande/';
   url = 'http://localhost:8080/bonCommande/';
-  url2 = 'http://localhost:8080/bonCommandeCtr/';
 
   listBonCommandes : BonCommandeModel[];
   listBonCommandeSubject = new Subject<BonCommandeModel[]>();

@@ -59,14 +59,13 @@ export class EditMarqueComponent implements OnInit {
 
     const formValue = this.marqueForm.value;
 
-    let addedMarque : MarqueModel = new MarqueModel(
-      (<string> formValue['nom']).trim(),
-    );
+    let editedMarque = this.marque;
+    editedMarque.nom = (<string> formValue['nom']).trim();
 
     if (this.isAddMode) {
-      this.addMarque(addedMarque);
+      this.addMarque(editedMarque);
     } else {
-      this.updateMarque(addedMarque);
+      this.updateMarque(editedMarque);
     }
 
   }

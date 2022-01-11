@@ -42,6 +42,12 @@ import { EditVenteComponent } from './edit-vente/edit-vente.component';
 import { AddFactureComponent } from './add-facture/add-facture.component';
 import { UpdateFactureComponent } from './update-facture/update-facture.component';
 import { ListFacturesComponent } from './list-factures/list-factures.component';
+import { EditEntrepriseComponent } from './edit-entreprise/edit-entreprise.component';
+import { ListEntreprisesComponent } from './list-entreprises/list-entreprises.component';
+import { ListPersonnesComponent } from './list-personnes/list-personnes.component';
+import { EditPersonneComponent } from './edit-personne/edit-personne.component';
+import { AddProformaComponent } from './add-proforma/add-proforma.component';
+import { ProformatComponent } from './proformat/proformat.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +74,13 @@ import { ListFacturesComponent } from './list-factures/list-factures.component';
     EditVenteComponent,
     AddFactureComponent,
     UpdateFactureComponent,
-    ListFacturesComponent
+    ListFacturesComponent,
+    EditEntrepriseComponent,
+    ListEntreprisesComponent,
+    ListPersonnesComponent,
+    EditPersonneComponent,
+    AddProformaComponent,
+    ProformatComponent
   ],
   imports: [
     BrowserModule,

@@ -1,15 +1,13 @@
-import {LentilleModel} from "./lentille.model";
-import {PrescripteurModel} from "./prescripteur.model";
+import {PersonneModel} from "./personne.model";
 
 export class PrescriptionModel {
 
   constructor(
-    datePrescription: Date,
-    deadline: Date,
-    eyeVision: String,
-    port: String,
-    lentille: LentilleModel,
-    Prescripteur: PrescripteurModel,
+    public datePrescription: Date,
+    public deadline: Date,
+    public eyeVision: String,
+    public port: String,
+    public prescripteur?: PersonneModel,
     public id?:number
   ){}
 

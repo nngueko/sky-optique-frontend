@@ -13,7 +13,7 @@ import {BonLivraisonModel} from "../models/bonLivraison.model";
 import {BonLivraisonService} from "../services/BonLivraison.service";
 import {FournisseurModel} from "../models/fournisseur.model";
 import {FournisseurService} from "../services/fournisseur.service";
-import {LotModel} from "../models/lot.model";
+import {StockModel} from "../models/stockModel";
 
 @Component({
   selector: 'app-edit-bon-livraison',
@@ -31,7 +31,7 @@ export class EditBonLivraisonComponent implements OnInit {
   listProduit: ProduitModel[]=[];
   listLivraison: LivraisonModel[]=[];
   filteredOptions: Observable<ProduitModel[]>;
-  produitControl = new FormControl();
+  produitControl = new FormControl('',[Validators.required]);
   typeControl = new FormControl();
 
   fournisseur : FournisseurModel = null;
@@ -141,7 +141,6 @@ export class EditBonLivraisonComponent implements OnInit {
     this.livraisonForm = this.formBuilder.group({
       prixAchat: ['', Validators.compose([Validators.required, Validators.min(0)])],
       qte: ['', Validators.compose([Validators.required, Validators.min(1)])],
-      prixVente: ['', Validators.compose([Validators.required, Validators.min(0)])],
     });
   }
 
@@ -150,8 +149,8 @@ export class EditBonLivraisonComponent implements OnInit {
     let addedLivraison : LivraisonModel = new LivraisonModel(
       formValue['prixAchat'],
       formValue['qte'],
-      formValue['prixVente'],
-      new LotModel(formValue['prixVente'], formValue['qte'], this.produit)
+      this.produit
+      //new StockModel(formValue['prixVente'], formValue['qte'], this.produit)
     );
     this.listLivraison.push(addedLivraison);
     this.produitControl.setValue("");

@@ -5,73 +5,121 @@
       <div class="card">
         <div class="card-header text-white bg-primary mb-3">Patient</div>
         <div class="card-body">
-
-          <!--<div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="patientRadio" id="patientRadio1" value="new" formControlName="isNewPatient"/>
-            <label class="form-check-label" for="patientRadio1">Nouveau patient</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="patientRadio" id="patientRadio2" value="select" formControlName="isNewPatient" />
-            <label class="form-check-label" for="patientRadio2">Selectionner un patient</label>
-          </div>
-
           <div class="form-group" >
-            <mat-form-field class="example-full-width" appearance="fill"  >
-              <mat-label>Selectionner un patient</mat-label>
-              <input type="text" matInput [formControl]="patientControl" [matAutocomplete]="auto1" #autoCompletePatient>
+            <mat-form-field class="example-full-width" appearance="outline"  >
+              <mat-label>Nom du patient</mat-label>
+              <input type="text" matInput formControlName="nomPatient" [matAutocomplete]="auto1" #autoCompletePatient>
+              <mat-error *ngIf="factureForm.get('nomPatient').invalid" >Selectionnez ou éditez un patient</mat-error>
               <mat-autocomplete #auto1="matAutocomplete" (optionSelected)='getPatient($event)' [displayWith]="displayPatient">
                 <mat-option *ngFor="let option of filteredPatients | async" [value]="option">
                   {{option.nom+' '+option.prenom}}
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
-          </div>-->
+          </div>
 
           <div class="row">
+
             <div class="col-lg-6">
-              <div class="form-group" >
-                <mat-form-field class="example-full-width" appearance="fill"  >
-                  <mat-label>Nom du patient</mat-label>
-                  <input type="text" matInput [formControl]="patientControl" [matAutocomplete]="auto1" #autoCompletePatient>
-                  <mat-autocomplete #auto1="matAutocomplete" (optionSelected)='getPatient($event)' [displayWith]="displayPatient">
-                    <mat-option *ngFor="let option of filteredPatients | async" [value]="option">
-                      {{option.nom+' '+option.prenom}}
-                    </mat-option>
-                  </mat-autocomplete>
-                </mat-form-field>
-              </div>
-              <mat-form-field appearance="fill">
+              <mat-form-field appearance="outline">
+                <mat-label>Prénom</mat-label>
+                <input type="text" matInput placeholder="Prénom" formControlName="prenomPatient" >
+              </mat-form-field>
+              <mat-form-field appearance="outline">
                 <mat-label>Date de naissance</mat-label>
-                <input type="text" matInput placeholder="Date de naissance" formControlName="dateNaiss" [readOnly]="patient!=null">
+                <input type="date" matInput placeholder="Date de naissance" formControlName="dateNaissPatient">
               </mat-form-field>
-              <mat-form-field appearance="fill">
-                <mat-label>Mobile</mat-label>
-                <input type="text" matInput placeholder="Date de naissance" formControlName="tel1" [readOnly]="patient!=null">
+              <mat-form-field appearance="outline">
+                <mat-label>Adresse</mat-label>
+                <input type="text" matInput placeholder="Adresse" formControlName="adressePatient">
               </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput placeholder="Email" formControlName="emailPatient">
+              </mat-form-field>
+
             </div>
             <div class="col-lg-6">
-              <mat-form-field appearance="fill">
-                <mat-label>Prénom</mat-label>
-                <input type="text" matInput placeholder="Date de naissance" formControlName="prenom" [readOnly]="patient!=null">
+              <div class="form-group">
+                <mat-form-field appearance="outline">
+                  <mat-label>Civilité</mat-label>
+                  <mat-select value="Mr" formControlName="civilitePatient">
+                    <mat-option value="Mr">Mr.</mat-option>
+                    <mat-option value="Mme">Mme.</mat-option>
+                    <mat-option value="Mxlle">Mxlle.</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Tel 1</mat-label>
+                <input type="text" matInput placeholder="Tel 1" formControlName="tel1Patient" >
               </mat-form-field>
-              <mat-form-field appearance="fill">
-                <mat-label>Civilité</mat-label>
-                <mat-select value="Mr" formControlName="civilite" [disabled]="patient!=null">
-                  <mat-option value="Mr">Mr.</mat-option>
-                  <mat-option value="Mme">Mme.</mat-option>
-                  <mat-option value="Mxlle">Mxlle.</mat-option>
-                </mat-select>
+              <mat-form-field appearance="outline">
+                <mat-label>Tel 2</mat-label>
+                <input type="text" matInput placeholder="Tel 2" formControlName="tel2Patient">
               </mat-form-field>
               <div class="form-group">
-                <mat-form-field class="example-full-width" appearance="fill" >
+                <mat-form-field class="example-full-width" appearance="outline" >
                   <mat-label>Entreprise</mat-label>
-                  <input type="text" matInput [formControl]="entrepriseControl" [matAutocomplete]="auto" #autoCompleteEntreprise [readOnly]="patient!=null">
-                  <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEntreprise($event)' [displayWith]="displayEntreprise">
-                    <mat-option *ngFor="let option of filteredEntreprises | async" [value]="option">
-                      {{option.nom}}
-                    </mat-option>
-                  </mat-autocomplete>
+                  <mat-select formControlName="idEntreprisePatient">
+                    <mat-option value="" ></mat-option>
+                    <mat-option *ngFor="let entreprise of listEntreprises" [value]="entreprise.id">{{ entreprise.nom }}</mat-option>
+                  </mat-select>
                 </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">Prescription</div>
+        <div class="card-body">
+          <div class="form-group" >
+            <mat-form-field class="example-full-width" appearance="outline"  >
+              <mat-label>Prescripteur</mat-label>
+              <input type="text" matInput formControlName="nomPrescripteur" [matAutocomplete]="auto2" #autoCompletePrescripteur>
+              <mat-error *ngIf="factureForm.get('nomPrescripteur').invalid" >Selectionnez ou éditez le prescripteur</mat-error>
+              <mat-autocomplete #auto2="matAutocomplete" (optionSelected)='getPrescripteur($event)' [displayWith]="displayPrescripteur">
+                <mat-option *ngFor="let option of filteredPrescripteurs | async" [value]="option">
+                  <span *ngIf="option.titre">{{option.titre+' '}}</span>{{option.nom+' '+option.prenom}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+
+          <div class="row" >
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="prenomPrescripteur">Prénom</label>
+                <input type="text" id="prenomPrescripteur" class="form-control" formControlName="prenomPrescripteur" [readOnly]="prescripteur!=null"/>
+              </div>
+              <div class="form-group">
+                <label for="datePrescription">Date prescription</label>
+                <input type="date" id="datePrescription" class="form-control" formControlName="datePrescription" />
+              </div>
+              <div class="form-group">
+                <label for="dateLimite">Date limite</label>
+                <input type="date" id="dateLimite" class="form-control" formControlName="dateLimite" />
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="titre">Titre</label>
+                <select id="titre" class="form-select" value="Mr" formControlName="titre" >
+                  <option value=""></option>
+                  <option value="Medicin">Médicin</option>
+                  <option value="Dr">Dr</option>
+                  <option value="Opticien">Opticien</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="eyeVision">Eye vision</label>
+                <input type="text" id="eyeVision" class="form-control" formControlName="eyeVision" />
+              </div>
+              <div class="form-group">
+                <label for="port">Port</label>
+                <input type="text" id="port" class="form-control" formControlName="port" />
               </div>
             </div>
           </div>
@@ -81,100 +129,239 @@
       <div class="card">
         <div class="card-header text-white bg-primary mb-3">Tiers payant</div>
         <div class="card-body">
-          <button type="button" class="btn btn-primary" (click)="onAddCouverture()">Ajouter un tier payant</button>
-          <div formArrayName="couvertures">
-            <br/>
-            <div class="card" *ngFor="let couverture of couvertures.controls; let i = index" >
-              <div class="card-header text-white bg-primary mb-3">Tiers payant {{i + 1}}</div>
-              <div class="card-body" [formGroupName]="i">
-                <div class="row">
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <mat-form-field appearance="fill">
-                        <mat-label>Date du document</mat-label>
-                        <input type="date" matInput placeholder="Date du document" formControlName="dateDocument" >
-                      </mat-form-field>
-                    </div>
-                    <div class="form-group">
-                      <label for="assurance">Assurance*</label>
-                      <mat-form-field class="example-full-width" appearance="fill" >
-                        <mat-label>Assurance</mat-label>
-                        <input type="text" matInput [matAutocomplete]="auto" #autoCompleteAssuranceCouverture formControlName="assurance">
-                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)='getEntreprise($event)' [displayWith]="displayEntreprise">
-                          <mat-option *ngFor="let option of filteredEntreprises | async" [value]="option">
-                            {{option.nom}}
-                          </mat-option>
-                        </mat-autocomplete>
-                      </mat-form-field>
-                    </div>
-                    <div class="form-group">
-                      <label for="assuranrePrincipal">Assuré principal*</label>
-                    </div>
-                    <div class="form-group">
-                      <label for="couvertureVerre">Couverture verre</label>
-                      <input type="number" id="couvertureVerre" class="form-control" formControlName="couvertureVerre" />
-                    </div>
-                    <div class="form-group">
-                      <label for="priseCharge">Prise en charge</label>
-                      <input disabled="false" type="number" id="priseCharge" class="form-control" formControlName="priseEnCharge" />
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label for="numeroDocument">Numéro du document</label>
-                      <input type="text" id="numeroDocument" class="form-control" formControlName="numeroDocument" />
-                    </div>
-                    <div class="form-group">
-                      <label for="entreprise">Entreprise*</label>
-                    </div>
-                    <div class="form-group">
-                      <label for="relation">Relation</label>
-                    </div>
-                    <div class="form-group">
-                      <label for="couvertureMonture">Couverture Monture</label>
-                      <input type="number" id="couvertureMonture" class="form-control" formControlName="couvertureMonture" />
-                    </div>
-                    <div class="form-group">
-                      <label for="franchise">Franchise</label>
-                      <input disabled="false" type="number" id="franchise" class="form-control" formControlName="franchise" />
-                    </div>
-                  </div>
-                </div>
-                  <br/>
-                  <button type="button" class="btn btn-danger" (click)="onDeleteCouverture(i)">Delete</button>
+          <button type="button" class="btn btn-primary" (click)="onAddCouverture()" *ngIf="!isCouverture">Ajouter un tier payant</button>
+          <div class="row" *ngIf="isCouverture">
+            <div class="col-lg-6">
 
+              <div class="form-group" >
+                <mat-form-field class="example-full-width" appearance="outline"  >
+                  <mat-label>Assuré principal*</mat-label>
+                  <input type="text" matInput formControlName="nomAssurePrincipal" [matAutocomplete]="auto3" #autoCompletePatient2>
+                  <mat-error *ngIf="factureForm.get('nomAssurePrincipal').invalid" >Selectionnez ou éditez l'assuré</mat-error>
+                  <mat-autocomplete #auto3="matAutocomplete" (optionSelected)='getAssurePrincipal($event)' [displayWith]="displayPatient">
+                    <mat-option *ngFor="let option of filteredAssurePrincipals | async" [value]="option">
+                      {{option.nom+' '+option.prenom}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Prénom</mat-label>
+                <input type="text" matInput placeholder="Prénom" formControlName="prenomAssurePrincipal" >
+              </mat-form-field>
+              <div class="form-group">
+                <mat-form-field appearance="outline">
+                  <mat-label>Civilité</mat-label>
+                  <mat-select value="Mr" formControlName="civiliteAssurePrincipal">
+                    <mat-option value="Mr">Mr.</mat-option>
+                    <mat-option value="Mme">Mme.</mat-option>
+                    <mat-option value="Mxlle">Mxlle.</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Date de naissance</mat-label>
+                <input type="date" matInput placeholder="Date de naissance" formControlName="dateNaissAssurePrincipal">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Adresse</mat-label>
+                <input type="text" matInput placeholder="Adresse" formControlName="adresseAssurePrincipal">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput placeholder="Email" formControlName="emailAssurePrincipal">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Téléphone</mat-label>
+                <input type="text" matInput placeholder="Téléphone" formControlName="tel1AssurePrincipal" >
+              </mat-form-field>
+              <div class="form-group">
+                <mat-form-field appearance="outline" >
+                  <mat-label>Entreprise</mat-label>
+                  <mat-select formControlName="entrepriseAssurePrincipal">
+                    <mat-option value="" ></mat-option>
+                    <mat-option *ngFor="let entreprise of listEntreprises" [value]="entreprise.id">{{ entreprise.nom }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
               </div>
             </div>
+
+
+            <div class="col-lg-6">
+              <mat-form-field appearance="outline">
+                <mat-label>Numéro du document</mat-label>
+                <input type="number" matInput placeholder="Numéro du document" formControlName="numeroDocument">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Date du document</mat-label>
+                <input type="date" matInput placeholder="Date du document" formControlName="dateDocument">
+              </mat-form-field>
+              <div class="form-group">
+                <mat-form-field class="example-full-width" appearance="outline" >
+                  <mat-label>Assurance*</mat-label>
+                  <mat-select formControlName="assurance">
+                    <mat-option value="" ></mat-option>
+                    <mat-option *ngFor="let entreprise of listEntreprises" [value]="entreprise.id">{{ entreprise.nom }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="form-group">
+                <mat-form-field appearance="outline" >
+                  <mat-label>Relation</mat-label>
+                  <mat-select formControlName="relation">
+                    <mat-option value="Aucune" >Aucune</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <mat-form-field appearance="outline">
+                <mat-label>Couverture Monture</mat-label>
+                <input type="number" matInput placeholder="Couverture Monture" formControlName="couvertureMonture" (change)="onCalculValeurs()">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Couverture verre</mat-label>
+                <input type="number" matInput placeholder="Couverture verre" formControlName="couvertureVerre" (change)="onCalculValeurs()">
+              </mat-form-field>
+              <br/>
+              <br/>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Prise en charge </td>
+                    <td> : </td>
+                    <td>{{f.priseEnCharge.value}}</td>
+                  </tr>
+                  <tr>
+                    <td> <br/> </td>
+                  </tr>
+                  <tr>
+                    <td>Franchise</td>
+                    <td> : </td>
+                    <td>{{f.franchise.value}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
+          <br/>
+          <button type="button" class="btn btn-danger" (click)="onDeleteCouverture()" *ngIf="isCouverture">Delete</button>
         </div>
       </div>
-
 
     </div>
 
     <div class="col-md-6">
       <div class="card">
-        <div class="card-header text-white bg-primary mb-3">Prescription</div>
+        <div class="card-header text-white bg-primary mb-3">Monture</div>
         <div class="card-body">
-          <div class="form-group">
-            <label for="prescripteur">Prescripteur*</label>
-            <input type="text" id="prescripteur" class="form-control" formControlName="nom"  [ngClass]="{ 'is-invalid': submitted && f.nom.errors }" />
-            <div *ngIf="submitted && f.nom.errors" class="invalid-feedback">
-              <div *ngIf="f.nom.errors.required">Veuillez renseigner le nom du patient</div>
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="form-group" >
+                <mat-form-field class="example-full-width" appearance="outline"  >
+                  <mat-label>Nom complet</mat-label>
+                  <input type="text" matInput [formControl]="montureControl" [matAutocomplete]="auto4" #autoCompleteMonture >
+                  <mat-autocomplete #auto4="matAutocomplete" (optionSelected)='getMonture($event)' [displayWith]="displayProduit">
+                    <mat-option *ngFor="let option of filteredMontures | async" [value]="option">
+                      {{option.produit.libelle}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="stockMonture">Stock</label>
+                <input type="number" id="stockMonture" min="0" class="form-control" [value]="monture ? monture.qte : null" readonly="true" />
+              </div>
+            </div>
+          </div>
+          <div class="row" [hidden]="!monture">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="puMonture">Prix unitaire</label>
+                <input type="number" id="puMonture" min="0" class="form-control" [value]="monture ? monture.prixVente : null" readonly="true" />
+              </div>
+              <div class="form-group">
+                <label for="remiseMonture">Remise</label>
+                <input type="number" id="remiseMonture" class="form-control" formControlName="remiseMonture" [ngClass]="{ 'is-invalid': submitted && f.remiseMonture.errors }" [readonly]="!monture" (change)="onCalculValeurs()"/>
+                <div *ngIf="submitted && f.remiseMonture.errors" class="invalid-feedback">
+                  <div *ngIf="f.remiseMonture.errors.min">La remise doit être supérieur ou égale à 0%</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="qteMonture">Quantité</label>
+                <input type="number" id="qteMonture" class="form-control" formControlName="qteMonture" [ngClass]="{ 'is-invalid': submitted && f.qteMonture.errors }" [readonly]="!monture" (change)="onCalculValeurs()"/>
+                <div *ngIf="f.qteMonture.errors" class="invalid-feedback">
+                  <div *ngIf="f.qteMonture.errors.min">La quantité doit être supérieur ou égale à 1</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="montantMonture">Montant</label>
+                <input type="number" id="montantMonture" min="0" class="form-control" formControlName="montantMonture" readonly="true"/>
+              </div>
+              <div class="form-group">
+                <label for="totalMonture">Total</label>
+                <input type="number" id="totalMonture" min="0" class="form-control" formControlName="totalMonture" readonly="true"/>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="card-header text-white bg-primary mb-3">Monture</div>
+        <div class="card-header text-white bg-primary mb-3">Lentille Gauche</div>
         <div class="card-body">
           <div class="row">
+            <div class="col-lg-8">
+              <div class="form-group" >
+                <mat-form-field class="example-full-width" appearance="outline"  >
+                  <mat-label>Libelle</mat-label>
+                  <input type="text" matInput [formControl]="lentilleGControl" [matAutocomplete]="auto5" #autoCompleteLentilleG>
+                  <mat-autocomplete #auto5="matAutocomplete" (optionSelected)='getLentilleG($event)' [displayWith]="displayProduit">
+                    <mat-option *ngFor="let option of filteredLentilleG | async" [value]="option">
+                      {{option.produit.libelle}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="stockLentilleG">Stock</label>
+                <input type="number" id="stockLentilleG" min="0" class="form-control" [value]="lentilleG ? lentilleG.qte : null" readonly="true" />
+              </div>
+            </div>
+          </div>
+          <div class="row" [hidden]="!lentilleG">
             <div class="col-lg-6">
               <div class="form-group">
-                <label for="monture">Nom de la monture</label>
-                <input type="date"  id="monture" class="form-control" formControlName="dateNaiss" />
+                <label for="puLentilleG">Prix unitaire</label>
+                <input type="number" id="puLentilleG" min="0" class="form-control" [value]="lentilleG ? lentilleG.prixVente : null" readonly="true" />
               </div>
-
+              <div class="form-group">
+                <label for="remiseLentilleG">Remise</label>
+                <input type="number" id="remiseLentilleG" class="form-control" formControlName="remiseLentilleG" [ngClass]="{ 'is-invalid': submitted && f.remiseLentilleG.errors }" [readonly]="!lentilleG" (change)="onCalculValeurs()"/>
+                <div *ngIf="submitted && f.remiseLentilleG.errors" class="invalid-feedback">
+                  <div *ngIf="f.remiseLentilleG.errors.min">La remise doit être supérieur ou égale à 0%</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="qteLentilleG">Quantité</label>
+                <input type="number" id="qteLentilleG" min="0" class="form-control" formControlName="qteLentilleG" [ngClass]="{ 'is-invalid': submitted && f.qteLentilleG.errors }" [readonly]="!lentilleG" (change)="onCalculValeurs()"/>
+                <div *ngIf="submitted && f.qteLentilleG.errors" class="invalid-feedback">
+                  <div *ngIf="f.qteLentilleG.errors.min">La quantité doit être supérieur ou égale à 1</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="montantLentilleG">Montant</label>
+                <input type="number" id="montantLentilleG" min="0" class="form-control" formControlName="montantLentilleG" readonly="true"/>
+              </div>
+              <div class="form-group">
+                <label for="totalLentilleG">Total</label>
+                <input type="number" id="totalLentilleG" min="0" class="form-control" formControlName="totalLentilleG" readonly="true"/>
+              </div>
             </div>
           </div>
         </div>
@@ -182,26 +369,80 @@
       <div class="card">
         <div class="card-header text-white bg-primary mb-3">Lentille Droite</div>
         <div class="card-body">
-
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="form-group" >
+                <mat-form-field class="example-full-width" appearance="outline"  >
+                  <mat-label>Libelle</mat-label>
+                  <input type="text" matInput [formControl]="lentilleDControl" [matAutocomplete]="auto6" #autoCompleteLentilleD>
+                  <mat-autocomplete #auto6="matAutocomplete" (optionSelected)='getLentilleD($event)' [displayWith]="displayProduit">
+                    <mat-option *ngFor="let option of filteredLentilleD | async" [value]="option">
+                      {{option.produit.libelle}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="stockLentilleD">Stock</label>
+                <input type="number" id="stockLentilleD" min="0" class="form-control" [value]="lentilleD ? lentilleD.qte : null" readonly="true" />
+              </div>
+            </div>
+          </div>
+          <div class="row" [hidden]="!lentilleD">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="puLentilleD">Prix unitaire</label>
+                <input type="number" id="puLentilleD" min="0" class="form-control" [value]="lentilleD ? lentilleD.prixVente : null" readonly="true" />
+              </div>
+              <div class="form-group">
+                <label for="remiseLentilleD">Remise</label>
+                <input type="number" id="remiseLentilleD" class="form-control" formControlName="remiseLentilleD" [ngClass]="{ 'is-invalid': submitted && f.remiseLentilleG.errors }" [readonly]="!lentilleD" (change)="onCalculValeurs()"/>
+                <div *ngIf="submitted && f.remiseLentilleD.errors" class="invalid-feedback">
+                  <div *ngIf="f.remiseLentilleD.errors.min">La remise doit être supérieur ou égale à 0%</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="qteLentilleD">Quantité</label>
+                <input type="number" id="qteLentilleD" min="0" class="form-control" formControlName="qteLentilleD" [ngClass]="{ 'is-invalid': submitted && f.qteLentilleD.errors }" [readonly]="!lentilleD" (change)="onCalculValeurs()"/>
+                <div *ngIf="f.qteLentilleD.errors" class="invalid-feedback">
+                  <div *ngIf="f.qteLentilleD.errors">La quantité doit être supérieur ou égale à 1</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="montantLentilleD">Montant</label>
+                <input type="number" id="montantLentilleD" min="0" class="form-control" formControlName="montantLentilleD" readonly="true"/>
+              </div>
+              <div class="form-group">
+                <label for="totalLentilleD">Total</label>
+                <input type="number" id="totalLentilleD" min="0" class="form-control" formControlName="totalLentilleD" readonly="true"/>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-header text-white bg-primary mb-3">Lentille Gauche</div>
-        <div class="card-body">
 
-        </div>
-      </div>
     </div>
 
   </div>
   <div class="row">
     <div class="card">
-      <div class="card-header text-white bg-danger mb-3">Production</div>
       <div class="card-body">
-
+        <h1>A payer : {{aPayer}}</h1>
       </div>
     </div>
   </div>
+
+  <br/>
+  <div >
+    <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
+    <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
+  </div>
+  <br/>
+  <br/>
 
 </form>
 

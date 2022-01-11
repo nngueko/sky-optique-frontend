@@ -20,11 +20,10 @@ export class LentilleService {
   constructor(private httpClient: HttpClient) { }
 
   getAllLentilles() {
-    this.httpClient.get<any[]>(this.url).subscribe(
+    this.httpClient.get<LentilleModel[]>(this.url).subscribe(
       (data: any[]) => {
         console.log(data);
-        // @ts-ignore
-        this.listLentilles = data._embedded.lentille;
+        this.listLentilles = data;
         this.emitlistLentilleSubject();
       }
     );

@@ -4,8 +4,7 @@ import {PrescriptionModel} from "./prescription.model";
 export class LentilleModel extends ProduitModel{
 
   constructor(
-    //public libelle:string,
-    public type:string,
+    //public type:string,
     public sphere:number,
     public cylindre:number,
     public axe?:number,
