@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {MontureModel} from "../models/monture.model";
 import {LentilleModel} from "../models/lentille.model";
-import {MontureService} from "../services/monture.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LentilleService} from "../services/lentille.service";
 import {FormBuilder, FormGroup, NgForm, Validators} from "@angular/forms";
+import {StockModel} from "../models/stockModel";
+import {MontureModel} from "../models/monture.model";
+import {StockService} from "../services/stock.service";
 
 @Component({
   selector: 'app-edit-lentille',
@@ -17,37 +18,41 @@ export class EditLentilleComponent implements OnInit {
   lentilleForm: FormGroup;
   submitted = false;
   loading = false;
+  stock = new StockModel(null, null, null, null, new LentilleModel(null, null, null, null));
   lentille = new LentilleModel(null, null, null, null, null);
 
-  constructor(private formBuilder: FormBuilder, private lentilleService : LentilleService, private router: Router, private route: ActivatedRoute) {
-    this.lentille.id = this.route.snapshot.params['id'];
+  constructor(private formBuilder: FormBuilder, private stockService :  StockService, private lentilleService : LentilleService, private router: Router, private route: ActivatedRoute) {
+    this.stock.id = this.route.snapshot.params['id'];
   }
 
   ngOnInit(): void {
-    this.isAddMode = !this.lentille.id;
-    this.initForm(this.lentille);
+    this.isAddMode = !this.stock.id;
+    this.initForm(this.stock);
+
     if (!this.isAddMode) {
       this.loading = true;
-      this.lentilleService.getLentilleById(this.lentille.id).subscribe((response) => {
-        this.lentille = response;
-        this.initForm(this.lentille);
+      this.stockService.getStockById(this.stock.id).subscribe((response) => {
+          this.stock = response;
+          this.initForm(this.stock);
         },(error) => {
           console.log('Erreur ! : ' + error);
         }
       );
       this.loading = false;
     }
-
   }
 
-  initForm(lentille : LentilleModel){
+  initForm(stock : StockModel){
+    let lentille: LentilleModel = stock.produit as LentilleModel;
     this.lentilleForm = this.formBuilder.group({
       libelle: [lentille.libelle, Validators.compose([Validators.required])],
       //type: lentille.type,
       sphere: [lentille.sphere, Validators.compose([Validators.required])],
       cylindre: [lentille.cylindre, Validators.compose([Validators.required])],
       axe: lentille.axe,
-      addition: lentille.addition
+      addition: lentille.addition,
+      qte: [stock.qte, Validators.compose([Validators.required, Validators.min(0)])],
+      prixVente: [stock.prixVente, Validators.compose([Validators.required, Validators.min(0)])],
     });
   }
 
@@ -59,18 +64,22 @@ export class EditLentilleComponent implements OnInit {
       return;
     }
     const formValue = this.lentilleForm.value;
-    let editedLentille = this.lentille;
+    let editedStock = this.stock;
+    let editedLentille = this.stock.produit as LentilleModel;
+
     editedLentille.sphere = <number> formValue['sphere'];
     editedLentille.cylindre = <number> formValue['cylindre'];
     editedLentille.axe = <number> formValue['axe'];
     editedLentille.addition = <number> formValue['addition'];
     editedLentille.libelle = (<string> formValue['libelle']).trim();
-    console.log(editedLentille);
+    editedStock.produit = editedLentille;
+    editedStock.prixVente = formValue['prixVente'];
+    editedStock.qte = formValue['qte'];
 
     if (this.isAddMode) {
-      this.addLentille(editedLentille);
+      this.addLentille(editedStock);
     } else {
-      this.updateLentille(editedLentille);
+      this.updateLentille(editedStock);
     }
   }
 
@@ -80,28 +89,40 @@ export class EditLentilleComponent implements OnInit {
   }
 
 
-  private addLentille(lentille : LentilleModel) {
-    this.lentilleService.addLentille(lentille).subscribe(data=>{
-      console.log(data);
-      this.loading = false;
-      this.lentilleService.getAllLentilles();
-      this.router.navigate(['/lentilles']);
+  private addLentille(stock : StockModel) {
+    this.lentilleService.addLentille(stock.produit as LentilleModel).subscribe(data1=>{
+      stock.produit = data1 as LentilleModel;
+      this.stockService.addStock(stock).subscribe(data2=>{
+        console.log(data2);
+        this.loading = false;
+        this.stockService.getAllStockLentille();
+        this.router.navigate(['/lentilles']);
+      }, error => {
+        console.log('Error ! : ' + error);
+      });
     }, error => {
       console.log('Error ! : ' + error);
       this.loading = false;
     });
+
   }
 
-  private updateLentille(lentille : LentilleModel) {
-    lentille.id = this.lentille.id;
-    this.lentilleService.updateLentille(lentille).subscribe(data=>{
-      console.log(data);
-      this.lentilleService.getAllLentilles();
-      this.router.navigate(['/lentilles']);
+  private updateLentille(stock : StockModel) {
+    this.lentilleService.updateLentille(stock.produit as LentilleModel).subscribe(data1=>{
+      stock.produit = data1 as LentilleModel;
+      this.stockService.updateStock(stock).subscribe(data2=>{
+        console.log(data2);
+        this.loading = false;
+        this.stockService.getAllStockLentille();
+        this.router.navigate(['/lentilles']);
+      }, error => {
+        console.log('Error ! : ' + error);
+      });
     }, error => {
       console.log('Error ! : ' + error);
       this.loading = false;
     });
+
   }
 
 }

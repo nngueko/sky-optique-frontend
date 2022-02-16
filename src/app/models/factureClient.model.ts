@@ -8,7 +8,6 @@ import {FactureModel} from "./facture.model";
 export class FactureClientModel extends FactureModel{
 
   constructor(
-    public couvertures?:CouvertureModel[],
     public reglements?:ReglementModel[],
     public id?:number,
   ) {

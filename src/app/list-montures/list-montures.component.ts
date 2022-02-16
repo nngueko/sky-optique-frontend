@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {Subscription} from "rxjs";
 import {MontureModel} from "../models/monture.model";
 import {MontureService} from "../services/monture.service";
+import {StockService} from "../services/stock.service";
+import {StockModel} from "../models/stockModel";
 
 @Component({
   selector: 'app-list-montures',
@@ -13,18 +15,19 @@ export class ListMonturesComponent implements OnInit {
   loading = false;
   // @ts-ignore
   montures: MontureModel[];
+  stocks: StockModel[];
   // @ts-ignore
   listMontureSubscription : Subscription;
-  constructor(private montureService : MontureService) { }
+  constructor(private stockService : StockService, private montureService : MontureService) { }
 
   ngOnInit(): void {
     this.loading = true;
-    this.listMontureSubscription = this.montureService.listMontureSubject.subscribe(
-      (montures: MontureModel[]) => {
-        this.montures = montures
+    this.listMontureSubscription = this.stockService.listStockMontureSubject.subscribe(
+      (data: StockModel[]) => {
+        this.stocks = data;
       }
     );
-    this.montureService.getAllMontures();
+    this.stockService.getAllStockMonture();
     this.loading = false;
   }
 
@@ -37,7 +40,7 @@ export class ListMonturesComponent implements OnInit {
     this.montureService.deleteMonture(id)
       .subscribe( data =>{
         console.log("ok deleting");
-        this.montureService.getAllMontures();
+        this.stockService.getAllStockMonture();
       });
 
     this.loading = false;

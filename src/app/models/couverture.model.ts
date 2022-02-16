@@ -1,6 +1,7 @@
 import {FactureModel} from "./facture.model";
 import {PersonneModel} from "./personne.model";
 import {CompagniModel} from "./compagni.model";
+import {AssuranceModel} from "./assurance.model";
 
 export class CouvertureModel {
 
@@ -13,7 +14,7 @@ export class CouvertureModel {
     public priseEnCharge: string,
     public franchise: string,
     public facture?: FactureModel,
-    public assurance?: CompagniModel,
+    public assurance?: AssuranceModel,
     public entreprise?: CompagniModel,
     public assurePrincipal?: PersonneModel,
     public relation?: string,

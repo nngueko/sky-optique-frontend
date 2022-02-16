@@ -1,5 +1,5 @@
-import {ProduitModel} from "./produit.model";
 import {FactureModel} from "./facture.model";
+import {StockModel} from "./stockModel";
 
 export class VenteModel {
 
@@ -10,8 +10,9 @@ export class VenteModel {
     public remise:number,
     public total:number,
     public tva?:number,
-    public produit?: ProduitModel,
+    public stock?: StockModel,
     public facture?: FactureModel,
+    public libelle?: string,
     public id?:number,
   ){}
 

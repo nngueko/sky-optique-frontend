@@ -47,7 +47,12 @@ import { ListEntreprisesComponent } from './list-entreprises/list-entreprises.co
 import { ListPersonnesComponent } from './list-personnes/list-personnes.component';
 import { EditPersonneComponent } from './edit-personne/edit-personne.component';
 import { AddProformaComponent } from './add-proforma/add-proforma.component';
-import { ProformatComponent } from './proformat/proformat.component';
+import { FactureComponent } from './proformat/facture.component';
+import { PrintProformaComponent } from './print-proforma/print-proforma.component';
+import { PrintFactureClientComponent } from './print-facture-client/print-facture-client.component';
+import { ListProformasComponent } from './list-proformas/list-proformas.component';
+import { EditAgenceComponent } from './edit-agence/edit-agence.component';
+import { ListAgencesComponent } from './list-agences/list-agences.component';
 
 @NgModule({
   declarations: [
@@ -80,7 +85,12 @@ import { ProformatComponent } from './proformat/proformat.component';
     ListPersonnesComponent,
     EditPersonneComponent,
     AddProformaComponent,
-    ProformatComponent
+    FactureComponent,
+    PrintProformaComponent,
+    PrintFactureClientComponent,
+    ListProformasComponent,
+    EditAgenceComponent,
+    ListAgencesComponent
   ],
   imports: [
     BrowserModule,

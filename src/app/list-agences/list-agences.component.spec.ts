@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProformatComponent } from './proformat.component';
+import { ListAgencesComponent } from './list-agences.component';
 
-describe('ProformatComponent', () => {
-  let component: ProformatComponent;
-  let fixture: ComponentFixture<ProformatComponent>;
+describe('ListAgencesComponent', () => {
+  let component: ListAgencesComponent;
+  let fixture: ComponentFixture<ListAgencesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ProformatComponent ]
+      declarations: [ ListAgencesComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ProformatComponent);
+    fixture = TestBed.createComponent(ListAgencesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

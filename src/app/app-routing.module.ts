@@ -25,6 +25,11 @@ import {ListEntreprisesComponent} from "./list-entreprises/list-entreprises.comp
 import {EditPersonneComponent} from "./edit-personne/edit-personne.component";
 import {ListPersonnesComponent} from "./list-personnes/list-personnes.component";
 import {AddProformaComponent} from "./add-proforma/add-proforma.component";
+import {PrintProformaComponent} from "./print-proforma/print-proforma.component";
+import {PrintFactureClientComponent} from "./print-facture-client/print-facture-client.component";
+import {ListProformasComponent} from "./list-proformas/list-proformas.component";
+import {ListAgencesComponent} from "./list-agences/list-agences.component";
+import {EditAgenceComponent} from "./edit-agence/edit-agence.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate:[AuthGaurdService] },
@@ -43,6 +48,10 @@ const routes: Routes = [
   { path: 'add-marque', component: EditMarqueComponent, canActivate:[AuthGaurdService] },
   { path: 'update-marque/:id', component: EditMarqueComponent, canActivate:[AuthGaurdService] },
 
+  { path: 'agences', component: ListAgencesComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-agence', component: EditAgenceComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-agence/:id', component: EditAgenceComponent, canActivate:[AuthGaurdService] },
+
   { path: 'livraisons', component: ListLivraisonsComponent, canActivate:[AuthGaurdService] },
   { path: 'add-livraison', component: EditLivraisonComponent, canActivate:[AuthGaurdService] },
   { path: 'update-livraison/:id', component: EditLivraisonComponent, canActivate:[AuthGaurdService] },
@@ -59,6 +68,7 @@ const routes: Routes = [
   { path: 'add-fournisseur', component: EditFournisseurComponent, canActivate:[AuthGaurdService] },
   { path: 'update-fournisseur/:id', component: EditFournisseurComponent, canActivate:[AuthGaurdService] },
 
+  { path: 'proformas', component: ListProformasComponent, canActivate:[AuthGaurdService] },
   { path: 'factures', component: ListFacturesComponent, canActivate:[AuthGaurdService] },
   { path: 'add-proforma', component: AddProformaComponent, canActivate:[AuthGaurdService] },
   { path: 'add-facture', component: AddFactureComponent, canActivate:[AuthGaurdService] },
@@ -70,7 +80,11 @@ const routes: Routes = [
 
   { path: 'personnes', component: ListPersonnesComponent, canActivate:[AuthGaurdService] },
   { path: 'add-personne', component: EditPersonneComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-personne', component: EditPersonneComponent, canActivate:[AuthGaurdService] },
   { path: 'update-personne/:id', component: EditPersonneComponent, canActivate:[AuthGaurdService] },
+
+  { path: 'print-proforma/:id', component: PrintProformaComponent, canActivate:[AuthGaurdService] },
+  { path: 'print-facture-client/:id', component: PrintFactureClientComponent, canActivate:[AuthGaurdService] },
 
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

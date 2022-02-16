@@ -18,7 +18,7 @@ export class ProformaService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getAllFactures() {
+  getAllProformas() {
     this.httpClient.get<ProformaModel[]>(this.url).subscribe(
       (data: ProformaModel[]) => {
         console.log(data);

@@ -10,20 +10,24 @@
         <th>Cylindre</th>
         <th>Axe</th>
         <th>Addition</th>
+        <th>Quantité</th>
+        <th>Prix de vente</th>
         <th></th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let lentille of lentilles">
-        <td>{{ lentille.libelle }}</td>
-        <td>{{ lentille.type }}</td>
-        <td>{{ lentille.sphere }}</td>
-        <td>{{ lentille.cylindre }}</td>
-        <td>{{ lentille.axe }}</td>
-        <td>{{ lentille.addition }}</td>
+      <tr *ngFor="let lentille of stocks">
+        <td>{{ lentille.produit.libelle }}</td>
+        <td>{{ lentille.produit.type }}</td>
+        <td>{{ lentille.produit.sphere }}</td>
+        <td>{{ lentille.produit.cylindre }}</td>
+        <td>{{ lentille.produit.axe }}</td>
+        <td>{{ lentille.produit.addition }}</td>
+        <td>{{ lentille.qte }}</td>
+        <td>{{ lentille.prixVente }}</td>
         <td style="white-space: nowrap">
           <a routerLink="../update-lentille/{{lentille.id}}" class="btn btn-sm btn-primary mr-1">Modifier</a>
-          <button (click)="deleteLentille(lentille.id)" class="btn btn-sm btn-danger btn-delete-user" [disabled]="false">
+          <button (click)="deleteLentille(lentille.produit.id)" class="btn btn-sm btn-danger btn-delete-user" [disabled]="false">
             <span>Supprimer</span>
           </button>
         </td>

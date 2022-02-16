@@ -3,10 +3,11 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {MontureModel} from "../models/monture.model";
 import {MontureService} from "../services/monture.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {CompagniModel} from "../models/compagni.model";
 import {Subscription} from "rxjs";
 import {MarqueModel} from "../models/marque.model";
 import {MarqueService} from "../services/marque.service";
+import {StockModel} from "../models/stockModel";
+import {StockService} from "../services/stock.service";
 
 @Component({
   selector: 'app-edit-monture',
@@ -19,22 +20,24 @@ export class EditMontureComponent implements OnInit {
   montureForm: FormGroup;
   submitted = false;
   loading = false;
+  stock = new StockModel(null, null, null, null, new MontureModel(null, null, null, null, null, null, null));
   monture = new MontureModel(null, null, null, null, null, null, null);
 
   listMarques : MarqueModel[]=[];
   listMarqueSubscription : Subscription;
 
   constructor(private formBuilder: FormBuilder,
-              private montureService : MontureService,
+              private montureService :  MontureService,
+              private stockService :  StockService,
               private marqueService : MarqueService,
               private router: Router,
               private route: ActivatedRoute) {
-    this.monture.id = this.route.snapshot.params['id'];
+    this.stock.id = this.route.snapshot.params['id'];
   }
 
   ngOnInit(): void {
-    this.isAddMode = !this.monture.id;
-    this.initForm(this.monture);
+    this.isAddMode = !this.stock.id;
+    this.initForm(this.stock);
 
     this.listMarqueSubscription = this.marqueService.listMarqueSubject.subscribe(
       data => {
@@ -47,9 +50,9 @@ export class EditMontureComponent implements OnInit {
 
     if (!this.isAddMode) {
       this.loading = true;
-      this.montureService.getMontureById(this.monture.id).subscribe((response) => {
-        this.monture = response;
-        this.initForm(this.monture);
+      this.stockService.getStockById(this.stock.id).subscribe((response) => {
+        this.stock = response;
+        this.initForm(this.stock);
       },(error) => {
         console.log('Erreur ! : ' + error);
         }
@@ -64,10 +67,11 @@ export class EditMontureComponent implements OnInit {
   }
 
 
-  initForm(monture : MontureModel){
+  initForm(stock : StockModel){
+    let monture: MontureModel = stock.produit as MontureModel;
     this.montureForm = this.formBuilder.group({
       reference: [monture.reference, Validators.compose([Validators.required])],
-      libelle: [monture.libelle, Validators.compose([Validators.required])],
+      //libelle: [monture.libelle, Validators.compose([Validators.required])],
       modele: monture.modele,
       matiere: monture.matiere,
       genre: monture.genre,
@@ -77,6 +81,8 @@ export class EditMontureComponent implements OnInit {
       lngBrn: monture.lngBrn,
       catAge: monture.catAge,
       idMarque: monture.marque ? monture.marque.id : null,
+      qte: [stock.qte, Validators.compose([Validators.required, Validators.min(0)])],
+      prixVente: [stock.prixVente, Validators.compose([Validators.required, Validators.min(0)])],
     });
   }
 
@@ -88,7 +94,9 @@ export class EditMontureComponent implements OnInit {
       return;
     }
     const formValue = this.montureForm.value;
-    let editedMonture = this.monture;
+    let editedStock = this.stock;
+    console.log(editedStock);
+    let editedMonture = this.stock.produit as MontureModel;
 
     editedMonture.reference=formValue['reference'] ? ( <string>formValue['reference']).trim() : formValue['reference'];
     editedMonture.modele= formValue['modele'] ? (<string> formValue['modele']).trim() : formValue['modele'];
@@ -96,20 +104,23 @@ export class EditMontureComponent implements OnInit {
     editedMonture.genre= formValue['genre'] ? (<string> formValue['genre']).trim() : formValue['genre'];
     editedMonture.taille= formValue['taille'] ? (<string> formValue['taille']).trim() : formValue['taille'];
     editedMonture.forme= formValue['forme'] ? (<string> formValue['forme']).trim() : formValue['forme'];
-    editedMonture.libelle = (<string> formValue['libelle']).trim();
+    editedMonture.libelle = editedMonture.reference
     if(formValue['idMarque']){
       editedMonture.marque = this.listMarques.filter(opt => opt.id == formValue['idMarque'])[0];
     }
     else {
       editedMonture.marque = null;
     }
+    editedStock.produit = editedMonture;
+    editedStock.prixVente = formValue['prixVente'];
+    editedStock.qte = formValue['qte'];
 
     console.log(editedMonture);
 
     if (this.isAddMode) {
-      this.addMonture(editedMonture);
+      this.addMonture(editedStock);
     } else {
-      this.updateMonture(editedMonture);
+      this.updateMonture(editedStock);
     }
 
   }
@@ -119,25 +130,40 @@ export class EditMontureComponent implements OnInit {
     this.montureForm.reset();
   }
 
-  private addMonture(monture : MontureModel) {
-    this.montureService.addMonture(monture).subscribe(data=>{
-      console.log(data);
-      this.loading = false;
-      this.montureService.getAllMontures();
-      this.router.navigate(['/montures']);
+  private addMonture(stock : StockModel) {
+    this.montureService.addMonture(stock.produit as MontureModel).subscribe(data1=>{
+      stock.produit = data1 as MontureModel;
+      console.log(stock.produit);
+      console.log(stock);
+      this.stockService.addStock(stock).subscribe(data2=>{
+        console.log(data2);
+        this.loading = false;
+        this.stockService.getAllStockMonture();
+        this.router.navigate(['/montures']);
+      }, error => {
+        console.log('Error ! : ' + error);
+      });
     }, error => {
       console.log('Error ! : ' + error);
       this.loading = false;
     });
+
   }
 
-  private updateMonture(monture : MontureModel) {
-    monture.id = this.monture.id;
-    this.montureService.updateMonture(this.monture).subscribe(data=>{
-      console.log(data);
-      this.loading = false;
-      this.montureService.getAllMontures();
-      this.router.navigate(['/montures']);
+  private updateMonture(stock : StockModel) {
+    stock.id = this.stock.id;
+    this.montureService.updateMonture(stock.produit as MontureModel).subscribe(data1=>{
+      stock.produit = data1 as MontureModel;
+      console.log(stock.produit);
+      console.log(stock);
+      this.stockService.updateStock(stock).subscribe(data2=>{
+        console.log(data2);
+        this.loading = false;
+        this.stockService.getAllStockMonture();
+        this.router.navigate(['/montures']);
+      }, error => {
+        console.log('Error ! : ' + error);
+      });
     }, error => {
       console.log('Error ! : ' + error);
       this.loading = false;

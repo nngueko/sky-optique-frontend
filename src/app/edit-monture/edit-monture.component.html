@@ -17,14 +17,6 @@
       </div>
       <br/>
       <div class="form-group">
-        <label for="libelle">Nom complet*</label>
-        <input type="text" id="libelle" class="form-control" formControlName="libelle" [ngClass]="{ 'is-invalid': submitted && f.libelle.errors }" />
-        <div *ngIf="submitted && f.libelle.errors" class="invalid-feedback">
-          <div *ngIf="f.libelle.errors.required">Veuillez renseigner le nom de la monture</div>
-        </div>
-      </div>
-      <br/>
-      <div class="form-group">
         <label for="idMarque">Marque</label>
         <select id="idMarque" class="form-select" formControlName="idMarque">
           <option value="" ></option>
@@ -76,6 +68,24 @@
           <option value="Wayfarer" >Wayfarer</option>
           <option value="Pilote" >Pilote</option>
         </select>
+      </div>
+      <br/>
+      <div class="form-group">
+        <label for="qte">Quantité*</label>
+        <input type="text" id="qte" class="form-control" formControlName="qte" [ngClass]="{ 'is-invalid': submitted && f.qte.errors }" />
+        <div *ngIf="submitted && f.qte.errors" class="invalid-feedback">
+          <div *ngIf="f.qte.errors.required">Veuillez renseigner la quantité</div>
+          <div *ngIf="f.qte.errors.min">La Quantité doit être supérieur ou égale à 0</div>
+        </div>
+      </div>
+      <br/>
+      <div class="form-group">
+        <label for="prixVente">Prix de vente*</label>
+        <input type="text" id="prixVente" class="form-control" formControlName="prixVente" [ngClass]="{ 'is-invalid': submitted && f.prixVente.errors }" />
+        <div *ngIf="submitted && f.qte.errors" class="invalid-feedback">
+          <div *ngIf="f.prixVente.errors.required">Veuillez renseigner le prix de vente</div>
+          <div *ngIf="f.prixVente.errors.min">Le prix vente doit être supérieur ou égal à 0</div>
+        </div>
       </div>
       <br/>
       <div >

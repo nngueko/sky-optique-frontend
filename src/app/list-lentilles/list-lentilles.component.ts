@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {Subscription} from "rxjs";
 import {LentilleModel} from "../models/lentille.model";
-import {MontureService} from "../services/monture.service";
-import {LentilleService} from "../services/lentille.service";
-import {MontureModel} from "../models/monture.model";
+ import {LentilleService} from "../services/lentille.service";
+import {StockModel} from "../models/stockModel";
+import {StockService} from "../services/stock.service";
 
 @Component({
   selector: 'app-list-lentilles',
@@ -13,22 +13,22 @@ import {MontureModel} from "../models/monture.model";
 export class ListLentillesComponent implements OnInit {
 
   loading = false;
-  // @ts-ignore
   lentilles: LentilleModel[];
-  // @ts-ignore
+  stocks: StockModel[];
   listLentilleSubscription : Subscription;
 
-  constructor(private lentilleService : LentilleService) { }
+  constructor(private stockService : StockService, private lentilleService : LentilleService) { }
 
   ngOnInit(): void {
     this.loading = true;
-    this.listLentilleSubscription = this.lentilleService.listLentilleSubject.subscribe(
-      (lentilles: LentilleModel[]) => {
-        this.lentilles = lentilles;
+    this.listLentilleSubscription = this.stockService.listStockLentilleSubject.subscribe(
+      (data: StockModel[]) => {
+        this.stocks = data;
+        console.log(data);
         this.loading = false;
       }
     );
-    this.lentilleService.getAllLentilles();
+    this.stockService.getAllStockLentille();
   }
 
   ngOnDestroy(): void {
@@ -40,7 +40,7 @@ export class ListLentillesComponent implements OnInit {
     this.lentilleService.deleteLentille(id)
       .subscribe( data =>{
         console.log("ok deleting");
-        this.lentilleService.getAllLentilles();
+        this.stockService.getAllStockLentille();
       });
 
     this.loading = false;

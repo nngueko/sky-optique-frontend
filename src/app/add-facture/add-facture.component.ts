@@ -16,10 +16,12 @@ import {MontureModel} from "../models/monture.model";
 import {LentilleModel} from "../models/lentille.model";
 import {PrescriptionModel} from "../models/prescription.model";
 import {VenteModel} from "../models/vente.model";
-import {ProformaModel} from "../models/Proforma.model";
 import {FactureModel} from "../models/facture.model";
 import {FactureClientModel} from "../models/factureClient.model";
 import {CouvertureModel} from "../models/couverture.model";
+import {PrescripteurService} from "../services/prescripteur.service";
+import {PrescripteurModel} from "../models/prescripteur.model";
+import {ProformaService} from "../services/proforma.service";
 
 @Component({
   selector: 'app-add-facture',
@@ -41,7 +43,9 @@ export class AddFactureComponent implements OnInit {
   @ViewChild('autoCompleteMonture', { read: MatAutocompleteTrigger }) triggerMonture: MatAutocompleteTrigger;
 
   lentilleG : StockModel;
+  lentilleGProd : LentilleModel;
   lentilleD : StockModel;
+  lentilleDProd : LentilleModel;
   lentilleGControl = new FormControl();
   lentilleDControl = new FormControl();
   filteredLentilleG : Observable<StockModel[]>;
@@ -51,8 +55,6 @@ export class AddFactureComponent implements OnInit {
   @ViewChild('autoCompleteLentilleG', { read: MatAutocompleteTrigger }) triggerLentilleG: MatAutocompleteTrigger;
   @ViewChild('autoCompleteLentilleD', { read: MatAutocompleteTrigger }) triggerLentilleD: MatAutocompleteTrigger;
   listLentilles : StockModel[]=[];
-
-  isCouverture = true;
 
   patient : PersonneModel = null;
   assurePrincipal : PersonneModel = null;
@@ -68,11 +70,21 @@ export class AddFactureComponent implements OnInit {
   prescripteur : PersonneModel = null;
   filteredPrescripteurs : Observable<PersonneModel[]>;
   listPrescripteurs : PersonneModel[]=[];
+  listPrescripteursSubscription : Subscription;
   prescripteurTriggerSubscription : Subscription;
   @ViewChild('autoCompletePrescripteur', { read: MatAutocompleteTrigger }) triggerPrescripteur: MatAutocompleteTrigger;
 
+  entreprise : CompagniModel;
+  filteredEntreprises : Observable<CompagniModel[]>;
+  assurance : CompagniModel;
+  filteredAssurances : Observable<CompagniModel[]>;
   listEntreprises : CompagniModel[]=[];
+  listAssurances : CompagniModel[]=[];
   listEntreprisesSubscription : Subscription;
+  entrepriseTriggerSubscription : Subscription;
+  assuranceTriggerSubscription : Subscription;
+  @ViewChild('autoCompleteEntreprise', { read: MatAutocompleteTrigger }) triggerEntreprise: MatAutocompleteTrigger;
+  @ViewChild('autoCompleteAssurance', { read: MatAutocompleteTrigger }) triggerAssurance: MatAutocompleteTrigger;
 
   factureForm: FormGroup;
   submitted = false;
@@ -84,17 +96,21 @@ export class AddFactureComponent implements OnInit {
               private factureService : FactureService,
               private compagniService : CompagniService,
               private personneService : PersonneService,
+              private prescripteurService : PrescripteurService,
               private factureClientService : FactureClientService,
+              private proformaService : ProformaService,
               private stockService : StockService
               ) { }
 
   ngOnInit(): void {
     this.initForm();
-    //this.onAddCouverture();
+    this.onAddCouverture();
+    this.onAddPrescription();
 
     this.listEntreprisesSubscription = this.compagniService.listCompagniSubject.subscribe(
       data => {
         this.listEntreprises = data;
+        this.listAssurances = this.listEntreprises.filter(entr => entr.type == "assurance");
       }, error => {
         console.log('Error ! : ' + error);
       }
@@ -104,7 +120,7 @@ export class AddFactureComponent implements OnInit {
     this.listPersonnesSubscription = this.personneService.listPersonneSubject.subscribe(
       data => {
         this.listPatients = data;
-        this.listPrescripteurs = this.listPatients.filter(pers => pers.isPrescripteur == true);
+        this.listPrescripteurs = this.listPatients.filter(pers => pers.discriminator == "PRESCRIPTEUR");
       }, error => {
         console.log('Error ! : ' + error);
       }
@@ -115,15 +131,26 @@ export class AddFactureComponent implements OnInit {
       map(value => typeof value === 'string' ? value : ''),
       map(nom => nom ? this._filterPatient(nom) : this.listPatients.slice())
     );
-    this.filteredAssurePrincipals = this.factureForm.get('nomAssurePrincipal').valueChanges.pipe(
+
+    this.filteredAssurePrincipals = this.couverture.at(0).get('nomAssurePrincipal').valueChanges.pipe(
       startWith(''),
       map(value => typeof value === 'string' ? value : ''),
       map(nom => nom ? this._filterPatient(nom) : this.listPatients.slice())
     );
-    this.filteredPrescripteurs = this.factureForm.get('nomPrescripteur').valueChanges.pipe(
+    this.filteredPrescripteurs = this.prescription.at(0).get('nomPrescripteur').valueChanges.pipe(
       startWith(''),
       map(value => typeof value === 'string' ? value : ''),
       map(nom => nom ? this._filterPrescripteur(nom) : this.listPrescripteurs.slice())
+    );
+    this.filteredEntreprises = this.couverture.at(0).get('entrepriseAssurePrincipal').valueChanges.pipe(
+      startWith(''),
+      map(value => typeof value === 'string' ? value : ''),
+      map(nom => nom ? this._filterEntreprise(nom) : this.listEntreprises.slice())
+    );
+    this.filteredAssurances = this.couverture.at(0).get('assurance').valueChanges.pipe(
+      startWith(''),
+      map(value => typeof value === 'string' ? value : ''),
+      map(nom => nom ? this._filterAssurance(nom) : this.listAssurances.slice())
     );
 
     this.listStocksSubscription = this.stockService.listStockSubject.subscribe(
@@ -137,7 +164,7 @@ export class AddFactureComponent implements OnInit {
         console.log('Error ! : ' + error);
       }
     );
-    this.stockService.getAllStocksByQte(1);
+    this.stockService.getAllStocks();
     this.filteredMontures = this.montureControl.valueChanges.pipe(
       startWith(''),
       map(value => typeof value === 'string' ? value : value.libelle),
@@ -173,7 +200,7 @@ export class AddFactureComponent implements OnInit {
       if (!e) {
         if(this.patient != null){
           this.patient = null;
-          this.onInitPatientForm(new PersonneModel(null, null, null, null, null, new CompagniModel()));
+          this.onInitPatientForm(new PersonneModel(null, null, null, new CompagniModel(), null, null));
           this.onEnablePatientForm();
         }
       }
@@ -183,18 +210,32 @@ export class AddFactureComponent implements OnInit {
       if (!e) {
         if(this.assurePrincipal != null){
           this.assurePrincipal = null;
-          this.onInitAssurePrincipalForm(new PersonneModel(null, null, null, null, null, new CompagniModel()));
+          this.onInitAssurePrincipalForm(new PersonneModel(null, null, null, new CompagniModel(), null));
           this.onEnableAssurePrincipalForm();
         }
       }
     },e => console.log('error', e));
-
 
     this.prescripteurTriggerSubscription = this.triggerPrescripteur.panelClosingActions.subscribe(e => {
       if (!e) {
         if(this.prescripteur != null){
           this.prescripteur = null;
           //this.onInitPatientForm(new PersonneModel(null, null, null, null, new CompagniModel()));
+        }
+      }
+    },e => console.log('error', e));
+
+    this.entrepriseTriggerSubscription = this.triggerEntreprise.panelClosingActions.subscribe(e => {
+      if (!e) {
+        if(this.entreprise != null){
+          this.entreprise = null;
+        }
+      }
+    },e => console.log('error', e));
+    this.assuranceTriggerSubscription = this.triggerAssurance.panelClosingActions.subscribe(e => {
+      if (!e) {
+        if(this.assurance != null){
+          this.assurance = null;
         }
       }
     },e => console.log('error', e));
@@ -211,6 +252,7 @@ export class AddFactureComponent implements OnInit {
     this.lentilleGTriggerSubscription = this.triggerLentilleG.panelClosingActions.subscribe(e => {
       if (!e) {
         this.lentilleG = null;
+        this.lentilleGProd = null;
         this.lentilleGControl.setValue(new LentilleModel(null,null,null,null));
         this.factureForm.get('qteLentilleG').reset(1);
         this.factureForm.get('remiseLentilleG').reset(0);
@@ -219,6 +261,7 @@ export class AddFactureComponent implements OnInit {
     this.lentilleDTriggerSubscription = this.triggerLentilleD.panelClosingActions.subscribe(e => {
       if (!e) {
         this.lentilleD = null;
+        this.lentilleDProd = null;
         this.lentilleDControl.setValue(new LentilleModel(null,null,null,null));
         this.factureForm.get('qteLentilleD').reset(1);
         this.factureForm.get('remiseLentilleD').reset(0);
@@ -245,8 +288,6 @@ export class AddFactureComponent implements OnInit {
   getPatient(event) {
     this.patient = event.option.value;
     this.onInitPatientForm(this.patient);
-    this.factureForm.get('civilitePatient').disable();
-    this.factureForm.get('idEntreprisePatient').disable();
   }
   onInitPatientForm(patient: PersonneModel){
     //this.factureForm.get('nom').setValue(patient.nom);
@@ -284,52 +325,11 @@ export class AddFactureComponent implements OnInit {
     this.factureForm.get('idEntreprisePatient').enable();
   }
 
-  getAssurePrincipal(event) {
-    this.assurePrincipal = event.option.value;
-    this.onInitAssurePrincipalForm(this.assurePrincipal);
-    this.factureForm.get('civilitePatient').disable();
-    this.factureForm.get('idEntreprisePatient').disable();
-  }
-  onInitAssurePrincipalForm(patient: PersonneModel){
-    //this.factureForm.get('nom').setValue(patient.nom);
-    this.factureForm.get('prenomAssurePrincipal').setValue(patient.prenom);
-    this.factureForm.get('dateNaissAssurePrincipal').setValue(patient.dateNaiss);
-    this.factureForm.get('adresseAssurePrincipal').setValue(patient.adresse);
-    this.factureForm.get('emailAssurePrincipal').setValue(patient.email);
-    this.factureForm.get('tel1AssurePrincipal').setValue(patient.tel1);
-    this.factureForm.get('civiliteAssurePrincipal').setValue(patient.civilite);
-    this.factureForm.get('entrepriseAssurePrincipal').setValue(patient.entreprise ? patient.entreprise.id : null);
-    if(patient.id == null)
-      this.onEnableAssurePrincipalForm();
-    else
-      this.onDisableAssurePrincipalForm();
-  }
-  onDisableAssurePrincipalForm(){
-    this.factureForm.get('prenomAssurePrincipal').disable();
-    this.factureForm.get('dateNaissAssurePrincipal').disable();
-    this.factureForm.get('adresseAssurePrincipal').disable();
-    this.factureForm.get('emailAssurePrincipal').disable();
-    this.factureForm.get('tel1AssurePrincipal').disable();
-    this.factureForm.get('civiliteAssurePrincipal').disable();
-    this.factureForm.get('entrepriseAssurePrincipal').disable();
-  }
-  onEnableAssurePrincipalForm(){
-    this.factureForm.get('prenomAssurePrincipal').enable();
-    this.factureForm.get('dateNaissAssurePrincipal').enable();
-    this.factureForm.get('adresseAssurePrincipal').enable();
-    this.factureForm.get('emailAssurePrincipal').enable();
-    this.factureForm.get('tel1AssurePrincipal').enable();
-    this.factureForm.get('civiliteAssurePrincipal').enable();
-    this.factureForm.get('entrepriseAssurePrincipal').enable();
-  }
-
   private _filterPrescripteur(value: string): PersonneModel[] {
     const filterValue = value.toLowerCase();
     let val='';
     return this.listPrescripteurs.filter(option => {
       let val='';
-      if(option.titre != null)
-        val = val+option.titre+' ';
       if(option.nom != null)
         val = val+option.nom+' ';
       if(option.prenom != null)
@@ -340,8 +340,6 @@ export class AddFactureComponent implements OnInit {
   displayPrescripteur(prescripteur: PersonneModel): string {
     let val='';
     if(prescripteur){
-      if(prescripteur.titre != null)
-        val = val+prescripteur.titre+' ';
       if(prescripteur.nom != null)
         val = val+prescripteur.nom+' ';
       if(prescripteur.prenom != null)
@@ -352,6 +350,67 @@ export class AddFactureComponent implements OnInit {
   getPrescripteur(event) {
     this.prescripteur = event.option.value;
   }
+
+  private _filterEntreprise(value: string): CompagniModel[] {
+    const filterValue = value.toLowerCase();
+    return this.listEntreprises.filter(option => option.nom.toLowerCase().includes(filterValue.trim()));
+  }
+  private _filterAssurance(value: string): CompagniModel[] {
+    const filterValue = value.toLowerCase();
+    return this.listAssurances.filter(option => option.nom.toLowerCase().includes(filterValue.trim()));
+  }
+  displayEntreprise(entreprise: CompagniModel): string {
+    if(entreprise && entreprise.nom){
+      return entreprise.nom;
+    }
+    return '';
+  }
+  getEntreprise(event) {
+    this.entreprise = event.option.value;
+  }
+  getAssurance(event) {
+    this.assurance = event.option.value;
+  }
+
+  getAssurePrincipal(event) {
+    this.assurePrincipal = event.option.value;
+    this.onInitAssurePrincipalForm(this.assurePrincipal);
+  }
+  onInitAssurePrincipalForm(patient: PersonneModel){
+    //this.factureForm.get('nom').setValue(patient.nom);
+    this.couverture.at(0).get('prenomAssurePrincipal').setValue(patient.prenom);
+    this.couverture.at(0).get('dateNaissAssurePrincipal').setValue(patient.dateNaiss);
+    this.couverture.at(0).get('adresseAssurePrincipal').setValue(patient.adresse);
+    this.couverture.at(0).get('emailAssurePrincipal').setValue(patient.email);
+    this.couverture.at(0).get('tel1AssurePrincipal').setValue(patient.tel1);
+    this.couverture.at(0).get('civiliteAssurePrincipal').setValue(patient.civilite);
+    this.couverture.at(0).get('entrepriseAssurePrincipal').setValue(patient.entreprise ? patient.entreprise.id : null);
+    if(patient.id == null)
+      this.onEnableAssurePrincipalForm();
+    else
+      this.onDisableAssurePrincipalForm();
+  }
+  onDisableAssurePrincipalForm(){
+    if(this.couverture.length == 1){
+      this.couverture.at(0).get('prenomAssurePrincipal').disable();
+      this.couverture.at(0).get('dateNaissAssurePrincipal').disable();
+      this.couverture.at(0).get('adresseAssurePrincipal').disable();
+      this.couverture.at(0).get('emailAssurePrincipal').disable();
+      this.couverture.at(0).get('tel1AssurePrincipal').disable();
+      this.couverture.at(0).get('civiliteAssurePrincipal').disable();
+    }
+  }
+  onEnableAssurePrincipalForm(){
+    if(this.couverture.length == 1){
+      this.couverture.at(0).get('prenomAssurePrincipal').enable();
+      this.couverture.at(0).get('dateNaissAssurePrincipal').enable();
+      this.couverture.at(0).get('adresseAssurePrincipal').enable();
+      this.couverture.at(0).get('emailAssurePrincipal').enable();
+      this.couverture.at(0).get('tel1AssurePrincipal').enable();
+      this.couverture.at(0).get('civiliteAssurePrincipal').enable();
+    }
+  }
+
 
   displayProduit(stock: StockModel): string {
     if(stock && stock.produit){
@@ -373,16 +432,18 @@ export class AddFactureComponent implements OnInit {
   }
   getLentilleG(event) {
     this.lentilleG = event.option.value;
+    this.lentilleGProd =this.lentilleG.produit as LentilleModel;
     this.onCalculValeurs();
   }
   getLentilleD(event) {
     this.lentilleD = event.option.value;
+    this.lentilleDProd =this.lentilleD.produit as LentilleModel;
     this.onCalculValeurs();
   }
 
   initForm(){
     this.factureForm = this.formBuilder.group({
-      civilitePatient: [null, Validators.compose([Validators.required])],
+      civilitePatient: new FormControl(),
       nomPatient: [null, Validators.compose([Validators.required])],
       prenomPatient: new FormControl(),
       dateNaissPatient: new FormControl(),
@@ -392,13 +453,8 @@ export class AddFactureComponent implements OnInit {
       tel2Patient: new FormControl(),
       idEntreprisePatient: new FormControl(),
 
-      nomPrescripteur: ['', Validators.compose([Validators.required])],
-      prenomPrescripteur: new FormControl(),
-      titre: new FormControl(),
-      datePrescription: new FormControl(),
-      dateLimite: new FormControl(),
-      eyeVision: new FormControl(),
-      port: new FormControl(),
+      prescription: this.formBuilder.array([]),
+      couverture: this.formBuilder.array([]),
 
       qteMonture: [1, Validators.compose([Validators.required, Validators.min(1)])],
       qteLentilleG: [1, Validators.compose([Validators.required, Validators.min(1)])],
@@ -413,7 +469,7 @@ export class AddFactureComponent implements OnInit {
       totalLentilleG: new FormControl(),
       totalLentilleD : new FormControl(),
 
-      civiliteAssurePrincipal: [null, Validators.compose([Validators.required])],
+      /*civiliteAssurePrincipal: new FormControl(),
       nomAssurePrincipal: [null, Validators.compose([Validators.required])],
       prenomAssurePrincipal: new FormControl(),
       dateNaissAssurePrincipal: new FormControl(),
@@ -427,32 +483,58 @@ export class AddFactureComponent implements OnInit {
       couvertureMonture : ['', Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
       numeroDocument : '',
       dateDocument : '',
+      relation : '',*/
+
       priseEnCharge : 0,
       franchise : 0,
-      relation : '',
 
     });
   }
   get f() { return this.factureForm.controls; }
 
+  get prescription(): FormArray {
+    return this.factureForm.get('prescription') as FormArray;
+  }
+  onAddPrescription(){
+    this.prescription.push(this.formBuilder.group({
+      nomPrescripteur: ['', Validators.compose([Validators.required])],
+      //prenomPrescripteur: new FormControl(),
+      datePrescription: new FormControl(),
+      dateLimite: new FormControl(),
+      eyeVision: new FormControl(),
+      port: new FormControl()
+    }));
+  }
+  onDeletePrescription(index: number){
+    this.prescription.removeAt(index);
+  }
+
+  get couverture(): FormArray {
+    return this.f.couverture as FormArray;
+  }
   onAddCouverture(){
-    this.isCouverture = true;
+    this.couverture.push(this.formBuilder.group({
+      civiliteAssurePrincipal: new FormControl(),
+      nomAssurePrincipal: [null, Validators.compose([Validators.required])],
+      prenomAssurePrincipal: new FormControl(),
+      dateNaissAssurePrincipal: new FormControl(),
+      emailAssurePrincipal: [null, Validators.compose([Validators.email])],
+      adresseAssurePrincipal: new FormControl(),
+      tel1AssurePrincipal: new FormControl(),
+      entrepriseAssurePrincipal : ['', Validators.compose([Validators.required])],
+
+      assurance : ['', Validators.compose([Validators.required])],
+      couvertureVerre : ['', Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
+      couvertureMonture : ['', Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
+      numeroDocument : '',
+      dateDocument : '',
+      relation : ''
+    }));
     this.onCalculValeurs();
   }
-  onDeleteCouverture(){
-    this.isCouverture = false;
-    this.onInitAssurePrincipalForm(new PersonneModel(null, null, null, null, null, new CompagniModel()));
-    this.factureForm.get('nomAssurePrincipal').reset();
-    this.factureForm.get('assurance').reset();
-    this.factureForm.get('couvertureVerre').reset();
-    this.factureForm.get('couvertureMonture').reset();
-    this.factureForm.get('numeroDocument').reset();
-    this.factureForm.get('dateDocument').reset();
-    this.factureForm.get('priseEnCharge').reset();
-    this.factureForm.get('relation').reset();
-    this.factureForm.get('franchise').reset();
+  onDeleteCouverture(index: number){
+    this.couverture.removeAt(index);
     this.onCalculValeurs();
-
   }
 
   onCalculValeurs(){
@@ -467,7 +549,6 @@ export class AddFactureComponent implements OnInit {
       this.f.montantMonture.setValue(0);
       this.f.totalMonture.setValue(0);
     }
-
 
     if(this.lentilleG != null) {
       this.f.montantLentilleG.setValue(this.lentilleG.prixVente * (1 - this.f.remiseLentilleG.value/100));
@@ -487,8 +568,8 @@ export class AddFactureComponent implements OnInit {
       this.f.totalLentilleD.setValue(0);
     }
 
-    if(this.isCouverture){
-      this.f.priseEnCharge.setValue(this.f.totalMonture.value * this.f.couvertureMonture.value/100 + this.f.totalLentilleG.value * this.f.couvertureVerre.value/100 + this.f.totalLentilleG.value*this.f.couvertureVerre.value/100)
+    if(this.couverture.length ==1){
+      this.f.priseEnCharge.setValue(this.f.totalMonture.value * this.couverture.at(0).get('couvertureMonture').value/100 + this.f.totalLentilleG.value * this.couverture.at(0).get('couvertureVerre').value/100 + this.f.totalLentilleG.value*this.couverture.at(0).get('couvertureVerre').value/100);
       this.f.franchise.setValue((this.f.totalMonture.value + this.f.totalLentilleG.value + this.f.totalLentilleD.value) - this.f.priseEnCharge.value);
       this.aPayer = (this.f.totalMonture.value + this.f.totalLentilleG.value + this.f.totalLentilleD.value) - this.f.priseEnCharge.value;
     }
@@ -502,6 +583,16 @@ export class AddFactureComponent implements OnInit {
 
   }
 
+  formatMillier( nombre){
+    nombre += '';
+    var sep = ' ';
+    var reg = /(\d+)(\d{3})/;
+    while( reg.test( nombre)) {
+      nombre = nombre.replace( reg, '$1' +sep +'$2');
+    }
+    return nombre;
+  }
+
   onReset() {
     this.submitted = false;
     this.factureForm.reset();
@@ -513,24 +604,153 @@ export class AddFactureComponent implements OnInit {
 
   onSubmitForm() {
     console.log("onSubmitForm");
-
     this.submitted = true;
     if (this.factureForm.invalid) {
       console.log("factureForm.invalid");
       return;
     }
 
+     const formValue = this.factureForm.value;
+
+
+    /*
+           let editedFacture = new FactureClientModel();
+
+
+           if(this.patient){
+             editedFacture.patient = this.patient;
+           }
+           else {
+             let editedPatient = new PersonneModel();
+             editedPatient.civilite = formValue['civilitePatient'] ? (<string> formValue['civilitePatient']).trim() : formValue['civilitePatient'];
+             editedPatient.nom = formValue['nomPatient'] ? (<string> formValue['nomPatient']).trim() : formValue['nomPatient'];
+             editedPatient.prenom = formValue['prenomPatient'] ? (<string> formValue['prenomPatient']).trim() : formValue['prenomPatient'];
+             editedPatient.dateNaiss = formValue['dateNaissPatient'] ? (<string> formValue['dateNaissPatient']).trim() : formValue['dateNaissPatient'];
+             editedPatient.email = formValue['emailPatient'] ? (<string> formValue['emailPatient']).trim() : formValue['emailPatient'];
+             editedPatient.adresse = formValue['adressePatient'] ? (<string> formValue['adressePatient']).trim() : formValue['adressePatient'];
+             editedPatient.tel1 = formValue['tel1Patient'] ? (<string> formValue['tel1Patient']).trim() : formValue['tel1Patient'];
+             editedPatient.tel2 = formValue['tel2Patient'] ? (<string> formValue['tel2Patient']).trim() : formValue['tel2Patient'];
+             if(formValue['idEntreprisePatient']){
+               editedPatient.entreprise = this.listEntreprises.filter(entre => entre.id == formValue['idEntreprisePatient'])[0];
+             }
+             else {
+               editedPatient.entreprise = null;
+             }
+             editedFacture.patient = editedPatient;
+           }
+
+           if(this.prescription.length == 1){
+             let editedPrescription = new PrescriptionModel(null, null, null, null);
+             editedPrescription.datePrescription = this.prescription.at(0).get('datePrescription').value;
+             editedPrescription.deadline = this.prescription.at(0).get('dateLimite').value;
+             editedPrescription.eyeVision = this.prescription.at(0).get('eyeVision').value;
+             editedPrescription.port = this.prescription.at(0).get('port').value;
+             if(this.prescripteur){
+               editedPrescription.prescripteur = this.prescripteur;
+             }
+             else {
+               let editedPrescripteur = new PrescripteurModel();
+               editedPrescripteur.nom =  this.prescription.at(0).get('nomPrescripteur').value;
+               editedPrescription.prescripteur = editedPrescripteur;
+             }
+             editedFacture.prescription = editedPrescription;
+           }
+            */
+
+    let isVente = false;
+    if(this.monture && formValue['qteMonture'] >= 1){
+      if(formValue['qteMonture'] > this.monture.qte){
+        alert("La quantité de monture "+this.monture.produit.libelle+" en stock est inférieur à la quantité commandé");
+        return;
+      }
+      else
+        isVente = true;
+    }
+    if(this.lentilleD && formValue['qteLentilleD'] >= 1){
+      if(formValue['qteLentilleD'] > this.lentilleD.qte){
+        alert("La quantité de lentille "+this.lentilleD.produit.libelle+" en stock est inférieur à la quantité commandé");
+        return;
+      }
+      else
+        isVente = true;
+    }
+    if(this.lentilleG && formValue['qteLentilleG'] >= 1){
+      if(formValue['qteLentilleG'] > this.lentilleG.qte){
+        alert("La quantité de lentille "+this.lentilleG.produit.libelle+" en stock est inférieur à la quantité commandé");
+        return;
+      }
+      else
+        isVente = true;
+    }
+    if(isVente == false){
+      alert("Veillez selectionner au moin un produit");
+      return;
+    }
+
+    /*
+    if(this.couverture.length == 1){
+      let editedCouverture : CouvertureModel[]=[];
+      let editCouverture = new CouvertureModel(null, null, null, null, null, null)
+
+      if(this.assurePrincipal){
+        editCouverture.assurePrincipal = this.assurePrincipal;
+      }
+      else {
+        let editedAssurePrincipal = new PersonneModel();
+        editedAssurePrincipal.civilite = this.couverture.at(0).get('civiliteAssurePrincipal').value;
+        editedAssurePrincipal.nom = this.couverture.at(0).get('nomAssurePrincipal').value ? (<string>formValue2['nomAssurePrincipal']).trim() : formValue2['nomAssurePrincipal'];
+        editedAssurePrincipal.prenom = this.couverture.at(0).get('prenomAssurePrincipal').value ? (<string>formValue2['prenomAssurePrincipal']).trim() : formValue2['prenomAssurePrincipal'];
+        editedAssurePrincipal.dateNaiss = this.couverture.at(0).get('dateNaissAssurePrincipal').value ? (<string>formValue2['dateNaissAssurePrincipal']).trim() : formValue2['dateNaissAssurePrincipal'];
+        editedAssurePrincipal.email = this.couverture.at(0).get('emailAssurePrincipal').value ? (<string>formValue2['emailAssurePrincipal']).trim() : formValue2['emailAssurePrincipal'];
+        editedAssurePrincipal.adresse = this.couverture.at(0).get('adresseAssurePrincipal').value ? (<string>formValue2['adresseAssurePrincipal']).trim() : formValue2['adresseAssurePrincipal'];
+        editedAssurePrincipal.tel1 = this.couverture.at(0).get('tel1AssurePrincipal').value ? (<string>formValue2['tel1AssurePrincipal']).trim() : formValue2['tel1AssurePrincipal'];
+        editCouverture.assurePrincipal = editedAssurePrincipal;
+      }
+      editCouverture.couvertureVerre = formValue2['couvertureVerre'];
+      editCouverture.couvertureMonture = formValue2['couvertureMonture'];
+      editCouverture.dateDocument = formValue2['dateDocument'];
+      editCouverture.numeroDocument = formValue2['numeroDocument'];
+      editCouverture.priseEnCharge = formValue['priseEnCharge'];
+      editCouverture.franchise = formValue['franchise'];
+      editCouverture.relation = formValue2['relation'];
+      if(this.entreprise){
+        editCouverture.entreprise = this.entreprise;
+      }
+      else {
+        let editedEntreprise = new CompagniModel();
+        editedEntreprise.nom = formValue2['entrepriseAssurePrincipal'] ? (<string> formValue2['entrepriseAssurePrincipal']).trim() : formValue2['entrepriseAssurePrincipal'];
+        editCouverture.entreprise = editedEntreprise;
+      }
+      if(this.assurance){
+        editCouverture.assurance = this.assurance;
+      }
+      else {
+        let editedAssurance = new CompagniModel();
+        editedAssurance.nom = formValue2['assurance'] ? (<string> formValue2['assurance']).trim() : formValue2['assurance'];
+        editCouverture.assurance = editedAssurance;
+      }
+
+      editedCouverture.push(editCouverture);
+      editedFacture.couvertures = editedCouverture;
+    }
+     */
+
+    this.addFactureClient(this.loadFacture());
+
+  }
+
+  loadFacture(){
+
     const formValue = this.factureForm.value;
-    let editedPatient = new PersonneModel();
-    let editedAssurePrincipal = new PersonneModel();
-    let editedPrescription : PrescriptionModel = new PrescriptionModel(null, null, null, null);
-    let editedVente : VenteModel[]=[];
-    let editedCouverture : CouvertureModel[]=[];
+
+
+    let editedFacture = new FactureClientModel();
 
     if(this.patient){
-      editedPatient  = this.patient;
+      editedFacture.patient = this.patient;
     }
     else {
+      let editedPatient = new PersonneModel();
       editedPatient.civilite = formValue['civilitePatient'] ? (<string> formValue['civilitePatient']).trim() : formValue['civilitePatient'];
       editedPatient.nom = formValue['nomPatient'] ? (<string> formValue['nomPatient']).trim() : formValue['nomPatient'];
       editedPatient.prenom = formValue['prenomPatient'] ? (<string> formValue['prenomPatient']).trim() : formValue['prenomPatient'];
@@ -545,101 +765,121 @@ export class AddFactureComponent implements OnInit {
       else {
         editedPatient.entreprise = null;
       }
+      editedFacture.patient = editedPatient;
     }
 
-    if(this.prescripteur || formValue['nomPrescripteur']){
-      editedPrescription.datePrescription = formValue['datePrescription'] ? (<string> formValue['datePrescription']).trim() : formValue['datePrescription'];
-      editedPrescription.deadline = formValue['datePrescription'] ? (<string> formValue['datePrescription']).trim() : formValue['datePrescription'];
-      editedPrescription.eyeVision = formValue['datePrescription'] ? (<string> formValue['datePrescription']).trim() : formValue['datePrescription'];
-      editedPrescription.port = formValue['datePrescription'] ? (<string> formValue['datePrescription']).trim() : formValue['datePrescription'];
+    if(this.prescription.length == 1){
+      let editedPrescription = new PrescriptionModel(null, null, null, null);
+      editedPrescription.datePrescription = this.prescription.at(0).get('datePrescription').value;
+      editedPrescription.deadline = this.prescription.at(0).get('dateLimite').value;
+      editedPrescription.eyeVision = this.prescription.at(0).get('eyeVision').value;
+      editedPrescription.port = this.prescription.at(0).get('port').value;
       if(this.prescripteur){
         editedPrescription.prescripteur = this.prescripteur;
       }
       else {
-        let editedPrescripteur = new PersonneModel();
-        editedPrescripteur.nom = formValue['nomPrescripteur'] ? (<string> formValue['nomPrescripteur']).trim() : formValue['nomPrescripteur'];
-        editedPrescripteur.prenom = formValue['prenomPrescripteur'] ? (<string> formValue['prenomPrescripteur']).trim() : formValue['prenomPrescripteur'];
-        editedPrescripteur.titre = formValue['titre'] ? (<string> formValue['titre']).trim() : formValue['titre'];
-        editedPrescripteur.isPrescripteur = true;
+        let editedPrescripteur = new PrescripteurModel();
+        editedPrescripteur.nom =  this.prescription.at(0).get('nomPrescripteur').value;
         editedPrescription.prescripteur = editedPrescripteur;
       }
-    }
-    else {
-      editedPrescription = null;
+      editedFacture.prescription = editedPrescription;
     }
 
+    let editedVente : VenteModel[]=[];
     if(this.monture && formValue['qteMonture'] >= 1){
+      if(formValue['qteMonture'] > this.monture.qte){
+        alert("La quantité de monture "+this.monture.produit.libelle+" en stock est inférieur à la quantité commandé");
+        return;
+      }
       let vente1 = new VenteModel(this.monture.prixVente, formValue['qteMonture'], formValue['montantMonture'], formValue['remiseMonture'], formValue['totalMonture']);
-      vente1.produit = this.monture.produit;
+      vente1.stock = this.monture;
+      vente1.libelle = "monture";
       editedVente.push(vente1);
     }
     if(this.lentilleD && formValue['qteLentilleD'] >= 1){
+      if(formValue['qteLentilleD'] > this.lentilleD.qte){
+        alert("La quantité de lentille "+this.lentilleD.produit.libelle+" en stock est inférieur à la quantité commandé");
+        return;
+      }
       let vente2 = new VenteModel(this.lentilleD.prixVente, formValue['qteLentilleD'], formValue['montantLentilleD'], formValue['remiseLentilleD'], formValue['totalLentilleD']);
-      vente2.produit = this.lentilleD.produit;
+      vente2.stock = this.lentilleD;
+      vente2.libelle = "lentilleD";
       editedVente.push(vente2);
     }
     if(this.lentilleG && formValue['qteLentilleG'] >= 1){
+      if(formValue['qteLentilleG'] > this.lentilleG.qte){
+        alert("La quantité de lentille "+this.lentilleG.produit.libelle+" en stock est inférieur à la quantité commandé");
+        return;
+      }
       let vente3 = new VenteModel(this.lentilleG.prixVente, formValue['qteLentilleG'], formValue['montantLentilleG'], formValue['remiseLentilleG'], formValue['totalLentilleG']);
-      vente3.produit = this.lentilleG.produit;
+      vente3.stock = this.lentilleG;
+      vente3.libelle = "lentilleG";
       editedVente.push(vente3);
     }
-
-    if(this.isCouverture){
-      if(this.assurePrincipal){
-        editedAssurePrincipal  = this.assurePrincipal;
-      }
-      else {
-        editedAssurePrincipal.civilite = formValue['civilitePatient'] ? (<string>formValue['civilitePatient']).trim() : formValue['civilitePatient'];
-        editedAssurePrincipal.nom = formValue['nomPatient'] ? (<string>formValue['nomPatient']).trim() : formValue['nomPatient'];
-        editedAssurePrincipal.prenom = formValue['prenomPatient'] ? (<string>formValue['prenomPatient']).trim() : formValue['prenomPatient'];
-        editedAssurePrincipal.dateNaiss = formValue['dateNaissPatient'] ? (<string>formValue['dateNaissPatient']).trim() : formValue['dateNaissPatient'];
-        editedAssurePrincipal.email = formValue['emailPatient'] ? (<string>formValue['emailPatient']).trim() : formValue['emailPatient'];
-        editedAssurePrincipal.adresse = formValue['adressePatient'] ? (<string>formValue['adressePatient']).trim() : formValue['adressePatient'];
-        editedAssurePrincipal.tel1 = formValue['tel1Patient'] ? (<string>formValue['tel1Patient']).trim() : formValue['tel1Patient'];
-        if (formValue['entrepriseAssurePrincipal']) {
-          editedAssurePrincipal.entreprise = this.listEntreprises.filter(entre => entre.id == formValue['entrepriseAssurePrincipal'])[0];
-        } else {
-          editedAssurePrincipal.entreprise = null;
-        }
-      }
-
-      let editCouverture = new CouvertureModel(null, null, null, null, null, null)
-      editCouverture.couvertureVerre = formValue['couvertureVerre'];
-      editCouverture.couvertureMonture = formValue['couvertureMonture'];
-      editCouverture.dateDocument = formValue['dateDocument'];
-      editCouverture.numeroDocument = formValue['numeroDocument'];
-      editCouverture.priseEnCharge = formValue['priseEnCharge'];
-      editCouverture.franchise = formValue['franchise'];
-      editCouverture.relation = formValue['relation'];
-      editCouverture.assurance = this.listEntreprises.filter(entre => entre.id == formValue['assurance'])[0];
-      editCouverture.assurePrincipal = editedAssurePrincipal;
-
-      editedCouverture.push(editCouverture);
-
-    }
-
-    let editedFacture = new FactureClientModel();
-    editedFacture.patient = editedPatient;
-    editedFacture.prescription = editedPrescription;
-    editedFacture.ventes = editedVente;
-    editedFacture.couvertures = editedCouverture;
-
     if(editedVente.length < 1){
       alert("Veillez selectionner au moin un produit");
       return;
     }
+    editedFacture.ventes = editedVente;
 
-    console.log(editedFacture);
+    if(this.couverture.length == 1){
+      const formValue2 = this.couverture.at(0).value;
+      let editedCouverture : CouvertureModel[]=[];
+      let editCouverture = new CouvertureModel(null, null, null, null, null, null)
 
-    this.addFactureClient(editedFacture);
+      if(this.assurePrincipal){
+        editCouverture.assurePrincipal = this.assurePrincipal;
+      }
+      else {
+        let editedAssurePrincipal = new PersonneModel();
+        editedAssurePrincipal.civilite = this.couverture.at(0).get('civiliteAssurePrincipal').value;
+        editedAssurePrincipal.nom = this.couverture.at(0).get('nomAssurePrincipal').value ? (<string>formValue2['nomAssurePrincipal']).trim() : formValue2['nomAssurePrincipal'];
+        editedAssurePrincipal.prenom = this.couverture.at(0).get('prenomAssurePrincipal').value ? (<string>formValue2['prenomAssurePrincipal']).trim() : formValue2['prenomAssurePrincipal'];
+        editedAssurePrincipal.dateNaiss = this.couverture.at(0).get('dateNaissAssurePrincipal').value ? (<string>formValue2['dateNaissAssurePrincipal']).trim() : formValue2['dateNaissAssurePrincipal'];
+        editedAssurePrincipal.email = this.couverture.at(0).get('emailAssurePrincipal').value ? (<string>formValue2['emailAssurePrincipal']).trim() : formValue2['emailAssurePrincipal'];
+        editedAssurePrincipal.adresse = this.couverture.at(0).get('adresseAssurePrincipal').value ? (<string>formValue2['adresseAssurePrincipal']).trim() : formValue2['adresseAssurePrincipal'];
+        editedAssurePrincipal.tel1 = this.couverture.at(0).get('tel1AssurePrincipal').value ? (<string>formValue2['tel1AssurePrincipal']).trim() : formValue2['tel1AssurePrincipal'];
+        editCouverture.assurePrincipal = editedAssurePrincipal;
+      }
+      editCouverture.couvertureVerre = formValue2['couvertureVerre'];
+      editCouverture.couvertureMonture = formValue2['couvertureMonture'];
+      editCouverture.dateDocument = formValue2['dateDocument'];
+      editCouverture.numeroDocument = formValue2['numeroDocument'];
+      editCouverture.priseEnCharge = formValue['priseEnCharge'];
+      editCouverture.franchise = formValue['franchise'];
+      editCouverture.relation = formValue2['relation'];
+      if(this.entreprise){
+        editCouverture.entreprise = this.entreprise;
+      }
+      else {
+        let editedEntreprise = new CompagniModel();
+        editedEntreprise.nom = formValue2['entrepriseAssurePrincipal'] ? (<string> formValue2['entrepriseAssurePrincipal']).trim() : formValue2['entrepriseAssurePrincipal'];
+        editCouverture.entreprise = editedEntreprise;
+      }
+      if(this.assurance){
+        editCouverture.assurance = this.assurance;
+      }
+      else {
+        let editedAssurance = new CompagniModel();
+        editedAssurance.nom = formValue2['assurance'] ? (<string> formValue2['assurance']).trim() : formValue2['assurance'];
+        editedAssurance.type = 'assurance';
+        editCouverture.assurance = editedAssurance;
+      }
 
+      editedCouverture.push(editCouverture);
+      editedFacture.couvertures = editedCouverture;
+    }
+
+    return editedFacture;
   }
+
   private addFactureClient(facture : FactureModel) {
     console.log(facture);
     this.factureClientService.addFactureClient(facture).subscribe(
       data =>{
         console.log(data);
-        this.onReset();
+        // @ts-ignore
+        this.router.navigate(['/print-facture-client/'+data.id]);
       }, error => {
         console.log('Error ! : ' + error);
         //this.loading = false;

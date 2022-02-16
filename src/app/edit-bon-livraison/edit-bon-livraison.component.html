@@ -130,12 +130,11 @@
           </thead>
           <tbody>
           <tr *ngFor="let livr of listLivraison; let i = index">
-            <td *ngIf="livr.lot.produit.discriminator== 'L'">Lentille</td>
-            <td *ngIf="livr.lot.produit.discriminator== 'M'">Monture</td>
-            <td>{{ livr.lot.produit.libelle }}</td>
+            <td *ngIf="livr.produit.discriminator== 'L'">Lentille</td>
+            <td *ngIf="livr.produit.discriminator== 'M'">Monture</td>
+            <td>{{ livr.produit.libelle }}</td>
             <td>{{ livr.qte }}</td>
             <td>{{ livr.prixAchat }}</td>
-            <td>{{ livr.lot.prixVente }}</td>
             <td style="white-space: nowrap">
               <button (click)="removeProduit(i)" class="btn btn-sm btn-danger btn-delete-user" [disabled]="false">
                 <span>Retirer</span>
