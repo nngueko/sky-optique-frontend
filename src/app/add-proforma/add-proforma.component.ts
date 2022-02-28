@@ -22,6 +22,10 @@ import {CouvertureModel} from "../models/couverture.model";
 import {PrescripteurService} from "../services/prescripteur.service";
 import {PrescripteurModel} from "../models/prescripteur.model";
 import {ProformaService} from "../services/proforma.service";
+import {MarqueModel} from "../models/marque.model";
+import {MontureService} from "../services/monture.service";
+import {LentilleService} from "../services/lentille.service";
+import {MarqueService} from "../services/marque.service";
 
 @Component({
   selector: 'app-add-proforma',
@@ -90,6 +94,17 @@ export class AddProformaComponent implements OnInit {
   submitted = false;
   loading = false;
 
+  montureForm: FormGroup;
+  submittedMontureForm = false;
+  listMarques : MarqueModel[]=[];
+  listMarqueSubscription : Subscription;
+
+  lentilleGForm: FormGroup;
+  submittedLentilleGForm = false;
+
+  lentilleDForm: FormGroup;
+  submittedLentilleDForm = false;
+
   constructor(private formBuilder: FormBuilder,
               private router: Router,
               private route: ActivatedRoute,
@@ -99,7 +114,10 @@ export class AddProformaComponent implements OnInit {
               private prescripteurService : PrescripteurService,
               private factureClientService : FactureClientService,
               private proformaService : ProformaService,
-              private stockService : StockService
+              private stockService : StockService,
+              private montureService :  MontureService,
+              private lentilleService :  LentilleService,
+              private marqueService : MarqueService,
   ) { }
 
   ngOnInit(): void {
@@ -182,6 +200,18 @@ export class AddProformaComponent implements OnInit {
       map(libelle => libelle ? this._filterLentille(libelle) : this.listLentilles.slice())
     );
 
+    this.listMarqueSubscription = this.marqueService.listMarqueSubject.subscribe(
+      data => {
+        this.listMarques = data;
+      }, error => {
+        console.log('Error ! : ' + error);
+      }
+    );
+    this.marqueService.getAllMarques();
+    this.initMontureForm();
+    this.initLentilleGForm();
+    this.initLentilleDForm();
+
   }
 
   ngOnDestroy(): void {
@@ -194,6 +224,7 @@ export class AddProformaComponent implements OnInit {
     this.montureTriggerSubscription.unsubscribe();
     this.lentilleGTriggerSubscription.unsubscribe();
     this.lentilleDTriggerSubscription.unsubscribe();
+    this.listMarqueSubscription.unsubscribe();
   }
 
   ngAfterViewInit() {
@@ -247,6 +278,7 @@ export class AddProformaComponent implements OnInit {
         this.montureControl.setValue(new MontureModel(null,null,null,null, null, null));
         this.factureForm.get('qteMonture').reset(1);
         this.factureForm.get('remiseMonture').reset(0);
+        this.onCalculValeurs();
       }
     },e => console.log('error', e));
 
@@ -257,6 +289,7 @@ export class AddProformaComponent implements OnInit {
         this.lentilleGControl.setValue(new LentilleModel(null,null,null,null));
         this.factureForm.get('qteLentilleG').reset(1);
         this.factureForm.get('remiseLentilleG').reset(0);
+        this.onCalculValeurs();
       }
     },e => console.log('error', e));
     this.lentilleDTriggerSubscription = this.triggerLentilleD.panelClosingActions.subscribe(e => {
@@ -266,6 +299,7 @@ export class AddProformaComponent implements OnInit {
         this.lentilleDControl.setValue(new LentilleModel(null,null,null,null));
         this.factureForm.get('qteLentilleD').reset(1);
         this.factureForm.get('remiseLentilleD').reset(0);
+        this.onCalculValeurs();
       }
     },e => console.log('error', e));
 
@@ -412,7 +446,6 @@ export class AddProformaComponent implements OnInit {
     }
   }
 
-
   displayProduit(stock: StockModel): string {
     if(stock && stock.produit){
       return stock.produit.libelle;
@@ -492,6 +525,49 @@ export class AddProformaComponent implements OnInit {
     });
   }
   get f() { return this.factureForm.controls; }
+  initMontureForm(){
+    this.montureForm = this.formBuilder.group({
+      reference: ['', Validators.compose([Validators.required])],
+      modele: null,
+      matiere: null,
+      genre: null,
+      taille: null,
+      forme: null,
+      coloris: null,
+      lngBrn: null,
+      catAge: null,
+      idMarque: null,
+      qte: [null, Validators.compose([Validators.required, Validators.min(0)])],
+      prixVente: [null, Validators.compose([Validators.required, Validators.min(0)])],
+    });
+  }
+  get fM() { return this.montureForm.controls; }
+  initLentilleGForm(){
+    this.lentilleGForm = this.formBuilder.group({
+      libelle: ['', Validators.compose([Validators.required])],
+      //type: lentille.type,
+      sphere: [null, Validators.compose([Validators.required])],
+      cylindre: [null, Validators.compose([Validators.required])],
+      axe: null,
+      addition: null,
+      qte: [null, Validators.compose([Validators.required, Validators.min(0)])],
+      prixVente: [null, Validators.compose([Validators.required, Validators.min(0)])],
+    });
+  }
+  get fLG() { return this.lentilleGForm.controls; }
+  initLentilleDForm(){
+    this.lentilleDForm = this.formBuilder.group({
+      libelle: ['', Validators.compose([Validators.required])],
+      //type: lentille.type,
+      sphere: [null, Validators.compose([Validators.required])],
+      cylindre: [null, Validators.compose([Validators.required])],
+      axe: null,
+      addition: null,
+      qte: [null, Validators.compose([Validators.required, Validators.min(0)])],
+      prixVente: [null, Validators.compose([Validators.required, Validators.min(0)])],
+    });
+  }
+  get fLD() { return this.lentilleDForm.controls; }
 
   get prescription(): FormArray {
     return this.factureForm.get('prescription') as FormArray;
@@ -592,6 +668,18 @@ export class AddProformaComponent implements OnInit {
     this.onEnableAssurePrincipalForm();
 
   }
+  onResettMontureForm() {
+    this.submittedMontureForm = false;
+    this.montureForm.reset();
+  }
+  onResettLentilleDForm() {
+    this.submittedLentilleDForm = false;
+    this.lentilleDForm.reset();
+  }
+  onResettLentilleGForm() {
+    this.submittedLentilleGForm = false;
+    this.lentilleGForm.reset();
+  }
 
   onSubmitForm() {
     console.log("onSubmitForm");
@@ -683,6 +771,120 @@ export class AddProformaComponent implements OnInit {
      */
 
     this.addProformat(this.loadFacture());
+
+  }
+  onSubmitMontureForm() {
+    this.submittedMontureForm = true;
+    if (this.montureForm.invalid) {
+      return;
+    }
+
+    const formValue = this.montureForm.value;
+    let editedStock = new StockModel(null, null,null,null);
+    let editedMonture = new MontureModel(null,null,null,null,null);
+    editedMonture.reference=formValue['reference'] ? ( <string>formValue['reference']).trim() : formValue['reference'];
+    editedMonture.modele= formValue['modele'] ? (<string> formValue['modele']).trim() : formValue['modele'];
+    editedMonture.matiere= formValue['matiere'] ? (<string> formValue['matiere']).trim() : formValue['matiere'];
+    editedMonture.genre= formValue['genre'] ? (<string> formValue['genre']).trim() : formValue['genre'];
+    editedMonture.taille= formValue['taille'] ? (<string> formValue['taille']).trim() : formValue['taille'];
+    editedMonture.forme= formValue['forme'] ? (<string> formValue['forme']).trim() : formValue['forme'];
+    editedMonture.libelle = editedMonture.reference
+    if(formValue['idMarque']){
+      editedMonture.marque = this.listMarques.filter(opt => opt.id == formValue['idMarque'])[0];
+    }
+    else {
+      editedMonture.marque = null;
+    }
+    editedStock.produit = editedMonture;
+    editedStock.prixVente = formValue['prixVente'];
+    editedStock.qte = formValue['qte'];
+
+    this.addMonture(editedStock);
+  }
+  onSubmitLentilleGForm(){
+    this.submittedLentilleGForm = true;
+    if (this.lentilleGForm.invalid) {
+      return;
+    }
+    const formValue = this.lentilleGForm.value;
+    let editedStock = new StockModel(null, null,null,null);
+    let editedLentille = new LentilleModel(null, null);
+    editedLentille.sphere = <number> formValue['sphere'];
+    editedLentille.cylindre = <number> formValue['cylindre'];
+    editedLentille.axe = <number> formValue['axe'];
+    editedLentille.addition = <number> formValue['addition'];
+    editedLentille.libelle = (<string> formValue['libelle']).trim();
+    editedStock.produit = editedLentille;
+    editedStock.prixVente = formValue['prixVente'];
+    editedStock.qte = formValue['qte'];
+
+    this.addLentille(editedStock, 'G');
+  }
+  onSubmitLentilleDForm(){
+    this.submittedLentilleDForm = true;
+    if (this.lentilleDForm.invalid) {
+      return;
+    }
+    const formValue = this.lentilleDForm.value;
+    let editedStock = new StockModel(null, null,null,null);
+    let editedLentille = new LentilleModel(null, null);
+    editedLentille.sphere = <number> formValue['sphere'];
+    editedLentille.cylindre = <number> formValue['cylindre'];
+    editedLentille.axe = <number> formValue['axe'];
+    editedLentille.addition = <number> formValue['addition'];
+    editedLentille.libelle = (<string> formValue['libelle']).trim();
+    editedStock.produit = editedLentille;
+    editedStock.prixVente = formValue['prixVente'];
+    editedStock.qte = formValue['qte'];
+
+    this.addLentille(editedStock, 'D');
+  }
+  private addMonture(stock : StockModel) {
+    this.montureService.addMonture(stock.produit as MontureModel).subscribe(data1=>{
+      stock.produit = data1 as MontureModel;
+      this.stockService.addStock(stock).subscribe(data2=>{
+        this.stockService.getAllStocks();
+        this.monture = data2 as StockModel;
+        console.log(this.monture.produit.libelle);
+        this.montureControl.setValue(this.monture);
+        this.onCalculValeurs();
+        this.onResettMontureForm();
+        document.getElementById('montureModal').click();
+      }, error => {
+        console.log('Error ! : ' + error);
+      });
+    }, error => {
+      console.log('Error ! : ' + error);
+      this.loading = false;
+    });
+
+  }
+  private addLentille(stock : StockModel, cote : string) {
+    this.lentilleService.addLentille(stock.produit as LentilleModel).subscribe(data1=>{
+      stock.produit = data1 as LentilleModel;
+      this.stockService.addStock(stock).subscribe(data2=>{
+        this.stockService.getAllStocks();
+        if(cote == 'G'){
+          this.lentilleG = data2 as StockModel;
+          this.lentilleGControl.setValue(this.lentilleG);
+          this.onCalculValeurs();
+          this.onResettLentilleGForm();
+          document.getElementById('lentilleGModal').click();
+        }
+        if(cote == 'D'){
+          this.lentilleD = data2 as StockModel;
+          this.lentilleDControl.setValue(this.lentilleD);
+          this.onCalculValeurs();
+          this.onResettLentilleDForm();
+          document.getElementById('lentilleDModal').click();
+        }
+      }, error => {
+        console.log('Error ! : ' + error);
+      });
+    }, error => {
+      console.log('Error ! : ' + error);
+      this.loading = false;
+    });
 
   }
 

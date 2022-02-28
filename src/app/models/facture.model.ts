@@ -10,7 +10,7 @@ export class FactureModel {
     public patient?:PersonneModel,
     public ventes?:VenteModel[],
     public prescription?: PrescriptionModel,
-    public createAt?: string,
+    public createAt?: Date,
 
     public totalFacture?: number,
     public totalCouverture?: number,

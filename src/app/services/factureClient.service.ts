@@ -28,6 +28,10 @@ export class FactureClientService {
     );
   }
 
+  getAllFactureClientsWithoutBordereau() {
+    return this.httpClient.get<FactureClientModel[]>(this.url+'wbordereau/');
+  }
+
   getFactureClientById(idFacture : number) {
     return this.httpClient.get<any>(this.url+idFacture);
   }

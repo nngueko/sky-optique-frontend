@@ -77,7 +77,7 @@
                     <mat-error *ngIf="prescription.get('nomPrescripteur').invalid" >Selectionnez ou éditez le prescripteur</mat-error>
                     <mat-autocomplete #auto2="matAutocomplete" (optionSelected)='getPrescripteur($event)' [displayWith]="displayPrescripteur">
                       <mat-option *ngFor="let option of filteredPrescripteurs | async" [value]="option">
-                        <span *ngIf="option.titre">{{option.titre+' '}}</span>{{option.nom+' '+option.prenom}}
+                        {{option.nom}}
                       </mat-option>
                     </mat-autocomplete>
                   </mat-form-field>
@@ -169,8 +169,6 @@
                       <input type="text" matInput placeholder="Téléphone" formControlName="tel1AssurePrincipal" >
                     </mat-form-field>
                   </div>
-
-
                   <div class="col-lg-6">
                     <mat-form-field appearance="outline">
                       <mat-label>Numéro du document</mat-label>
@@ -237,11 +235,119 @@
       </div>
 
     </div>
-
     <div class="col-md-6">
       <div class="card">
         <div class="card-header text-white bg-primary mb-3">Monture</div>
         <div class="card-body">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#montureModal">
+            Enregistrer une monture
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="montureModal" tabindex="-1" aria-labelledby="staticBackdrop" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h2 class="modal-title" id="staticBackdropLabel">Nouvelle Monture</h2>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form [formGroup]="montureForm" (ngSubmit)="onSubmitMontureForm()">
+
+                    <div class="form-group">
+                      <label for="monture_ref">Reference*</label>
+                      <input type="text" id="monture_ref" class="form-control" formControlName="reference" [ngClass]="{ 'is-invalid': submittedMontureForm && fM.reference.errors }" />
+                      <div *ngIf="submittedMontureForm && fM.reference.errors" class="invalid-feedback">
+                        <div *ngIf="fM.reference.errors.required">Veuillez renseigner le nom de la reference</div>
+                      </div>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="idMarque">Marque</label>
+                      <select id="idMarque" class="form-select" formControlName="idMarque">
+                        <option value="" ></option>
+                        <option *ngFor="let marque of listMarques" [value]="marque.id" >{{ marque.nom }}</option>
+                      </select>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="modele">
+                        Modele
+                      </label>
+                      <input type="text" id="modele" class="form-control" formControlName="modele"/>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="matiere">Matiere</label>
+                      <select id="matiere" class="form-select" formControlName="matiere">
+                        <option value="" ></option>
+                        <option value="Plastique" >Plastique</option>
+                        <option value="Métallique" >Métallique</option>
+                      </select>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="genre">Genre</label>
+                      <select id="genre" class="form-select" formControlName="genre">
+                        <option value="" ></option>
+                        <option value="Mixte" >Mixte</option>
+                        <option value="Homme" >Homme</option>
+                        <option value="Femme" >Femme</option>
+                      </select>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="taille">
+                        Taille
+                      </label>
+                      <input type="text" id="taille" class="form-control" formControlName="taille" />
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="forme">Forme</label>
+                      <select id="forme" class="form-select" formControlName="forme">
+                        <option value="" ></option>
+                        <option value="Ovale" >Ovale</option>
+                        <option value="Rectangulaire" >Rectangulaire</option>
+                        <option value="Ronde" >Ronde</option>
+                        <option value="Papillon" >Papillon</option>
+                        <option value="Wayfarer" >Wayfarer</option>
+                        <option value="Pilote" >Pilote</option>
+                      </select>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="qte">Quantité*</label>
+                      <input type="text" id="qte" class="form-control" formControlName="qte" [ngClass]="{ 'is-invalid': submittedMontureForm && fM.qte.errors }" />
+                      <div *ngIf="submittedMontureForm && fM.qte.errors" class="invalid-feedback">
+                        <div *ngIf="fM.qte.errors.required">Veuillez renseigner la quantité</div>
+                        <div *ngIf="fM.qte.errors.min">La Quantité doit être supérieur ou égale à 0</div>
+                      </div>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="prixVente">Prix de vente*</label>
+                      <input type="text" id="prixVente" class="form-control" formControlName="prixVente" [ngClass]="{ 'is-invalid': submittedMontureForm && fM.prixVente.errors }" />
+                      <div *ngIf="submittedMontureForm && fM.prixVente.errors" class="invalid-feedback">
+                        <div *ngIf="fM.prixVente.errors.required">Veuillez renseigner le prix de vente</div>
+                        <div *ngIf="fM.prixVente.errors.min">Le prix vente doit être supérieur ou égal à 0</div>
+                      </div>
+                    </div>
+                    <br/>
+                    <div >
+                      <button class="btn btn-secondary col-md-5" type="reset" (click)="onResettMontureForm()">Reset</button>
+                      <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
+                    </div>
+
+                  </form>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <br/>
           <div class="row">
             <div class="col-lg-8">
               <div class="form-group" >
@@ -300,6 +406,93 @@
       <div class="card">
         <div class="card-header text-white bg-primary mb-3">Lentille Gauche</div>
         <div class="card-body">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lentilleGModal">
+            Enregistrer une Lentille
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="lentilleGModal" tabindex="-1" aria-labelledby="staticBackdrop" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h2 class="modal-title" id="staticBackdropLabel2">Nouvelle Lentille</h2>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form [formGroup]="lentilleGForm" (ngSubmit)="onSubmitLentilleGForm()">
+
+                    <div class="form-group">
+                      <label for="libelle2">Nom*</label>
+                      <input type="text" id="libelle2" class="form-control" formControlName="libelle"  [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.libelle.errors }" />
+                      <div *ngIf="submittedLentilleGForm && fLG.libelle.errors" class="invalid-feedback">
+                        <div *ngIf="fLG.libelle.errors.required">Veuillez renseigner le libelle</div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="sphere">
+                        Sphere
+                      </label>
+                      <input type="number" id="sphere" class="form-control" formControlName="sphere"  [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.sphere.errors }"/>
+                      <div *ngIf="submittedLentilleGForm && fLG.sphere.errors" class="invalid-feedback">
+                        <div *ngIf="fLG.sphere.errors.required">Veuillez renseigner la valeur</div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="cylindre">
+                        Cylindre
+                      </label>
+                      <input type="number" id="cylindre" class="form-control" formControlName="cylindre"  [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.cylindre.errors }"/>
+                      <div *ngIf="submittedLentilleGForm && fLG.cylindre.errors" class="invalid-feedback">
+                        <div *ngIf="fLG.cylindre.errors.required">Veuillez renseigner la valeur</div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="axe">
+                        Axe
+                      </label>
+                      <input type="number" id="axe" class="form-control" formControlName="axe" />
+                    </div>
+                    <div class="form-group">
+                      <label for="addition">
+                        Addition
+                      </label>
+                      <input type="number" id="addition" class="form-control" formControlName="addition" />
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="qte2">Quantité*</label>
+                      <input type="text" id="qte2" class="form-control" formControlName="qte" [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.qte.errors }" />
+                      <div *ngIf="submittedLentilleGForm && fLG.qte.errors" class="invalid-feedback">
+                        <div *ngIf="fLG.qte.errors.required">Veuillez renseigner la quantité</div>
+                        <div *ngIf="fLG.qte.errors.min">La Quantité doit être supérieur ou égale à 0</div>
+                      </div>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="prixVente2">Prix de vente*</label>
+                      <input type="text" id="prixVente2" class="form-control" formControlName="prixVente" [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.prixVente.errors }" />
+                      <div *ngIf="submittedLentilleGForm && fLG.qte.errors" class="invalid-feedback">
+                        <div *ngIf="fLG.prixVente.errors.required">Veuillez renseigner le prix de vente</div>
+                        <div *ngIf="fLG.prixVente.errors.min">Le prix vente doit être supérieur ou égal à 0</div>
+                      </div>
+                    </div>
+
+                    <br/>
+                    <div >
+                      <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
+                      <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
+                    </div>
+
+                  </form>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <br/>
           <div class="row">
             <div class="col-lg-8">
               <div class="form-group" >
@@ -378,6 +571,93 @@
       <div class="card">
         <div class="card-header text-white bg-primary mb-3">Lentille Droite</div>
         <div class="card-body">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lentilleDModal">
+            Enregistrer une Lentille
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="lentilleDModal" tabindex="-1" aria-labelledby="staticBackdrop" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h2 class="modal-title" id="staticBackdropLabel3">Nouvelle Lentille</h2>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form [formGroup]="lentilleDForm" (ngSubmit)="onSubmitLentilleDForm()">
+
+                    <div class="form-group">
+                      <label for="libelle3">Nom*</label>
+                      <input type="text" id="libelle3" class="form-control" formControlName="libelle"  [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.libelle.errors }" />
+                      <div *ngIf="submittedLentilleDForm && fLD.libelle.errors" class="invalid-feedback">
+                        <div *ngIf="fLD.libelle.errors.required">Veuillez renseigner le libelle</div>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="sphere2">
+                        Sphere
+                      </label>
+                      <input type="number" id="sphere2" class="form-control" formControlName="sphere"  [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.sphere.errors }"/>
+                      <div *ngIf="submittedLentilleDForm && fLD.sphere.errors" class="invalid-feedback">
+                        <div *ngIf="fLD.sphere.errors.required">Veuillez renseigner la valeur</div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="cylindre2">
+                        Cylindre
+                      </label>
+                      <input type="number" id="cylindre2" class="form-control" formControlName="cylindre"  [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.cylindre.errors }"/>
+                      <div *ngIf="submittedLentilleDForm && fLD.cylindre.errors" class="invalid-feedback">
+                        <div *ngIf="fLD.cylindre.errors.required">Veuillez renseigner la valeur</div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="axe2">
+                        Axe
+                      </label>
+                      <input type="number" id="axe2" class="form-control" formControlName="axe" />
+                    </div>
+                    <div class="form-group">
+                      <label for="addition2">
+                        Addition
+                      </label>
+                      <input type="number" id="addition2" class="form-control" formControlName="addition" />
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="qte3">Quantité*</label>
+                      <input type="text" id="qte3" class="form-control" formControlName="qte" [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.qte.errors }" />
+                      <div *ngIf="submittedLentilleDForm && fLD.qte.errors" class="invalid-feedback">
+                        <div *ngIf="fLD.qte.errors.required">Veuillez renseigner la quantité</div>
+                        <div *ngIf="fLD.qte.errors.min">La Quantité doit être supérieur ou égale à 0</div>
+                      </div>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                      <label for="prixVente3">Prix de vente*</label>
+                      <input type="text" id="prixVente3" class="form-control" formControlName="prixVente" [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.prixVente.errors }" />
+                      <div *ngIf="submittedLentilleDForm && fLD.qte.errors" class="invalid-feedback">
+                        <div *ngIf="fLD.prixVente.errors.required">Veuillez renseigner le prix de vente</div>
+                        <div *ngIf="fLD.prixVente.errors.min">Le prix vente doit être supérieur ou égal à 0</div>
+                      </div>
+                    </div>
+
+                    <br/>
+                    <div >
+                      <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
+                      <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
+                    </div>
+
+                  </form>
+                </div>
+                <div class="modal-footer">
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <br/>
+          <br/>
           <div class="row">
             <div class="col-lg-8">
               <div class="form-group" >

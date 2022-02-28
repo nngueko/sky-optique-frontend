@@ -1,10 +1,9 @@
 <nav class="navbar navbar-expand-lg bg-primary navbar-dark" *ngIf="authentificationService.isUserLoggedIn()">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Sky-Optique</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <a class="navbar-brand" href="#">Sky-Optique</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMonture" role="button" data-bs-toggle="dropdown" aria-expanded="false">Montures</a>
@@ -76,6 +75,8 @@
             <li><a class="dropdown-item" routerLink="add-facture">Nouvelle vente</a></li>
             <li><a class="dropdown-item" routerLink="factures">Liste factures Client</a></li>
             <li><a class="dropdown-item" routerLink="proformas">Liste Proforma</a></li>
+            <li><a class="dropdown-item" routerLink="add-bordereau">Editer un Bordereau</a></li>
+            <li><a class="dropdown-item" routerLink="Bordereaux">Liste des Bordereaux</a></li>
           </ul>
         </li>
       </ul>
@@ -83,7 +84,6 @@
         <app-logout></app-logout>
       </form>
     </div>
-  </div>
 </nav>
 
 

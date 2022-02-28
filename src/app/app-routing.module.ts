@@ -30,6 +30,9 @@ import {PrintFactureClientComponent} from "./print-facture-client/print-facture-
 import {ListProformasComponent} from "./list-proformas/list-proformas.component";
 import {ListAgencesComponent} from "./list-agences/list-agences.component";
 import {EditAgenceComponent} from "./edit-agence/edit-agence.component";
+import {ListBordereauComponent} from "./list-bordereau/list-bordereau.component";
+import {EditBordereauComponent} from "./edit-bordereau/edit-bordereau.component";
+import {PrintBordereauComponent} from "./print-bordereau/print-bordereau.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate:[AuthGaurdService] },
@@ -73,6 +76,8 @@ const routes: Routes = [
   { path: 'add-proforma', component: AddProformaComponent, canActivate:[AuthGaurdService] },
   { path: 'add-facture', component: AddFactureComponent, canActivate:[AuthGaurdService] },
   { path: 'update-facture/:id', component: UpdateFactureComponent, canActivate:[AuthGaurdService] },
+  { path: 'Bordereaux', component: ListBordereauComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-bordereau', component: EditBordereauComponent, canActivate:[AuthGaurdService] },
 
   { path: 'entreprises', component: ListEntreprisesComponent, canActivate:[AuthGaurdService] },
   { path: 'add-entreprise', component: EditEntrepriseComponent, canActivate:[AuthGaurdService] },
@@ -85,6 +90,7 @@ const routes: Routes = [
 
   { path: 'print-proforma/:id', component: PrintProformaComponent, canActivate:[AuthGaurdService] },
   { path: 'print-facture-client/:id', component: PrintFactureClientComponent, canActivate:[AuthGaurdService] },
+  { path: 'print-bordereau/:id', component: PrintBordereauComponent, canActivate:[AuthGaurdService] },
 
   // { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

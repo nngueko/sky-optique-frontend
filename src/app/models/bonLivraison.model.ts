@@ -1,4 +1,3 @@
-import {ProduitModel} from "./produit.model";
 import {LivraisonModel} from "./livraison.model";
 import {FournisseurModel} from "./fournisseur.model";
 

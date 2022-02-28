@@ -53,6 +53,9 @@ import { PrintFactureClientComponent } from './print-facture-client/print-factur
 import { ListProformasComponent } from './list-proformas/list-proformas.component';
 import { EditAgenceComponent } from './edit-agence/edit-agence.component';
 import { ListAgencesComponent } from './list-agences/list-agences.component';
+import { EditBordereauComponent } from './edit-bordereau/edit-bordereau.component';
+import { ListBordereauComponent } from './list-bordereau/list-bordereau.component';
+import { PrintBordereauComponent } from './print-bordereau/print-bordereau.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +93,10 @@ import { ListAgencesComponent } from './list-agences/list-agences.component';
     PrintFactureClientComponent,
     ListProformasComponent,
     EditAgenceComponent,
-    ListAgencesComponent
+    ListAgencesComponent,
+    EditBordereauComponent,
+    ListBordereauComponent,
+    PrintBordereauComponent
   ],
   imports: [
     BrowserModule,

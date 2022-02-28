@@ -10,6 +10,7 @@ export class FactureClientModel extends FactureModel{
   constructor(
     public reglements?:ReglementModel[],
     public id?:number,
+    public checked?: boolean
   ) {
     super();
   }
