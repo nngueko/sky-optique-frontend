@@ -1,10 +1,10 @@
 
 <div class="card col-lg-6 offset-lg-3">
   <div *ngIf="isAddMode" class="card-header text-white bg-primary mb-3">
-    Ajouter une personne
+    Ajouter un patient
   </div>
   <div *ngIf="!isAddMode" class="card-header text-white bg-primary mb-3">
-    Modifier personne
+    Modifier patient
   </div>
   <div class="card-body">
     <form [formGroup]="personneForm" (ngSubmit)="onSubmitForm()">

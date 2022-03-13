@@ -23,7 +23,8 @@ export class ListPersonnesComponent implements OnInit {
     this.loading = true;
     this.listPersonneSubscription = this.personneService.listPersonneSubject.subscribe(
       (data: PersonneModel[]) => {
-        this.personnes = data;
+        let listPersonnes = data;
+        this.personnes = listPersonnes.filter(pers => pers.discriminator != "PRESCRIPTEUR");
         this.loading = false;
       }
     );

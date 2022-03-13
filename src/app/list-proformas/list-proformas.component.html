@@ -17,8 +17,9 @@
         <td>{{ facture.numero}}</td>
         <td>{{ facture.patient.nom }}</td>
         <td>{{ facture.patient.prenom }}</td>
-        <td style="white-space: nowrap">
+        <td>
           <a routerLink="../print-proforma/{{facture.id}}" class="btn btn-sm btn-primary mr-1">Imprimer Facture</a>
+          <button (click)="onSaveFactureClient(facture.id)" class="btn btn-sm btn-danger" >Enregistrer Facture Client</button>
         </td>
       </tr>
       </tbody>

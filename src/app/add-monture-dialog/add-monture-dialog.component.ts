@@ -1,30 +1,28 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {MontureModel} from "../models/monture.model";
-import {MontureService} from "../services/monture.service";
+import {Component, Inject, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {Observable, Subscription} from "rxjs";
-import {MarqueModel} from "../models/marque.model";
-import {MarqueService} from "../services/marque.service";
 import {StockModel} from "../models/stockModel";
-import {StockService} from "../services/stock.service";
-import {PersonneModel} from "../models/personne.model";
+import {MontureModel} from "../models/monture.model";
+import {MarqueModel} from "../models/marque.model";
+import {Observable, Subscription} from "rxjs";
 import {MatAutocompleteTrigger} from "@angular/material/autocomplete";
+import {MontureService} from "../services/monture.service";
+import {StockService} from "../services/stock.service";
+import {MarqueService} from "../services/marque.service";
 import {map, startWith} from "rxjs/operators";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
-  selector: 'app-edit-monture',
-  templateUrl: './edit-monture.component.html',
-  styleUrls: ['./edit-monture.component.css']
+  selector: 'app-add-monture-dialog',
+  templateUrl: './add-monture-dialog.component.html',
+  styleUrls: ['./add-monture-dialog.component.css']
 })
-export class EditMontureComponent implements OnInit {
+export class AddMontureDialogComponent implements OnInit {
 
-  isAddMode: boolean;
   montureForm: FormGroup;
   submitted = false;
   loading = false;
-  stock = new StockModel(null, null, null, null, new MontureModel(null, null, null, null, null, null, null));
-  monture = new MontureModel(null, null, null, null, null, null, null);
+  //stock = new StockModel(1000, 100, 0, null, new MontureModel('ref000154', 'rdxv', 'Bronze', null, null, null, null));
+  //monture = new MontureModel(null, null, null, null, null, null, null);
 
   marque : MarqueModel = null;
   filteredMarque : Observable<MarqueModel[]>;
@@ -38,14 +36,11 @@ export class EditMontureComponent implements OnInit {
               private montureService :  MontureService,
               private stockService :  StockService,
               private marqueService : MarqueService,
-              private router: Router,
-              private route: ActivatedRoute) {
-    this.stock.id = this.route.snapshot.params['id'];
-  }
+              public dialogRef: MatDialogRef<AddMontureDialogComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: StockModel,) { }
 
   ngOnInit(): void {
-    this.isAddMode = !this.stock.id;
-    this.initForm(this.stock);
+    this.initForm();
 
     this.listMarqueSubscription = this.marqueService.listMarqueSubject.subscribe(data => {
       this.listMarques = data;
@@ -54,32 +49,11 @@ export class EditMontureComponent implements OnInit {
     });
     this.marqueService.getAllMarques();
 
-    if (!this.isAddMode) {
-      this.loading = true;
-      this.stockService.getStockById(this.stock.id).subscribe((response) => {
-        this.stock = response;
-        if((this.stock.produit as MontureModel).marque!=null)
-        { // @ts-ignore
-          this.marque = this.stock.produit.marque;
-          console.log(this.marque.nom);
-          // @ts-ignore
-          this.marqueControl.setValue(this.marque);
-        }
-        this.initForm(this.stock);
-      },(error) => {
-        console.log('Erreur ! : ' + error);
-        }
-      );
-      this.loading = false;
-    }
-
     this.filteredMarque = this.marqueControl.valueChanges.pipe(
       startWith(''),
       map( value => ( typeof value === 'string' ? value : value.nom)),
       map( nom => (nom ? this._filterMarque(nom) : this.listMarques.slice())),
     );
-
-
 
   }
 
@@ -115,22 +89,20 @@ export class EditMontureComponent implements OnInit {
     this.marque = event.option.value;
   }
 
-  initForm(stock : StockModel){
-    let monture: MontureModel = stock.produit as MontureModel;
+  initForm(){
     this.montureForm = this.formBuilder.group({
-      reference: [monture.reference, Validators.compose([Validators.required])],
+      reference: [null, Validators.compose([Validators.required])],
       //libelle: [monture.libelle, Validators.compose([Validators.required])],
-      modele: monture.modele,
-      matiere: monture.matiere,
-      genre: monture.genre,
-      taille: monture.taille,
-      forme: monture.forme,
-      coloris: monture.coloris,
-      lngBrn: monture.lngBrn,
-      catAge: monture.catAge,
+      modele: null,
+      matiere: null,
+      genre: null,
+      taille: null,
+      forme: null,
+      coloris: null,
+      lngBrn: null,
+      catAge: null,
       //marque: monture.marque ? monture.marque.nom : null,
-      qte: [stock.qte, Validators.compose([Validators.required, Validators.min(0)])],
-      prixVente: [stock.prixVente, Validators.compose([Validators.required, Validators.min(0)])],
+      prixVente: [null, Validators.compose([Validators.required, Validators.min(0)])],
     });
   }
 
@@ -145,8 +117,8 @@ export class EditMontureComponent implements OnInit {
       return;
     }
     const formValue = this.montureForm.value;
-    let editedStock = this.stock;
-    let editedMonture = this.stock.produit as MontureModel;
+    let editedStock = new StockModel(1000, 100, 0, null, new MontureModel(null, null, null, null, null, null, null));
+    let editedMonture = editedStock.produit as MontureModel;
 
     editedMonture.reference=formValue['reference'] ? ( <string>formValue['reference']).trim() : formValue['reference'];
     editedMonture.modele= formValue['modele'] ? (<string> formValue['modele']).trim() : formValue['modele'];
@@ -164,16 +136,9 @@ export class EditMontureComponent implements OnInit {
       editedMonture.marque = null;
     editedStock.produit = editedMonture;
     editedStock.prixVente = formValue['prixVente'];
-    editedStock.qte = formValue['qte'];
+    editedStock.qte = 1;
 
-    console.log(editedMonture);
-
-    if (this.isAddMode) {
-      this.addMonture(editedStock);
-    } else {
-      this.updateMonture(editedStock);
-    }
-
+    this.addMonture(editedStock);
   }
 
   onReset() {
@@ -187,7 +152,7 @@ export class EditMontureComponent implements OnInit {
       this.stockService.addStock(stock).subscribe(data2=>{
         this.loading = false;
         this.stockService.getAllStockMonture();
-        this.router.navigate(['/montures']);
+        this.dialogRef.close(data2);
       }, error => {
         console.log('Error ! : ' + error);
       });
@@ -198,24 +163,8 @@ export class EditMontureComponent implements OnInit {
 
   }
 
-  private updateMonture(stock : StockModel) {
-    stock.id = this.stock.id;
-    this.montureService.updateMonture(stock.produit as MontureModel).subscribe(data1=>{
-      stock.produit = data1 as MontureModel;
-      console.log(stock.produit);
-      console.log(stock);
-      this.stockService.updateStock(stock).subscribe(data2=>{
-        console.log(data2);
-        this.loading = false;
-        this.stockService.getAllStockMonture();
-        this.router.navigate(['/montures']);
-      }, error => {
-        console.log('Error ! : ' + error);
-      });
-    }, error => {
-      console.log('Error ! : ' + error);
-      this.loading = false;
-    });
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 
 }

@@ -16,7 +16,7 @@
         <td>{{ bonLivraison.dateLivraison }}</td>
         <td>{{ bonLivraison.fournisseur.nom}}</td>
         <td style="white-space: nowrap">
-          <a routerLink="../update-bonLivraison/{{bonLivraison.id}}" class="btn btn-sm btn-primary mr-1">Modifier</a>
+<!--          <a routerLink="../update-bonLivraison/{{bonLivraison.id}}" class="btn btn-sm btn-primary mr-1">Modifier</a>-->
           <button (click)="deleteBonLivraison(bonLivraison.id)" class="btn btn-sm btn-danger btn-delete-user" [disabled]="false">
             <span>Supprimer</span>
           </button>

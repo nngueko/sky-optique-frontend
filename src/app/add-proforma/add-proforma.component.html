@@ -5,6 +5,11 @@
       <div class="card">
         <div class="card-header text-white bg-primary mb-3">Patient</div>
         <div class="card-body">
+
+          <button type="button" (click)="openPatientDialog()" class="btn btn-primary">Nouveau patient</button>
+          <br/>
+          <br/>
+
           <div class="form-group" >
             <mat-form-field class="example-full-width" appearance="outline"  >
               <mat-label>Nom du patient</mat-label>
@@ -12,7 +17,7 @@
               <mat-error *ngIf="factureForm.get('nomPatient').invalid" >Selectionnez ou éditez un patient</mat-error>
               <mat-autocomplete #auto1="matAutocomplete" (optionSelected)='getPatient($event)' [displayWith]="displayPatient">
                 <mat-option *ngFor="let option of filteredPatients | async" [value]="option">
-                  {{option.nom+' '+option.prenom}}
+                  {{option.nom}}<span *ngIf="option.prenom">{{' '+option.prenom}}</span>
                 </mat-option>
               </mat-autocomplete>
             </mat-form-field>
@@ -21,10 +26,6 @@
           <div class="row">
 
             <div class="col-lg-6">
-              <mat-form-field appearance="outline">
-                <mat-label>Prénom</mat-label>
-                <input type="text" matInput placeholder="Prénom" formControlName="prenomPatient" >
-              </mat-form-field>
               <mat-form-field appearance="outline">
                 <mat-label>Date de naissance</mat-label>
                 <input type="date" matInput placeholder="Date de naissance" formControlName="dateNaissPatient">
@@ -57,6 +58,7 @@
 
             </div>
           </div>
+
         </div>
       </div>
 
@@ -126,6 +128,10 @@
                 <div class="row">
                   <div class="col-lg-6">
 
+                    <button type="button" (click)="openAssurePrincipalDialog()" class="btn btn-primary">Nouveau assuré</button>
+                    <br/>
+                    <br/>
+
                     <div class="form-group" >
                       <mat-form-field class="example-full-width" appearance="outline"  >
                         <mat-label>Assuré principal*</mat-label>
@@ -133,15 +139,11 @@
                         <mat-error *ngIf="couverture.get('nomAssurePrincipal').invalid" >Selectionnez ou éditez l'assuré</mat-error>
                         <mat-autocomplete #auto3="matAutocomplete" (optionSelected)='getAssurePrincipal($event)' [displayWith]="displayPatient">
                           <mat-option *ngFor="let option of filteredAssurePrincipals | async" [value]="option">
-                            {{option.nom+' '+option.prenom}}
+                            {{option.nom}}<span *ngIf="option.prenom">{{' '+option.prenom}}</span>
                           </mat-option>
                         </mat-autocomplete>
                       </mat-form-field>
                     </div>
-                    <mat-form-field appearance="outline">
-                      <mat-label>Prénom</mat-label>
-                      <input type="text" matInput placeholder="Prénom" formControlName="prenomAssurePrincipal" >
-                    </mat-form-field>
                     <div class="form-group">
                       <mat-form-field appearance="outline">
                         <mat-label>Civilité</mat-label>
@@ -169,8 +171,6 @@
                       <input type="text" matInput placeholder="Téléphone" formControlName="tel1AssurePrincipal" >
                     </mat-form-field>
                   </div>
-
-
                   <div class="col-lg-6">
                     <mat-form-field appearance="outline">
                       <mat-label>Numéro du document</mat-label>
@@ -242,113 +242,9 @@
       <div class="card">
         <div class="card-header text-white bg-primary mb-3">Monture</div>
         <div class="card-body">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#montureModal">
-            Enregistrer une monture
-          </button>
-          <!-- Modal -->
-          <div class="modal fade" id="montureModal" tabindex="-1" aria-labelledby="staticBackdrop" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h2 class="modal-title" id="staticBackdropLabel">Nouvelle Monture</h2>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <form [formGroup]="montureForm" (ngSubmit)="onSubmitMontureForm()">
 
-                    <div class="form-group">
-                      <label for="monture_ref">Reference*</label>
-                      <input type="text" id="monture_ref" class="form-control" formControlName="reference" [ngClass]="{ 'is-invalid': submittedMontureForm && fM.reference.errors }" />
-                      <div *ngIf="submittedMontureForm && fM.reference.errors" class="invalid-feedback">
-                        <div *ngIf="fM.reference.errors.required">Veuillez renseigner le nom de la reference</div>
-                      </div>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="idMarque">Marque</label>
-                      <select id="idMarque" class="form-select" formControlName="idMarque">
-                        <option value="" ></option>
-                        <option *ngFor="let marque of listMarques" [value]="marque.id" >{{ marque.nom }}</option>
-                      </select>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="modele">
-                        Modele
-                      </label>
-                      <input type="text" id="modele" class="form-control" formControlName="modele"/>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="matiere">Matiere</label>
-                      <select id="matiere" class="form-select" formControlName="matiere">
-                        <option value="" ></option>
-                        <option value="Plastique" >Plastique</option>
-                        <option value="Métallique" >Métallique</option>
-                      </select>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="genre">Genre</label>
-                      <select id="genre" class="form-select" formControlName="genre">
-                        <option value="" ></option>
-                        <option value="Mixte" >Mixte</option>
-                        <option value="Homme" >Homme</option>
-                        <option value="Femme" >Femme</option>
-                      </select>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="taille">
-                        Taille
-                      </label>
-                      <input type="text" id="taille" class="form-control" formControlName="taille" />
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="forme">Forme</label>
-                      <select id="forme" class="form-select" formControlName="forme">
-                        <option value="" ></option>
-                        <option value="Ovale" >Ovale</option>
-                        <option value="Rectangulaire" >Rectangulaire</option>
-                        <option value="Ronde" >Ronde</option>
-                        <option value="Papillon" >Papillon</option>
-                        <option value="Wayfarer" >Wayfarer</option>
-                        <option value="Pilote" >Pilote</option>
-                      </select>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="qte">Quantité*</label>
-                      <input type="text" id="qte" class="form-control" formControlName="qte" [ngClass]="{ 'is-invalid': submittedMontureForm && fM.qte.errors }" />
-                      <div *ngIf="submittedMontureForm && fM.qte.errors" class="invalid-feedback">
-                        <div *ngIf="fM.qte.errors.required">Veuillez renseigner la quantité</div>
-                        <div *ngIf="fM.qte.errors.min">La Quantité doit être supérieur ou égale à 0</div>
-                      </div>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="prixVente">Prix de vente*</label>
-                      <input type="text" id="prixVente" class="form-control" formControlName="prixVente" [ngClass]="{ 'is-invalid': submittedMontureForm && fM.prixVente.errors }" />
-                      <div *ngIf="submittedMontureForm && fM.prixVente.errors" class="invalid-feedback">
-                        <div *ngIf="fM.prixVente.errors.required">Veuillez renseigner le prix de vente</div>
-                        <div *ngIf="fM.prixVente.errors.min">Le prix vente doit être supérieur ou égal à 0</div>
-                      </div>
-                    </div>
-                    <br/>
-                    <div >
-                      <button class="btn btn-secondary col-md-5" type="reset" (click)="onResettMontureForm()">Reset</button>
-                      <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
-                    </div>
+          <button type="button" (click)="openMontureDialog()" class="btn btn-primary">Enregistrer une monture</button>
 
-                  </form>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-              </div>
-            </div>
-          </div>
           <br/>
           <br/>
           <div class="row">
@@ -407,113 +303,92 @@
         </div>
       </div>
       <div class="card">
-        <div class="card-header text-white bg-primary mb-3">Lentille Gauche</div>
+        <div class="card-header text-white bg-primary mb-3">verre Droite</div>
         <div class="card-body">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lentilleGModal">
-            Enregistrer une Lentille
-          </button>
-          <!-- Modal -->
-          <div class="modal fade" id="lentilleGModal" tabindex="-1" aria-labelledby="staticBackdrop" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h2 class="modal-title" id="staticBackdropLabel2">Nouvelle Lentille</h2>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <form [formGroup]="lentilleGForm" (ngSubmit)="onSubmitLentilleGForm()">
+          <button type="button" (click)="openLentilleDDialog()" class="btn btn-primary">Nouveau Verre</button>
 
-                    <div class="form-group">
-                      <label for="libelle2">Nom*</label>
-                      <input type="text" id="libelle2" class="form-control" formControlName="libelle"  [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.libelle.errors }" />
-                      <div *ngIf="submittedLentilleGForm && fLG.libelle.errors" class="invalid-feedback">
-                        <div *ngIf="fLG.libelle.errors.required">Veuillez renseigner le libelle</div>
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="sphere">
-                        Sphere
-                      </label>
-                      <input type="number" id="sphere" class="form-control" formControlName="sphere"  [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.sphere.errors }"/>
-                      <div *ngIf="submittedLentilleGForm && fLG.sphere.errors" class="invalid-feedback">
-                        <div *ngIf="fLG.sphere.errors.required">Veuillez renseigner la valeur</div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="cylindre">
-                        Cylindre
-                      </label>
-                      <input type="number" id="cylindre" class="form-control" formControlName="cylindre"  [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.cylindre.errors }"/>
-                      <div *ngIf="submittedLentilleGForm && fLG.cylindre.errors" class="invalid-feedback">
-                        <div *ngIf="fLG.cylindre.errors.required">Veuillez renseigner la valeur</div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="axe">
-                        Axe
-                      </label>
-                      <input type="number" id="axe" class="form-control" formControlName="axe" />
-                    </div>
-                    <div class="form-group">
-                      <label for="addition">
-                        Addition
-                      </label>
-                      <input type="number" id="addition" class="form-control" formControlName="addition" />
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="qte2">Quantité*</label>
-                      <input type="text" id="qte2" class="form-control" formControlName="qte" [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.qte.errors }" />
-                      <div *ngIf="submittedLentilleGForm && fLG.qte.errors" class="invalid-feedback">
-                        <div *ngIf="fLG.qte.errors.required">Veuillez renseigner la quantité</div>
-                        <div *ngIf="fLG.qte.errors.min">La Quantité doit être supérieur ou égale à 0</div>
-                      </div>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="prixVente2">Prix de vente*</label>
-                      <input type="text" id="prixVente2" class="form-control" formControlName="prixVente" [ngClass]="{ 'is-invalid': submittedLentilleGForm && fLG.prixVente.errors }" />
-                      <div *ngIf="submittedLentilleGForm && fLG.qte.errors" class="invalid-feedback">
-                        <div *ngIf="fLG.prixVente.errors.required">Veuillez renseigner le prix de vente</div>
-                        <div *ngIf="fLG.prixVente.errors.min">Le prix vente doit être supérieur ou égal à 0</div>
-                      </div>
-                    </div>
-
-                    <br/>
-                    <div >
-                      <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
-                      <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
-                    </div>
-
-                  </form>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-              </div>
-            </div>
-          </div>
           <br/>
           <br/>
           <div class="row">
-            <div class="col-lg-8">
+            <div class="col-lg-12">
               <div class="form-group" >
-                <mat-form-field class="example-full-width" appearance="outline"  >
-                  <mat-label>Libelle</mat-label>
-                  <input type="text" matInput [formControl]="lentilleGControl" [matAutocomplete]="auto5" #autoCompleteLentilleG>
-                  <mat-autocomplete #auto5="matAutocomplete" (optionSelected)='getLentilleG($event)' [displayWith]="displayProduit">
-                    <mat-option *ngFor="let option of filteredLentilleG | async" [value]="option">
-                      {{option.produit.libelle}}
-                    </mat-option>
-                  </mat-autocomplete>
+                <mat-form-field appearance="outline">
+                  <mat-label>Catalogue</mat-label>
+                  <input type="text" matInput placeholder="Catalogue" [formControl]="lentilleDControl" >
                 </mat-form-field>
               </div>
             </div>
-            <div class="col-lg-4">
+
+          </div>
+          <div class="row">
+            <table class="table table-striped table-sm" *ngIf="lentilleDProd">
+              <thead>
+              <tr>
+                <th>Sphere</th>
+                <th>Cylindre</th>
+                <th>Axe</th>
+                <th>Addition</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>{{ lentilleDProd.sphere }}</td>
+                <td>{{ lentilleDProd.cylindre }}</td>
+                <td>{{ lentilleDProd.axe }}</td>
+                <td>{{ lentilleDProd.addition }}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row" [hidden]="!lentilleD">
+            <div class="col-lg-6">
               <div class="form-group">
-                <label for="stockLentilleG">Stock</label>
-                <input type="number" id="stockLentilleG" min="0" class="form-control" [value]="lentilleG ? lentilleG.qte : null" readonly="true" />
+                <label for="puLentilleD">Prix unitaire</label>
+                <input type="number" id="puLentilleD" min="0" class="form-control" [value]="lentilleD ? lentilleD.prixVente : null" readonly="true" />
+              </div>
+              <div class="form-group">
+                <label for="remiseLentilleD">Remise</label>
+                <input type="number" id="remiseLentilleD" class="form-control" formControlName="remiseLentilleD" [ngClass]="{ 'is-invalid': submitted && f.remiseLentilleG.errors }" [readonly]="!lentilleD" (change)="onCalculValeurs()"/>
+                <div *ngIf="submitted && f.remiseLentilleD.errors" class="invalid-feedback">
+                  <div *ngIf="f.remiseLentilleD.errors.min">La remise doit être supérieur ou égale à 0%</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="qteLentilleD">Quantité</label>
+                <input type="number" id="qteLentilleD" min="0" class="form-control" formControlName="qteLentilleD" [ngClass]="{ 'is-invalid': submitted && f.qteLentilleD.errors }" [readonly]="!lentilleD" (change)="onCalculValeurs()"/>
+                <div *ngIf="f.qteLentilleD.errors" class="invalid-feedback">
+                  <div *ngIf="f.qteLentilleD.errors">La quantité doit être supérieur ou égale à 1</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="montantLentilleD">Montant</label>
+                <input type="number" id="montantLentilleD" min="0" class="form-control" formControlName="montantLentilleD" readonly="true"/>
+              </div>
+              <div class="form-group">
+                <label for="totalLentilleD">Total</label>
+                <input type="number" id="totalLentilleD" min="0" class="form-control" formControlName="totalLentilleD" readonly="true"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header text-white bg-primary mb-3">verre Gauche</div>
+        <div class="card-body">
+          <button type="button" (click)="openLentilleGDialog()" class="btn btn-primary" *ngIf="!this.lentilleG">Nouveau Verre</button>
+          <button type="button" (click)="onDeleteLentilleG()" class="btn btn-danger" *ngIf="this.lentilleG">Supprimer le verre</button>
+
+          <br/>
+          <br/>
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group" >
+                <mat-form-field appearance="outline">
+                  <mat-label>Catalogue</mat-label>
+                  <input type="text" matInput placeholder="Catalogue" [formControl]="lentilleGControl" >
+                </mat-form-field>
               </div>
             </div>
           </div>
@@ -571,172 +446,6 @@
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-header text-white bg-primary mb-3">Lentille Droite</div>
-        <div class="card-body">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#lentilleDModal">
-            Enregistrer une Lentille
-          </button>
-          <!-- Modal -->
-          <div class="modal fade" id="lentilleDModal" tabindex="-1" aria-labelledby="staticBackdrop" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h2 class="modal-title" id="staticBackdropLabel3">Nouvelle Lentille</h2>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <form [formGroup]="lentilleDForm" (ngSubmit)="onSubmitLentilleDForm()">
-
-                    <div class="form-group">
-                      <label for="libelle3">Nom*</label>
-                      <input type="text" id="libelle3" class="form-control" formControlName="libelle"  [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.libelle.errors }" />
-                      <div *ngIf="submittedLentilleDForm && fLD.libelle.errors" class="invalid-feedback">
-                        <div *ngIf="fLD.libelle.errors.required">Veuillez renseigner le libelle</div>
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label for="sphere2">
-                        Sphere
-                      </label>
-                      <input type="number" id="sphere2" class="form-control" formControlName="sphere"  [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.sphere.errors }"/>
-                      <div *ngIf="submittedLentilleDForm && fLD.sphere.errors" class="invalid-feedback">
-                        <div *ngIf="fLD.sphere.errors.required">Veuillez renseigner la valeur</div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="cylindre2">
-                        Cylindre
-                      </label>
-                      <input type="number" id="cylindre2" class="form-control" formControlName="cylindre"  [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.cylindre.errors }"/>
-                      <div *ngIf="submittedLentilleDForm && fLD.cylindre.errors" class="invalid-feedback">
-                        <div *ngIf="fLD.cylindre.errors.required">Veuillez renseigner la valeur</div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="axe2">
-                        Axe
-                      </label>
-                      <input type="number" id="axe2" class="form-control" formControlName="axe" />
-                    </div>
-                    <div class="form-group">
-                      <label for="addition2">
-                        Addition
-                      </label>
-                      <input type="number" id="addition2" class="form-control" formControlName="addition" />
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="qte3">Quantité*</label>
-                      <input type="text" id="qte3" class="form-control" formControlName="qte" [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.qte.errors }" />
-                      <div *ngIf="submittedLentilleDForm && fLD.qte.errors" class="invalid-feedback">
-                        <div *ngIf="fLD.qte.errors.required">Veuillez renseigner la quantité</div>
-                        <div *ngIf="fLD.qte.errors.min">La Quantité doit être supérieur ou égale à 0</div>
-                      </div>
-                    </div>
-                    <br/>
-                    <div class="form-group">
-                      <label for="prixVente3">Prix de vente*</label>
-                      <input type="text" id="prixVente3" class="form-control" formControlName="prixVente" [ngClass]="{ 'is-invalid': submittedLentilleDForm && fLD.prixVente.errors }" />
-                      <div *ngIf="submittedLentilleDForm && fLD.qte.errors" class="invalid-feedback">
-                        <div *ngIf="fLD.prixVente.errors.required">Veuillez renseigner le prix de vente</div>
-                        <div *ngIf="fLD.prixVente.errors.min">Le prix vente doit être supérieur ou égal à 0</div>
-                      </div>
-                    </div>
-
-                    <br/>
-                    <div >
-                      <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
-                      <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>
-                    </div>
-
-                  </form>
-                </div>
-                <div class="modal-footer">
-
-                </div>
-              </div>
-            </div>
-          </div>
-          <br/>
-          <br/>
-          <div class="row">
-            <div class="col-lg-8">
-              <div class="form-group" >
-                <mat-form-field class="example-full-width" appearance="outline"  >
-                  <mat-label>Libelle</mat-label>
-                  <input type="text" matInput [formControl]="lentilleDControl" [matAutocomplete]="auto6" #autoCompleteLentilleD>
-                  <mat-autocomplete #auto6="matAutocomplete" (optionSelected)='getLentilleD($event)' [displayWith]="displayProduit">
-                    <mat-option *ngFor="let option of filteredLentilleD | async" [value]="option">
-                      {{option.produit.libelle}}
-                    </mat-option>
-                  </mat-autocomplete>
-                </mat-form-field>
-              </div>
-            </div>
-            <div class="col-lg-4">
-              <div class="form-group">
-                <label for="stockLentilleD">Stock</label>
-                <input type="number" id="stockLentilleD" min="0" class="form-control" [value]="lentilleD ? lentilleD.qte : null" readonly="true" />
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <table class="table table-striped table-sm" *ngIf="lentilleDProd">
-              <thead>
-              <tr>
-                <th>Sphere</th>
-                <th>Cylindre</th>
-                <th>Axe</th>
-                <th>Addition</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>{{ lentilleDProd.sphere }}</td>
-                <td>{{ lentilleDProd.cylindre }}</td>
-                <td>{{ lentilleDProd.axe }}</td>
-                <td>{{ lentilleDProd.addition }}</td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="row" [hidden]="!lentilleD">
-            <div class="col-lg-6">
-              <div class="form-group">
-                <label for="puLentilleD">Prix unitaire</label>
-                <input type="number" id="puLentilleD" min="0" class="form-control" [value]="lentilleD ? lentilleD.prixVente : null" readonly="true" />
-              </div>
-              <div class="form-group">
-                <label for="remiseLentilleD">Remise</label>
-                <input type="number" id="remiseLentilleD" class="form-control" formControlName="remiseLentilleD" [ngClass]="{ 'is-invalid': submitted && f.remiseLentilleG.errors }" [readonly]="!lentilleD" (change)="onCalculValeurs()"/>
-                <div *ngIf="submitted && f.remiseLentilleD.errors" class="invalid-feedback">
-                  <div *ngIf="f.remiseLentilleD.errors.min">La remise doit être supérieur ou égale à 0%</div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-6">
-              <div class="form-group">
-                <label for="qteLentilleD">Quantité</label>
-                <input type="number" id="qteLentilleD" min="0" class="form-control" formControlName="qteLentilleD" [ngClass]="{ 'is-invalid': submitted && f.qteLentilleD.errors }" [readonly]="!lentilleD" (change)="onCalculValeurs()"/>
-                <div *ngIf="f.qteLentilleD.errors" class="invalid-feedback">
-                  <div *ngIf="f.qteLentilleD.errors">La quantité doit être supérieur ou égale à 1</div>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="montantLentilleD">Montant</label>
-                <input type="number" id="montantLentilleD" min="0" class="form-control" formControlName="montantLentilleD" readonly="true"/>
-              </div>
-              <div class="form-group">
-                <label for="totalLentilleD">Total</label>
-                <input type="number" id="totalLentilleD" min="0" class="form-control" formControlName="totalLentilleD" readonly="true"/>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
 
   </div>

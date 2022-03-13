@@ -58,16 +58,7 @@
         </select>
       </div>
       <br/>
-      <div class="form-group">
-        <label for="idAgence">Agence</label>
-        <select id="idAgence" class="form-select" formControlName="idAgence" [ngClass]="{ 'is-invalid': submitted && f.idAgence.errors }" \>
-          <option *ngFor="let agence of listAgences" [value]="agence.id" >{{ agence.nom }}</option>
-        </select>
-        <div *ngIf="submitted && f.idAgence.errors" class="invalid-feedback">
-          <div *ngIf="f.idAgence.errors.required">Veuillez renseigner le nom de l'agence</div>
-        </div>
-      </div>
-      
+
       <div >
         <button class="btn btn-secondary col-md-5" type="reset" (click)="onReset()">Reset</button>
         <button type="submit" class="btn btn-primary col-md-5 offset-md-2" >Enregistrer</button>

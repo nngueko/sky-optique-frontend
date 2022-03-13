@@ -1,10 +1,10 @@
 
 <div class="card col-lg-6 offset-lg-3">
   <div *ngIf="isAddMode" class="card-header text-white bg-primary mb-3">
-    Ajouter un entreprise
+    Ajouter une compagnie d'assurance
   </div>
   <div *ngIf="!isAddMode" class="card-header text-white bg-primary mb-3">
-    Modifier entreprise
+    Modifier une compagnie d'assurance
   </div>
   <div class="card-body">
     <form [formGroup]="entrepriseForm" (ngSubmit)="onSubmitForm()">
@@ -32,12 +32,12 @@
         <input type="text" id="tel1" class="form-control" formControlName="tel1" />
       </div>
       <div class="form-group">
-        <label for="tel2">Tel 2</label>
-        <input type="text" id="tel2" class="form-control" formControlName="tel2" />
-      </div>
-      <div class="form-group">
         <label for="bp">BP</label>
         <input type="text" id="bp" class="form-control" formControlName="bp" />
+      </div>
+      <div class="form-group">
+        <label for="rccm">Rccm</label>
+        <input type="text" id="rccm" class="form-control" formControlName="rccm" />
       </div>
 
       <br/>

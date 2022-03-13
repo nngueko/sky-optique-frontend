@@ -6,66 +6,28 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMonture" role="button" data-bs-toggle="dropdown" aria-expanded="false">Montures</a>
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMonture" role="button" data-bs-toggle="dropdown" aria-expanded="false">Produits</a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" routerLink="montures">Liste des montures</a></li>
             <li><a class="dropdown-item" routerLink="add-monture">Ajouter une monture</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLentille" role="button" data-bs-toggle="dropdown" aria-expanded="false">Lentilles</a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="lentilles">Liste des lentilles</a></li>
-            <li><a class="dropdown-item" routerLink="add-lentille">Ajouter une lentille</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMarque" role="button" data-bs-toggle="dropdown" aria-expanded="false">Marques</a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" routerLink="marques">Liste des marques</a></li>
             <li><a class="dropdown-item" routerLink="add-marque">Ajouter une marque</a></li>
+            <li><a class="dropdown-item" routerLink="catalogues">Liste des catalogues</a></li>
+            <li><a class="dropdown-item" routerLink="add-catalogue">Ajouter un catalogue</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAgence" role="button" data-bs-toggle="dropdown" aria-expanded="false">Agences</a>
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEntreprise" role="button" data-bs-toggle="dropdown" aria-expanded="false">Assurances</a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="agences">Liste des agences</a></li>
-            <li><a class="dropdown-item" routerLink="add-agence">Ajouter une agence</a></li>
+            <li><a class="dropdown-item" routerLink="entreprises">Liste des compagnies d'assurances</a></li>
+            <li><a class="dropdown-item" routerLink="add-entreprise">Ajouter compagnie d'assurance</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBonLivraison" role="button" data-bs-toggle="dropdown" aria-expanded="false">Bons de livraisons</a>
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPatient" role="button" data-bs-toggle="dropdown" aria-expanded="false">Patients</a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="add-bonLivraison">Enregistrer un bon de livraison</a></li>
-            <li><a class="dropdown-item" routerLink="bonLivraisons">Liste des bons de livraisons</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownBonCommande" role="button" data-bs-toggle="dropdown" aria-expanded="false">Bons de commandes</a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="add-bonCommande">Enregistrer un bon de commande</a></li>
-            <li><a class="dropdown-item" routerLink="bonCommandes">Liste des bons de commandes</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownFournisseur" role="button" data-bs-toggle="dropdown" aria-expanded="false">Fournisseurs</a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="fournisseurs">Liste des fournisseurs</a></li>
-            <li><a class="dropdown-item" routerLink="add-fournisseur">Ajouter un fournisseur</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEntreprise" role="button" data-bs-toggle="dropdown" aria-expanded="false">Entreprises</a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="entreprises">Liste des entreprises</a></li>
-            <li><a class="dropdown-item" routerLink="add-entreprise">Ajouter une entreprise</a></li>
-          </ul>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPatient" role="button" data-bs-toggle="dropdown" aria-expanded="false">Clients</a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" routerLink="personnes">Liste des clients</a></li>
-            <li><a class="dropdown-item" routerLink="add-personne">Ajouter un client</a></li>
+            <li><a class="dropdown-item" routerLink="personnes">Liste des patients</a></li>
+            <li><a class="dropdown-item" routerLink="add-personne">Ajouter un patient</a></li>
           </ul>
         </li>
         <li class="nav-item dropdown">
@@ -77,6 +39,13 @@
             <li><a class="dropdown-item" routerLink="proformas">Liste Proforma</a></li>
             <li><a class="dropdown-item" routerLink="add-bordereau">Editer un Bordereau</a></li>
             <li><a class="dropdown-item" routerLink="Bordereaux">Liste des Bordereaux</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUtilisateur" role="button" data-bs-toggle="dropdown" aria-expanded="false">Utilisateurs</a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" routerLink="utilisateurs">Liste des Utilisateurs</a></li>
+            <li><a class="dropdown-item" routerLink="add-utilisateur">Nouvel utilisateur</a></li>
           </ul>
         </li>
       </ul>

@@ -33,6 +33,10 @@ import {EditAgenceComponent} from "./edit-agence/edit-agence.component";
 import {ListBordereauComponent} from "./list-bordereau/list-bordereau.component";
 import {EditBordereauComponent} from "./edit-bordereau/edit-bordereau.component";
 import {PrintBordereauComponent} from "./print-bordereau/print-bordereau.component";
+import {ListCataloguesComponent} from "./list-catalogues/list-catalogues.component";
+import {EditCatalogueComponent} from "./edit-catalogue/edit-catalogue.component";
+import {ListUtilisateursComponent} from "./list-utilisateurs/list-utilisateurs.component";
+import {EditUtilisateurComponent} from "./edit-utilisateur/edit-utilisateur.component";
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate:[AuthGaurdService] },
@@ -50,6 +54,10 @@ const routes: Routes = [
   { path: 'marques', component: ListMarquesComponent, canActivate:[AuthGaurdService] },
   { path: 'add-marque', component: EditMarqueComponent, canActivate:[AuthGaurdService] },
   { path: 'update-marque/:id', component: EditMarqueComponent, canActivate:[AuthGaurdService] },
+
+  { path: 'catalogues', component: ListCataloguesComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-catalogue', component: EditCatalogueComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-catalogue/:id', component: EditCatalogueComponent, canActivate:[AuthGaurdService] },
 
   { path: 'agences', component: ListAgencesComponent, canActivate:[AuthGaurdService] },
   { path: 'add-agence', component: EditAgenceComponent, canActivate:[AuthGaurdService] },
@@ -85,8 +93,11 @@ const routes: Routes = [
 
   { path: 'personnes', component: ListPersonnesComponent, canActivate:[AuthGaurdService] },
   { path: 'add-personne', component: EditPersonneComponent, canActivate:[AuthGaurdService] },
-  { path: 'add-personne', component: EditPersonneComponent, canActivate:[AuthGaurdService] },
   { path: 'update-personne/:id', component: EditPersonneComponent, canActivate:[AuthGaurdService] },
+
+  { path: 'utilisateurs', component: ListUtilisateursComponent, canActivate:[AuthGaurdService] },
+  { path: 'add-utilisateur', component: EditUtilisateurComponent, canActivate:[AuthGaurdService] },
+  { path: 'update-utilisateur/:id', component: EditUtilisateurComponent, canActivate:[AuthGaurdService] },
 
   { path: 'print-proforma/:id', component: PrintProformaComponent, canActivate:[AuthGaurdService] },
   { path: 'print-facture-client/:id', component: PrintFactureClientComponent, canActivate:[AuthGaurdService] },

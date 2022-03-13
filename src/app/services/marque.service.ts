@@ -21,7 +21,6 @@ export class MarqueService {
   getAllMarques() {
     this.httpClient.get<MarqueModel[]>(this.url).subscribe(
       (data: any[]) => {
-        console.log(data);
         // @ts-ignore
         this.listMarques = data;
         this.emitListMarqueSubject();

@@ -1,5 +1,5 @@
 <div class="card">
-  <div class="card-header text-white bg-primary">Liste des entreprises</div>
+  <div class="card-header text-white bg-primary">Liste des compagnies d'assurances</div>
   <div class="card-body">
     <table class="table table-striped table-sm">
       <thead>
@@ -8,8 +8,8 @@
         <th>Email</th>
         <th>Adresse</th>
         <th>Tel1</th>
-        <th>Tel2</th>
         <th>BP</th>
+        <th>RCCM</th>
         <th></th>
       </tr>
       </thead>
@@ -19,8 +19,8 @@
         <td>{{ entreprise.email }}</td>
         <td>{{ entreprise.adresse }}</td>
         <td>{{ entreprise.tel1 }}</td>
-        <td>{{ entreprise.tel2 }}</td>
         <td>{{ entreprise.bp }}</td>
+        <td>{{ entreprise.rccm }}</td>
         <td style="white-space: nowrap">
           <a routerLink="../update-entreprise/{{entreprise.id}}" class="btn btn-sm btn-primary mr-1">Modifier</a>
           <button (click)="deleteEntreprise(entreprise.id)" class="btn btn-sm btn-danger btn-delete-user" [disabled]="false">

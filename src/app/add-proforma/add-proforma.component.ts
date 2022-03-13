@@ -26,6 +26,11 @@ import {MarqueModel} from "../models/marque.model";
 import {MontureService} from "../services/monture.service";
 import {LentilleService} from "../services/lentille.service";
 import {MarqueService} from "../services/marque.service";
+import {MatDialog} from "@angular/material/dialog";
+import {EditMontureComponent} from "../edit-monture/edit-monture.component";
+import {AddMontureDialogComponent} from "../add-monture-dialog/add-monture-dialog.component";
+import {AddLentilleDialogComponent} from "../add-lentille-dialog/add-lentille-dialog.component";
+import {AddPatientDialogComponent} from "../add-patient-dialog/add-patient-dialog.component";
 
 @Component({
   selector: 'app-add-proforma',
@@ -52,13 +57,6 @@ export class AddProformaComponent implements OnInit {
   lentilleDProd : LentilleModel;
   lentilleGControl = new FormControl();
   lentilleDControl = new FormControl();
-  filteredLentilleG : Observable<StockModel[]>;
-  filteredLentilleD : Observable<StockModel[]>;
-  lentilleGTriggerSubscription : Subscription;
-  lentilleDTriggerSubscription : Subscription;
-  @ViewChild('autoCompleteLentilleG', { read: MatAutocompleteTrigger }) triggerLentilleG: MatAutocompleteTrigger;
-  @ViewChild('autoCompleteLentilleD', { read: MatAutocompleteTrigger }) triggerLentilleD: MatAutocompleteTrigger;
-  listLentilles : StockModel[]=[];
 
   patient : PersonneModel = null;
   assurePrincipal : PersonneModel = null;
@@ -94,17 +92,6 @@ export class AddProformaComponent implements OnInit {
   submitted = false;
   loading = false;
 
-  montureForm: FormGroup;
-  submittedMontureForm = false;
-  listMarques : MarqueModel[]=[];
-  listMarqueSubscription : Subscription;
-
-  lentilleGForm: FormGroup;
-  submittedLentilleGForm = false;
-
-  lentilleDForm: FormGroup;
-  submittedLentilleDForm = false;
-
   constructor(private formBuilder: FormBuilder,
               private router: Router,
               private route: ActivatedRoute,
@@ -115,35 +102,30 @@ export class AddProformaComponent implements OnInit {
               private factureClientService : FactureClientService,
               private proformaService : ProformaService,
               private stockService : StockService,
-              private montureService :  MontureService,
-              private lentilleService :  LentilleService,
-              private marqueService : MarqueService,
+              public dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
     this.initForm();
+
     this.onAddCouverture();
     this.onAddPrescription();
 
-    this.listEntreprisesSubscription = this.compagniService.listCompagniSubject.subscribe(
-      data => {
+    this.listEntreprisesSubscription = this.compagniService.listCompagniSubject.subscribe(data => {
         console.log(data);
         this.listEntreprises = data;
         this.listAssurances = this.listEntreprises.filter(entr => entr.type == "assurance");
       }, error => {
         console.log('Error ! : ' + error);
-      }
-    );
+      });
     this.compagniService.getAllCompagnis();
 
-    this.listPersonnesSubscription = this.personneService.listPersonneSubject.subscribe(
-      data => {
+    this.listPersonnesSubscription = this.personneService.listPersonneSubject.subscribe(data => {
         this.listPatients = data;
         this.listPrescripteurs = this.listPatients.filter(pers => pers.discriminator == "PRESCRIPTEUR");
       }, error => {
         console.log('Error ! : ' + error);
-      }
-    );
+      });
     this.personneService.getAllPersonnes();
     this.filteredPatients = this.factureForm.get('nomPatient').valueChanges.pipe(
       startWith(''),
@@ -176,9 +158,9 @@ export class AddProformaComponent implements OnInit {
       data => {
         this.listStocks = data;
         this.listMontures = this.listStocks.filter(stock => stock.produit.discriminator=="M");
-        this.listLentilles = this.listStocks.filter(stock => stock.produit.discriminator=="L");
+        //this.listLentilles = this.listStocks.filter(stock => stock.produit.discriminator=="L");
         console.log(this.listMontures);
-        console.log(this.listLentilles);
+        //console.log(this.listLentilles);
       }, error => {
         console.log('Error ! : ' + error);
       }
@@ -189,31 +171,7 @@ export class AddProformaComponent implements OnInit {
       map(value => typeof value === 'string' ? value : value.libelle),
       map(libelle => libelle ? this._filterMonture(libelle) : this.listMontures.slice())
     );
-    this.filteredLentilleG = this.lentilleGControl.valueChanges.pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value.libelle),
-      map(libelle => libelle ? this._filterLentille(libelle) : this.listLentilles.slice())
-    );
-    this.filteredLentilleD = this.lentilleDControl.valueChanges.pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value.libelle),
-      map(libelle => libelle ? this._filterLentille(libelle) : this.listLentilles.slice())
-    );
-
-    this.listMarqueSubscription = this.marqueService.listMarqueSubject.subscribe(
-      data => {
-        this.listMarques = data;
-      }, error => {
-        console.log('Error ! : ' + error);
-      }
-    );
-    this.marqueService.getAllMarques();
-    this.initMontureForm();
-    this.initLentilleGForm();
-    this.initLentilleDForm();
-
   }
-
   ngOnDestroy(): void {
     this.listStocksSubscription.unsubscribe();
     this.listEntreprisesSubscription.unsubscribe();
@@ -222,29 +180,24 @@ export class AddProformaComponent implements OnInit {
     this.assurePrincipalTriggerSubscription.unsubscribe();
     this.prescripteurTriggerSubscription.unsubscribe();
     this.montureTriggerSubscription.unsubscribe();
-    this.lentilleGTriggerSubscription.unsubscribe();
-    this.lentilleDTriggerSubscription.unsubscribe();
-    this.listMarqueSubscription.unsubscribe();
   }
-
   ngAfterViewInit() {
     this.patientTriggerSubscription = this.triggerPatient.panelClosingActions.subscribe(e => {
       if (!e) {
-        if(this.patient != null){
-          this.patient = null;
-          this.onInitPatientForm(new PersonneModel(null, null, null, new CompagniModel(), null, null));
-          this.onEnablePatientForm();
-        }
+        this.patient = null;
+        this.factureForm.get('nomPatient').setValue(this.patient);
+        this.onInitPatientForm(this.patient);
       }
     },e => console.log('error', e));
 
     this.assurePrincipalTriggerSubscription = this.triggerAssurePrincipal.panelClosingActions.subscribe(e => {
       if (!e) {
-        if(this.assurePrincipal != null){
-          this.assurePrincipal = null;
-          this.onInitAssurePrincipalForm(new PersonneModel(null, null, null, new CompagniModel(), null));
-          this.onEnableAssurePrincipalForm();
+        this.assurePrincipal = null;
+        if(this.couverture.length == 1){
+          this.couverture.at(0).get('nomAssurePrincipal').setValue(this.assurePrincipal);
+          this.onInitAssurePrincipalForm(this.assurePrincipal);
         }
+
       }
     },e => console.log('error', e));
 
@@ -256,7 +209,6 @@ export class AddProformaComponent implements OnInit {
         }
       }
     },e => console.log('error', e));
-
     this.entrepriseTriggerSubscription = this.triggerEntreprise.panelClosingActions.subscribe(e => {
       if (!e) {
         if(this.entreprise != null){
@@ -271,7 +223,6 @@ export class AddProformaComponent implements OnInit {
         }
       }
     },e => console.log('error', e));
-
     this.montureTriggerSubscription = this.triggerMonture.panelClosingActions.subscribe(e => {
       if (!e) {
         this.monture = null;
@@ -281,28 +232,6 @@ export class AddProformaComponent implements OnInit {
         this.onCalculValeurs();
       }
     },e => console.log('error', e));
-
-    this.lentilleGTriggerSubscription = this.triggerLentilleG.panelClosingActions.subscribe(e => {
-      if (!e) {
-        this.lentilleG = null;
-        this.lentilleGProd = null;
-        this.lentilleGControl.setValue(new LentilleModel(null,null,null,null));
-        this.factureForm.get('qteLentilleG').reset(1);
-        this.factureForm.get('remiseLentilleG').reset(0);
-        this.onCalculValeurs();
-      }
-    },e => console.log('error', e));
-    this.lentilleDTriggerSubscription = this.triggerLentilleD.panelClosingActions.subscribe(e => {
-      if (!e) {
-        this.lentilleD = null;
-        this.lentilleDProd = null;
-        this.lentilleDControl.setValue(new LentilleModel(null,null,null,null));
-        this.factureForm.get('qteLentilleD').reset(1);
-        this.factureForm.get('remiseLentilleD').reset(0);
-        this.onCalculValeurs();
-      }
-    },e => console.log('error', e));
-
   }
 
   private _filterPatient(value: string): PersonneModel[] {
@@ -315,29 +244,40 @@ export class AddProformaComponent implements OnInit {
     });
   }
   displayPatient(patient: PersonneModel): string {
-    if(patient && patient.nom){
-      return patient.nom;
+    let val='';
+    if(patient){
+      if(patient.nom != null)
+        val = val+patient.nom+' ';
+      if(patient.prenom != null)
+        val = val+patient.prenom;
     }
-    return '';
+    return val.trim();
   }
   getPatient(event) {
     this.patient = event.option.value;
     this.onInitPatientForm(this.patient);
+    if(this.couverture.length == 1){
+      this.assurePrincipal = this.patient;
+      this.onInitAssurePrincipalForm(this.assurePrincipal);
+    }
   }
   onInitPatientForm(patient: PersonneModel){
-    //this.factureForm.get('nom').setValue(patient.nom);
-    this.factureForm.get('prenomPatient').setValue(patient.prenom);
-    this.factureForm.get('dateNaissPatient').setValue(patient.dateNaiss);
-    this.factureForm.get('adressePatient').setValue(patient.adresse);
-    this.factureForm.get('emailPatient').setValue(patient.email);
-    this.factureForm.get('tel1Patient').setValue(patient.tel1);
-    this.factureForm.get('tel2Patient').setValue(patient.tel2);
-    this.factureForm.get('civilitePatient').setValue(patient.civilite);
-    this.factureForm.get('idEntreprisePatient').setValue(patient.entreprise ? patient.entreprise.id : null);
-    if(patient.id == null)
-      this.onEnablePatientForm();
-    else
-      this.onDisablePatientForm();
+    if(patient){
+      this.factureForm.get('dateNaissPatient').setValue(patient.dateNaiss);
+      this.factureForm.get('adressePatient').setValue(patient.adresse);
+      this.factureForm.get('emailPatient').setValue(patient.email);
+      this.factureForm.get('tel1Patient').setValue(patient.tel1);
+      this.factureForm.get('civilitePatient').setValue(patient.civilite);
+    }
+    else {
+      this.factureForm.get('dateNaissPatient').setValue(null);
+      this.factureForm.get('adressePatient').setValue(null);
+      this.factureForm.get('emailPatient').setValue(null);
+      this.factureForm.get('tel1Patient').setValue(null);
+      this.factureForm.get('tel2Patient').setValue(null);
+      this.factureForm.get('civilitePatient').setValue(null);
+    }
+
   }
   onDisablePatientForm(){
     this.factureForm.get('prenomPatient').disable();
@@ -348,16 +288,6 @@ export class AddProformaComponent implements OnInit {
     this.factureForm.get('tel2Patient').disable();
     this.factureForm.get('civilitePatient').disable();
     this.factureForm.get('idEntreprisePatient').disable();
-  }
-  onEnablePatientForm(){
-    this.factureForm.get('prenomPatient').enable();
-    this.factureForm.get('dateNaissPatient').enable();
-    this.factureForm.get('adressePatient').enable();
-    this.factureForm.get('emailPatient').enable();
-    this.factureForm.get('tel1Patient').enable();
-    this.factureForm.get('tel2Patient').enable();
-    this.factureForm.get('civilitePatient').enable();
-    this.factureForm.get('idEntreprisePatient').enable();
   }
 
   private _filterPrescripteur(value: string): PersonneModel[] {
@@ -412,18 +342,21 @@ export class AddProformaComponent implements OnInit {
     this.onInitAssurePrincipalForm(this.assurePrincipal);
   }
   onInitAssurePrincipalForm(patient: PersonneModel){
-    //this.factureForm.get('nom').setValue(patient.nom);
-    this.couverture.at(0).get('prenomAssurePrincipal').setValue(patient.prenom);
-    this.couverture.at(0).get('dateNaissAssurePrincipal').setValue(patient.dateNaiss);
-    this.couverture.at(0).get('adresseAssurePrincipal').setValue(patient.adresse);
-    this.couverture.at(0).get('emailAssurePrincipal').setValue(patient.email);
-    this.couverture.at(0).get('tel1AssurePrincipal').setValue(patient.tel1);
-    this.couverture.at(0).get('civiliteAssurePrincipal').setValue(patient.civilite);
-    this.couverture.at(0).get('entrepriseAssurePrincipal').setValue(patient.entreprise ? patient.entreprise.id : null);
-    if(patient.id == null)
-      this.onEnableAssurePrincipalForm();
-    else
-      this.onDisableAssurePrincipalForm();
+    if(patient){
+      this.couverture.at(0).get('nomAssurePrincipal').setValue(patient);
+      this.couverture.at(0).get('dateNaissAssurePrincipal').setValue(patient.dateNaiss);
+      this.couverture.at(0).get('adresseAssurePrincipal').setValue(patient.adresse);
+      this.couverture.at(0).get('emailAssurePrincipal').setValue(patient.email);
+      this.couverture.at(0).get('tel1AssurePrincipal').setValue(patient.tel1);
+      this.couverture.at(0).get('civiliteAssurePrincipal').setValue(patient.civilite);
+    }
+    else {
+      this.couverture.at(0).get('dateNaissAssurePrincipal').setValue(null);
+      this.couverture.at(0).get('adresseAssurePrincipal').setValue(null);
+      this.couverture.at(0).get('emailAssurePrincipal').setValue(null);
+      this.couverture.at(0).get('tel1AssurePrincipal').setValue(null);
+      this.couverture.at(0).get('civiliteAssurePrincipal').setValue(null);
+    }
   }
   onDisableAssurePrincipalForm(){
     if(this.couverture.length == 1){
@@ -433,16 +366,6 @@ export class AddProformaComponent implements OnInit {
       this.couverture.at(0).get('emailAssurePrincipal').disable();
       this.couverture.at(0).get('tel1AssurePrincipal').disable();
       this.couverture.at(0).get('civiliteAssurePrincipal').disable();
-    }
-  }
-  onEnableAssurePrincipalForm(){
-    if(this.couverture.length == 1){
-      this.couverture.at(0).get('prenomAssurePrincipal').enable();
-      this.couverture.at(0).get('dateNaissAssurePrincipal').enable();
-      this.couverture.at(0).get('adresseAssurePrincipal').enable();
-      this.couverture.at(0).get('emailAssurePrincipal').enable();
-      this.couverture.at(0).get('tel1AssurePrincipal').enable();
-      this.couverture.at(0).get('civiliteAssurePrincipal').enable();
     }
   }
 
@@ -456,22 +379,8 @@ export class AddProformaComponent implements OnInit {
     const filterValue = value.toLowerCase();
     return this.listMontures.filter(option => option.produit.libelle.toLowerCase().includes(filterValue.trim()));
   }
-  private _filterLentille(value: string): StockModel[] {
-    const filterValue = value.toLowerCase();
-    return this.listLentilles.filter(option => option.produit.libelle.toLowerCase().includes(filterValue.trim()));
-  }
   getMonture(event) {
     this.monture = event.option.value;
-    this.onCalculValeurs();
-  }
-  getLentilleG(event) {
-    this.lentilleG = event.option.value;
-    this.lentilleGProd =this.lentilleG.produit as LentilleModel;
-    this.onCalculValeurs();
-  }
-  getLentilleD(event) {
-    this.lentilleD = event.option.value;
-    this.lentilleDProd =this.lentilleD.produit as LentilleModel;
     this.onCalculValeurs();
   }
 
@@ -503,71 +412,13 @@ export class AddProformaComponent implements OnInit {
       totalLentilleG: new FormControl(),
       totalLentilleD : new FormControl(),
 
-      /*civiliteAssurePrincipal: new FormControl(),
-      nomAssurePrincipal: [null, Validators.compose([Validators.required])],
-      prenomAssurePrincipal: new FormControl(),
-      dateNaissAssurePrincipal: new FormControl(),
-      emailAssurePrincipal: [null, Validators.compose([Validators.email])],
-      adresseAssurePrincipal: new FormControl(),
-      tel1AssurePrincipal: new FormControl(),
-      entrepriseAssurePrincipal : ['', Validators.compose([Validators.required])],
-
-      assurance : ['', Validators.compose([Validators.required])],
-      couvertureVerre : ['', Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
-      couvertureMonture : ['', Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
-      numeroDocument : '',
-      dateDocument : '',
-      relation : '',*/
-
       priseEnCharge : 0,
       franchise : 0,
 
     });
+    this.onDisablePatientForm();
   }
   get f() { return this.factureForm.controls; }
-  initMontureForm(){
-    this.montureForm = this.formBuilder.group({
-      reference: ['', Validators.compose([Validators.required])],
-      modele: null,
-      matiere: null,
-      genre: null,
-      taille: null,
-      forme: null,
-      coloris: null,
-      lngBrn: null,
-      catAge: null,
-      idMarque: null,
-      qte: [null, Validators.compose([Validators.required, Validators.min(0)])],
-      prixVente: [null, Validators.compose([Validators.required, Validators.min(0)])],
-    });
-  }
-  get fM() { return this.montureForm.controls; }
-  initLentilleGForm(){
-    this.lentilleGForm = this.formBuilder.group({
-      libelle: ['', Validators.compose([Validators.required])],
-      //type: lentille.type,
-      sphere: [null, Validators.compose([Validators.required])],
-      cylindre: [null, Validators.compose([Validators.required])],
-      axe: null,
-      addition: null,
-      qte: [null, Validators.compose([Validators.required, Validators.min(0)])],
-      prixVente: [null, Validators.compose([Validators.required, Validators.min(0)])],
-    });
-  }
-  get fLG() { return this.lentilleGForm.controls; }
-  initLentilleDForm(){
-    this.lentilleDForm = this.formBuilder.group({
-      libelle: ['', Validators.compose([Validators.required])],
-      //type: lentille.type,
-      sphere: [null, Validators.compose([Validators.required])],
-      cylindre: [null, Validators.compose([Validators.required])],
-      axe: null,
-      addition: null,
-      qte: [null, Validators.compose([Validators.required, Validators.min(0)])],
-      prixVente: [null, Validators.compose([Validators.required, Validators.min(0)])],
-    });
-  }
-  get fLD() { return this.lentilleDForm.controls; }
 
   get prescription(): FormArray {
     return this.factureForm.get('prescription') as FormArray;
@@ -601,12 +452,15 @@ export class AddProformaComponent implements OnInit {
       entrepriseAssurePrincipal : ['', Validators.compose([Validators.required])],
 
       assurance : ['', Validators.compose([Validators.required])],
-      couvertureVerre : ['', Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
-      couvertureMonture : ['', Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
+      couvertureVerre : [100, Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
+      couvertureMonture : [100, Validators.compose([Validators.required, Validators.min(0), Validators.max(100)])],
       numeroDocument : '',
       dateDocument : '',
       relation : ''
     }));
+    this.onDisableAssurePrincipalForm();
+    this.assurePrincipal = this.patient;
+    this.onInitAssurePrincipalForm(this.assurePrincipal);
     this.onCalculValeurs();
   }
   onDeleteCouverture(index: number){
@@ -646,7 +500,7 @@ export class AddProformaComponent implements OnInit {
     }
 
     if(this.couverture.length ==1){
-      this.f.priseEnCharge.setValue(this.f.totalMonture.value * this.couverture.at(0).get('couvertureMonture').value/100 + this.f.totalLentilleG.value * this.couverture.at(0).get('couvertureVerre').value/100 + this.f.totalLentilleG.value*this.couverture.at(0).get('couvertureVerre').value/100);
+      this.f.priseEnCharge.setValue(this.f.totalMonture.value * this.couverture.at(0).get('couvertureMonture').value/100 + this.f.totalLentilleG.value * this.couverture.at(0).get('couvertureVerre').value/100 + this.f.totalLentilleD.value*this.couverture.at(0).get('couvertureVerre').value/100);
       this.f.franchise.setValue((this.f.totalMonture.value + this.f.totalLentilleG.value + this.f.totalLentilleD.value) - this.f.priseEnCharge.value);
       this.aPayer = (this.f.totalMonture.value + this.f.totalLentilleG.value + this.f.totalLentilleD.value) - this.f.priseEnCharge.value;
     }
@@ -657,30 +511,96 @@ export class AddProformaComponent implements OnInit {
     }
 
 
+  }
+  formatMillier( nombre){
+    nombre += '';
+    var sep = ' ';
+    var reg = /(\d+)(\d{3})/;
+    while( reg.test( nombre)) {
+      nombre = nombre.replace( reg, '$1' +sep +'$2');
+    }
+    return nombre;
+  }
 
+  openPatientDialog() {
+    const dialogRef = this.dialog.open(AddPatientDialogComponent, {width: '600px',});
+    dialogRef.afterClosed().subscribe(result => {
+      if(result != null || result != undefined){
+        this.patient = result as PersonneModel;
+        this.factureForm.get('nomPatient').setValue(this.patient);
+        this.onInitPatientForm(this.patient);
+        if(this.couverture.length == 1){
+          this.assurePrincipal = this.patient;
+          this.couverture.at(0).get('nomAssurePrincipal').setValue(this.assurePrincipal);
+          this.onInitAssurePrincipalForm(this.assurePrincipal);
+        }
+      }
+    });
+  }
+  openAssurePrincipalDialog() {
+    const dialogRef = this.dialog.open(AddPatientDialogComponent, {width: '600px',});
+    dialogRef.afterClosed().subscribe(result => {
+      if(result != null || result != undefined){
+        if(this.couverture.length == 1){
+          this.assurePrincipal = result as PersonneModel;
+          this.couverture.at(0).get('nomAssurePrincipal').setValue(this.assurePrincipal);
+          this.onInitAssurePrincipalForm(this.assurePrincipal);
+        }
+      }
+    });
+  }
+
+  openMontureDialog() {
+    const dialogRef = this.dialog.open(AddMontureDialogComponent, {width: '600px',});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result != null || result != undefined){
+        this.monture = result as StockModel;
+        this.montureControl.setValue(this.monture);
+      }
+      this.onCalculValeurs();
+    });
+
+  }
+  openLentilleGDialog() {
+    const dialogRef = this.dialog.open(AddLentilleDialogComponent, {width: '600px',});
+    dialogRef.afterClosed().subscribe(result => {
+      if(result != null || result != undefined){
+        this.lentilleG = result as StockModel;
+        this.lentilleGProd = this.lentilleG.produit as LentilleModel;
+        this.lentilleGControl.setValue(this.lentilleG.produit.libelle);
+      }
+      this.onCalculValeurs();
+    });
+  }
+  openLentilleDDialog() {
+    const dialogRef = this.dialog.open(AddLentilleDialogComponent, {width: '600px',});
+    dialogRef.afterClosed().subscribe(result => {
+      if(result != null || result != undefined){
+        this.lentilleD = result as StockModel;
+        this.lentilleDProd = this.lentilleD.produit as LentilleModel;
+        this.lentilleDControl.setValue(this.lentilleD.produit.libelle);
+      }
+      this.onCalculValeurs();
+    });
+  }
+
+  onDeleteLentilleD() {
+    this.lentilleD = null;
+    this.lentilleDProd = null;
+    this.lentilleDControl = null;
+  }
+  onDeleteLentilleG() {
+    this.lentilleG = null;
+    this.lentilleGProd = null;
+    this.lentilleGControl = null;
   }
 
   onReset() {
     this.submitted = false;
     this.factureForm.reset();
     this.patient = null;
-    this.onEnablePatientForm();
-    this.onEnableAssurePrincipalForm();
-
   }
-  onResettMontureForm() {
-    this.submittedMontureForm = false;
-    this.montureForm.reset();
-  }
-  onResettLentilleDForm() {
-    this.submittedLentilleDForm = false;
-    this.lentilleDForm.reset();
-  }
-  onResettLentilleGForm() {
-    this.submittedLentilleGForm = false;
-    this.lentilleGForm.reset();
-  }
-
   onSubmitForm() {
     console.log("onSubmitForm");
     this.submitted = true;
@@ -690,31 +610,15 @@ export class AddProformaComponent implements OnInit {
     }
 
     const formValue = this.factureForm.value;
-    //const formValue2 = this.couverture.at(0).value;
 
     let isVente = false;
     if(this.monture && formValue['qteMonture'] >= 1){
-      if(formValue['qteMonture'] > this.monture.qte){
-        alert("La quantité de monture "+this.monture.produit.libelle+" en stock est inférieur à la quantité commandé");
-        return;
-      }
-      else
         isVente = true;
     }
     if(this.lentilleD && formValue['qteLentilleD'] >= 1){
-      if(formValue['qteLentilleD'] > this.lentilleD.qte){
-        alert("La quantité de lentille "+this.lentilleD.produit.libelle+" en stock est inférieur à la quantité commandé");
-        return;
-      }
-      else
         isVente = true;
     }
     if(this.lentilleG && formValue['qteLentilleG'] >= 1){
-      if(formValue['qteLentilleG'] > this.lentilleG.qte){
-        alert("La quantité de lentille "+this.lentilleG.produit.libelle+" en stock est inférieur à la quantité commandé");
-        return;
-      }
-      else
         isVente = true;
     }
     if(isVente == false){
@@ -722,172 +626,9 @@ export class AddProformaComponent implements OnInit {
       return;
     }
 
-    /*
-    if(this.couverture.length == 1){
-      let editedCouverture : CouvertureModel[]=[];
-      let editCouverture = new CouvertureModel(null, null, null, null, null, null)
-
-      if(this.assurePrincipal){
-        editCouverture.assurePrincipal = this.assurePrincipal;
-      }
-      else {
-        let editedAssurePrincipal = new PersonneModel();
-        editedAssurePrincipal.civilite = this.couverture.at(0).get('civiliteAssurePrincipal').value;
-        editedAssurePrincipal.nom = this.couverture.at(0).get('nomAssurePrincipal').value ? (<string>formValue2['nomAssurePrincipal']).trim() : formValue2['nomAssurePrincipal'];
-        editedAssurePrincipal.prenom = this.couverture.at(0).get('prenomAssurePrincipal').value ? (<string>formValue2['prenomAssurePrincipal']).trim() : formValue2['prenomAssurePrincipal'];
-        editedAssurePrincipal.dateNaiss = this.couverture.at(0).get('dateNaissAssurePrincipal').value ? (<string>formValue2['dateNaissAssurePrincipal']).trim() : formValue2['dateNaissAssurePrincipal'];
-        editedAssurePrincipal.email = this.couverture.at(0).get('emailAssurePrincipal').value ? (<string>formValue2['emailAssurePrincipal']).trim() : formValue2['emailAssurePrincipal'];
-        editedAssurePrincipal.adresse = this.couverture.at(0).get('adresseAssurePrincipal').value ? (<string>formValue2['adresseAssurePrincipal']).trim() : formValue2['adresseAssurePrincipal'];
-        editedAssurePrincipal.tel1 = this.couverture.at(0).get('tel1AssurePrincipal').value ? (<string>formValue2['tel1AssurePrincipal']).trim() : formValue2['tel1AssurePrincipal'];
-        editCouverture.assurePrincipal = editedAssurePrincipal;
-      }
-      editCouverture.couvertureVerre = formValue2['couvertureVerre'];
-      editCouverture.couvertureMonture = formValue2['couvertureMonture'];
-      editCouverture.dateDocument = formValue2['dateDocument'];
-      editCouverture.numeroDocument = formValue2['numeroDocument'];
-      editCouverture.priseEnCharge = formValue['priseEnCharge'];
-      editCouverture.franchise = formValue['franchise'];
-      editCouverture.relation = formValue2['relation'];
-      if(this.entreprise){
-        editCouverture.entreprise = this.entreprise;
-      }
-      else {
-        let editedEntreprise = new CompagniModel();
-        editedEntreprise.nom = formValue2['entrepriseAssurePrincipal'] ? (<string> formValue2['entrepriseAssurePrincipal']).trim() : formValue2['entrepriseAssurePrincipal'];
-        editCouverture.entreprise = editedEntreprise;
-      }
-      if(this.assurance){
-        editCouverture.assurance = this.assurance;
-      }
-      else {
-        let editedAssurance = new CompagniModel();
-        editedAssurance.nom = formValue2['assurance'] ? (<string> formValue2['assurance']).trim() : formValue2['assurance'];
-        editCouverture.assurance = editedAssurance;
-      }
-
-      editedCouverture.push(editCouverture);
-      editedFacture.couvertures = editedCouverture;
-    }
-     */
-
     this.addProformat(this.loadFacture());
 
   }
-  onSubmitMontureForm() {
-    this.submittedMontureForm = true;
-    if (this.montureForm.invalid) {
-      return;
-    }
-
-    const formValue = this.montureForm.value;
-    let editedStock = new StockModel(null, null,null,null);
-    let editedMonture = new MontureModel(null,null,null,null,null);
-    editedMonture.reference=formValue['reference'] ? ( <string>formValue['reference']).trim() : formValue['reference'];
-    editedMonture.modele= formValue['modele'] ? (<string> formValue['modele']).trim() : formValue['modele'];
-    editedMonture.matiere= formValue['matiere'] ? (<string> formValue['matiere']).trim() : formValue['matiere'];
-    editedMonture.genre= formValue['genre'] ? (<string> formValue['genre']).trim() : formValue['genre'];
-    editedMonture.taille= formValue['taille'] ? (<string> formValue['taille']).trim() : formValue['taille'];
-    editedMonture.forme= formValue['forme'] ? (<string> formValue['forme']).trim() : formValue['forme'];
-    editedMonture.libelle = editedMonture.reference
-    if(formValue['idMarque']){
-      editedMonture.marque = this.listMarques.filter(opt => opt.id == formValue['idMarque'])[0];
-    }
-    else {
-      editedMonture.marque = null;
-    }
-    editedStock.produit = editedMonture;
-    editedStock.prixVente = formValue['prixVente'];
-    editedStock.qte = formValue['qte'];
-
-    this.addMonture(editedStock);
-  }
-  onSubmitLentilleGForm(){
-    this.submittedLentilleGForm = true;
-    if (this.lentilleGForm.invalid) {
-      return;
-    }
-    const formValue = this.lentilleGForm.value;
-    let editedStock = new StockModel(null, null,null,null);
-    let editedLentille = new LentilleModel(null, null);
-    editedLentille.sphere = <number> formValue['sphere'];
-    editedLentille.cylindre = <number> formValue['cylindre'];
-    editedLentille.axe = <number> formValue['axe'];
-    editedLentille.addition = <number> formValue['addition'];
-    editedLentille.libelle = (<string> formValue['libelle']).trim();
-    editedStock.produit = editedLentille;
-    editedStock.prixVente = formValue['prixVente'];
-    editedStock.qte = formValue['qte'];
-
-    this.addLentille(editedStock, 'G');
-  }
-  onSubmitLentilleDForm(){
-    this.submittedLentilleDForm = true;
-    if (this.lentilleDForm.invalid) {
-      return;
-    }
-    const formValue = this.lentilleDForm.value;
-    let editedStock = new StockModel(null, null,null,null);
-    let editedLentille = new LentilleModel(null, null);
-    editedLentille.sphere = <number> formValue['sphere'];
-    editedLentille.cylindre = <number> formValue['cylindre'];
-    editedLentille.axe = <number> formValue['axe'];
-    editedLentille.addition = <number> formValue['addition'];
-    editedLentille.libelle = (<string> formValue['libelle']).trim();
-    editedStock.produit = editedLentille;
-    editedStock.prixVente = formValue['prixVente'];
-    editedStock.qte = formValue['qte'];
-
-    this.addLentille(editedStock, 'D');
-  }
-  private addMonture(stock : StockModel) {
-    this.montureService.addMonture(stock.produit as MontureModel).subscribe(data1=>{
-      stock.produit = data1 as MontureModel;
-      this.stockService.addStock(stock).subscribe(data2=>{
-        this.stockService.getAllStocks();
-        this.monture = data2 as StockModel;
-        console.log(this.monture.produit.libelle);
-        this.montureControl.setValue(this.monture);
-        this.onCalculValeurs();
-        this.onResettMontureForm();
-        document.getElementById('montureModal').click();
-      }, error => {
-        console.log('Error ! : ' + error);
-      });
-    }, error => {
-      console.log('Error ! : ' + error);
-      this.loading = false;
-    });
-
-  }
-  private addLentille(stock : StockModel, cote : string) {
-    this.lentilleService.addLentille(stock.produit as LentilleModel).subscribe(data1=>{
-      stock.produit = data1 as LentilleModel;
-      this.stockService.addStock(stock).subscribe(data2=>{
-        this.stockService.getAllStocks();
-        if(cote == 'G'){
-          this.lentilleG = data2 as StockModel;
-          this.lentilleGControl.setValue(this.lentilleG);
-          this.onCalculValeurs();
-          this.onResettLentilleGForm();
-          document.getElementById('lentilleGModal').click();
-        }
-        if(cote == 'D'){
-          this.lentilleD = data2 as StockModel;
-          this.lentilleDControl.setValue(this.lentilleD);
-          this.onCalculValeurs();
-          this.onResettLentilleDForm();
-          document.getElementById('lentilleDModal').click();
-        }
-      }, error => {
-        console.log('Error ! : ' + error);
-      });
-    }, error => {
-      console.log('Error ! : ' + error);
-      this.loading = false;
-    });
-
-  }
-
   loadFacture(){
 
     const formValue = this.factureForm.value;
@@ -1021,17 +762,6 @@ export class AddProformaComponent implements OnInit {
 
     return editedFacture;
   }
-
-  formatMillier( nombre){
-    nombre += '';
-    var sep = ' ';
-    var reg = /(\d+)(\d{3})/;
-    while( reg.test( nombre)) {
-      nombre = nombre.replace( reg, '$1' +sep +'$2');
-    }
-    return nombre;
-  }
-
   private addProformat(facture : FactureModel) {
     console.log(facture);
     this.proformaService.addProforma(facture).subscribe(
@@ -1045,6 +775,9 @@ export class AddProformaComponent implements OnInit {
       }
     )
   }
+
+
+
 
 }
 

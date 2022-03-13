@@ -52,6 +52,8 @@ export class EditMarqueComponent implements OnInit {
 
   get f() { return this.marqueForm.controls; }
   onSubmitForm(){
+    if(this.marqueForm.get('nom').value && this.marqueForm.get('nom').value.toString().trim()=='')
+      this.marqueForm.get('nom').setValue(null);
     this.submitted = true;
     if (this.marqueForm.invalid) {
       return;

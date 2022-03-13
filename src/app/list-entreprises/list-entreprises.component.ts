@@ -22,7 +22,8 @@ export class ListEntreprisesComponent implements OnInit {
     this.loading = true;
     this.listEntrepriseSubscription = this.compagniService.listCompagniSubject.subscribe(
       (entreprises: CompagniModel[]) => {
-        this.entreprises = entreprises;
+        let listEntreprises = entreprises;
+        this.entreprises = listEntreprises.filter(x => x.type == 'assurance');
         this.loading = false;
       }
     );

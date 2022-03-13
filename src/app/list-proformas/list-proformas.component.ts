@@ -3,8 +3,8 @@ import {FactureClientModel} from "../models/factureClient.model";
 import {Subscription} from "rxjs";
 import {ProformaModel} from "../models/Proforma.model";
 import {FactureClientService} from "../services/factureClient.service";
-import {LentilleModel} from "../models/lentille.model";
 import {ProformaService} from "../services/proforma.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-list-proformas',
@@ -17,7 +17,11 @@ export class ListProformasComponent implements OnInit {
   factures: ProformaModel[];
   listFactureSubscription : Subscription;
 
-  constructor(private proformaService : ProformaService) { }
+  constructor(private proformaService : ProformaService,
+              private factureClientService : FactureClientService,
+              private route: ActivatedRoute,
+              private router: Router,
+              ) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -45,4 +49,24 @@ export class ListProformasComponent implements OnInit {
     this.loading = false;
   }
 
+  onSaveFactureClient(id: number) {
+    let facture : FactureClientModel = this.factures.filter(x => x.id == id)[0];
+    facture.numero = null;
+    facture.ventes.forEach(x => x.id=null);
+    if(facture.couvertures)
+      facture.couvertures.forEach(x => x.id=null);
+    console.log(facture);
+
+    this.factureClientService.addFactureClient(facture).subscribe(
+      data =>{
+        console.log(data);
+        // @ts-ignore
+        this.router.navigate(['/print-facture-client/'+data.id]);
+      }, error => {
+        console.log('Error ! : ' + error);
+        //this.loading = false;
+      }
+    );
+
+  }
 }

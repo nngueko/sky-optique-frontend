@@ -28,6 +28,7 @@ import {MatNativeDateModule, MatOptionModule} from "@angular/material/core";
 import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
 import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatMenuModule} from "@angular/material/menu";
 import {MatButtonModule} from "@angular/material/button";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
@@ -52,10 +53,16 @@ import { PrintProformaComponent } from './print-proforma/print-proforma.componen
 import { PrintFactureClientComponent } from './print-facture-client/print-facture-client.component';
 import { ListProformasComponent } from './list-proformas/list-proformas.component';
 import { EditAgenceComponent } from './edit-agence/edit-agence.component';
+import { EditUtilisateurComponent } from './edit-utilisateur/edit-utilisateur.component';
 import { ListAgencesComponent } from './list-agences/list-agences.component';
 import { EditBordereauComponent } from './edit-bordereau/edit-bordereau.component';
 import { ListBordereauComponent } from './list-bordereau/list-bordereau.component';
 import { PrintBordereauComponent } from './print-bordereau/print-bordereau.component';
+import { AddMontureDialogComponent } from './add-monture-dialog/add-monture-dialog.component';
+import { EditCatalogueComponent } from './edit-catalogue/edit-catalogue.component';
+import { ListCataloguesComponent } from './list-catalogues/list-catalogues.component';
+import { AddLentilleDialogComponent } from './add-lentille-dialog/add-lentille-dialog.component';
+import { AddPatientDialogComponent } from './add-patient-dialog/add-patient-dialog.component';
 
 @NgModule({
   declarations: [
@@ -96,7 +103,13 @@ import { PrintBordereauComponent } from './print-bordereau/print-bordereau.compo
     ListAgencesComponent,
     EditBordereauComponent,
     ListBordereauComponent,
-    PrintBordereauComponent
+    PrintBordereauComponent,
+    AddMontureDialogComponent,
+    EditCatalogueComponent,
+    ListCataloguesComponent,
+    AddLentilleDialogComponent,
+    EditUtilisateurComponent,
+    AddPatientDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -119,7 +132,8 @@ import { PrintBordereauComponent } from './print-bordereau/print-bordereau.compo
     MatRadioModule,
     MatSelectModule,
     MatOptionModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

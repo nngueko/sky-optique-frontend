@@ -47,8 +47,9 @@ export class EditEntrepriseComponent implements OnInit {
       email: [entreprise.email, Validators.compose([Validators.email])],
       adresse: entreprise.adresse,
       tel1: entreprise.tel1,
-      tel2: entreprise.tel2,
+      //tel2: entreprise.tel2,
       bp: entreprise.bp,
+      rccm: entreprise.rccm,
     });
   }
 
@@ -66,8 +67,10 @@ export class EditEntrepriseComponent implements OnInit {
     editedEntreprise.email = formValue['email'] ? (<string> formValue['email']).trim() : formValue['email'];
     editedEntreprise.adresse = formValue['adresse'] ? (<string> formValue['adresse']).trim() : formValue['adresse'];
     editedEntreprise.tel1 = formValue['tel1'] ? (<string> formValue['tel1']).trim() : formValue['tel1'];
-    editedEntreprise.tel2 = formValue['tel2'] ? (<string> formValue['tel2']).trim() : formValue['tel2'];
+    //editedEntreprise.tel2 = formValue['tel2'] ? (<string> formValue['tel2']).trim() : formValue['tel2'];
     editedEntreprise.bp = formValue['bp'] ? (<string> formValue['bp']).trim() : formValue['bp'];
+    editedEntreprise.rccm = formValue['rccm'] ? (<string> formValue['rccm']).trim() : formValue['rccm'];
+    editedEntreprise.type='assurance';
     console.log(editedEntreprise);
 
     if (this.isAddMode) {
