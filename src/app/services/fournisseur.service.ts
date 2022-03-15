@@ -10,7 +10,7 @@ import {FournisseurModel} from "../models/fournisseur.model";
 })
 export class FournisseurService {
 
-  url = 'http://localhost:8080/fournisseur/';
+  url = 'https://sky-optique-back2.herokuapp.com/fournisseur/';
   // @ts-ignore
   listFournisseurs : FournisseurModel[];
   listFournisseurSubject = new Subject<FournisseurModel[]>();

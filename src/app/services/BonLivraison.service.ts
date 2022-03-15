@@ -10,7 +10,7 @@ import {BonLivraisonModel} from "../models/bonLivraison.model";
 })
 export class BonLivraisonService {
 
-  url = 'http://localhost:8080/bonLivraison/';
+  url = 'https://sky-optique-back2.herokuapp.com/bonLivraison/';
 
   listBonLivraisons : BonLivraisonModel[];
   listBonLivraisonSubject = new Subject<BonLivraisonModel[]>();

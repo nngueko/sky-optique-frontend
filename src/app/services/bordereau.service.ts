@@ -8,7 +8,7 @@ import {BordereauModel} from "../models/bordereau.model";
 })
 export class BordereauService {
 
-  url = 'http://localhost:8080/bordereau/';
+  url = 'https://sky-optique-back2.herokuapp.com/bordereau/';
   // @ts-ignore
   listBordereau : BordereauModel[];
   listBordereauSubject = new Subject<BordereauModel[]>();

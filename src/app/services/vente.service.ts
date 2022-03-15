@@ -8,7 +8,7 @@ import {VenteModel} from "../models/vente.model";
 })
 export class VenteService {
 
-  url = 'http://localhost:8080/vente/';
+  url = 'https://sky-optique-back2.herokuapp.com/vente/';
   // @ts-ignore
   listVentes : VenteModel[];
   listVenteSubject = new Subject<VenteModel[]>();

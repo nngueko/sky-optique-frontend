@@ -8,8 +8,7 @@ import {BonCommandeModel} from "../models/bonCommande.model";
 })
 export class BonCommandeService {
 
-  //url2 = 'http://localhost:8080/bonCommande/';
-  url = 'http://localhost:8080/bonCommande/';
+  url = 'https://sky-optique-back2.herokuapp.com/bonCommande/';
 
   listBonCommandes : BonCommandeModel[];
   listBonCommandeSubject = new Subject<BonCommandeModel[]>();

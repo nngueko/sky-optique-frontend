@@ -8,7 +8,7 @@ import {CompagniModel} from "../models/compagni.model";
 })
 export class CompagniService {
 
-  url = 'http://localhost:8080/compagni/';
+  url = 'https://sky-optique-back2.herokuapp.com/compagni/';
   // @ts-ignore
   listCompagnis : CompagniModel[];
   listCompagniSubject = new Subject<CompagniModel[]>();

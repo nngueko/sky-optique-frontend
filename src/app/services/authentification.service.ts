@@ -24,7 +24,7 @@ export class AuthentificationService {
 
   authenticate(utilisateur : UtilisateurModel) {
     return this.httpClient
-      .post('http://localhost:8080/utilisateur/login', utilisateur);
+      .post('https://sky-optique-back2.herokuapp.com/login', utilisateur);
   }
 
   isUserLoggedIn() {

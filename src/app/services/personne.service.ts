@@ -8,7 +8,7 @@ import {PersonneModel} from "../models/personne.model";
 })
 export class PersonneService {
 
-  url = 'http://localhost:8080/personne/';
+  url = 'https://sky-optique-back2.herokuapp.com/personne/';
 
   // @ts-ignore
   listPersonnes : PersonneModel[];

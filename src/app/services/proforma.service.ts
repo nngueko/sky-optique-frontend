@@ -8,7 +8,7 @@ import {ProformaModel} from "../models/Proforma.model";
 })
 export class ProformaService {
 
-  url = 'http://localhost:8080/proforma/';
+  url = 'https://sky-optique-back2.herokuapp.com/proforma/';
   // @ts-ignore
   listProformas : ProformaModel[];
   listProformaSubject = new Subject<ProformaModel[]>();

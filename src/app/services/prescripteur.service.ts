@@ -8,7 +8,7 @@ import {PrescripteurModel} from "../models/prescripteur.model";
 })
 export class PrescripteurService {
 
-  url = 'http://localhost:8080/prescripteur/';
+  url = 'https://sky-optique-back2.herokuapp.com/prescripteur/';
   // @ts-ignore
   listPrescripteurs : PrescripteurModel[];
   listPrescripteurSubject = new Subject<PrescripteurModel[]>();

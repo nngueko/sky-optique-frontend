@@ -8,7 +8,7 @@ import {CatalogueModel} from "../models/catalogue.model";
 })
 export class CatalogueService {
 
-  url = 'http://localhost:8080/catalogue/';
+  url = 'https://sky-optique-back2.herokuapp.com/catalogue/';
   // @ts-ignore
   listCatalogues : CatalogueModel[];
   listCatalogueSubject = new Subject<CatalogueModel[]>();

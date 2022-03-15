@@ -8,7 +8,7 @@ import {MarqueModel} from "../models/marque.model";
 })
 export class MarqueService {
 
-  url = 'http://localhost:8080/marque/';
+  url = 'https://sky-optique-back2.herokuapp.com/marque/';
   // @ts-ignore
   listMarques : MarqueModel[];
   listMarqueSubject = new Subject<MarqueModel[]>();

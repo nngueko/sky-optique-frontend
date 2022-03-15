@@ -8,7 +8,7 @@ import {StockModel} from "../models/stockModel";
 })
 export class StockService {
 
-  url = 'http://localhost:8080/stock/';
+  url = 'https://sky-optique-back2.herokuapp.com/stock/';
 
   listStocks : StockModel[];
   listStockSubject = new Subject<StockModel[]>();
